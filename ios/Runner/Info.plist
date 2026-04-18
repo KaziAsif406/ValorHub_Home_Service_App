@@ -6,6 +6,11 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your gallery</string>
+
+	<key>NSCameraUsageDescription</key>
+	<string>We need access to your camera</string>
 	<key>CFBundleDisplayName</key>
 	<string>Template Flutter</string>
 	<key>CFBundleExecutable</key>
