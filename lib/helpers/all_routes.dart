@@ -104,13 +104,32 @@ final class RouteGenerator {
             routeArgs is Map<String, dynamic> && routeArgs['initialIndex'] is int
                 ? routeArgs['initialIndex'] as int
                 : 0;
+        final String profileName = routeArgs is Map<String, dynamic> && routeArgs['name'] is String
+            ? routeArgs['name'] as String
+            : 'Md Riyad';
+        final String profileEmail = routeArgs is Map<String, dynamic> && routeArgs['email'] is String
+            ? routeArgs['email'] as String
+            : 'mdriyadpc11@gmail.com';
+        final String? profileImagePath = routeArgs is Map<String, dynamic>
+            ? routeArgs['imagePath'] as String?
+            : null;
 
         return defaultTargetPlatform == TargetPlatform.iOS
             ? CupertinoPageRoute(
-                builder: (context) => NavigationScreen(initialIndex: initialIndex),
+                builder: (context) => NavigationScreen(
+                  initialIndex: initialIndex,
+                  profileName: profileName,
+                  profileEmail: profileEmail,
+                  profileImagePath: profileImagePath,
+                ),
               )
             : _FadedTransitionRoute(
-                widget: NavigationScreen(initialIndex: initialIndex),
+                widget: NavigationScreen(
+                  initialIndex: initialIndex,
+                  profileName: profileName,
+                  profileEmail: profileEmail,
+                  profileImagePath: profileImagePath,
+                ),
                 settings: settings,
               );
 
@@ -195,10 +214,32 @@ final class RouteGenerator {
       //       : _FadedTransitionRoute(widget: const NavigationScreen(), settings: settings);
 
       case Routes.profile:
+        final profileArgs = settings.arguments;
+        final String profileName = profileArgs is Map<String, dynamic> && profileArgs['name'] is String
+            ? profileArgs['name'] as String
+            : 'Md Riyad';
+        final String profileEmail = profileArgs is Map<String, dynamic> && profileArgs['email'] is String
+            ? profileArgs['email'] as String
+            : 'mdriyadpc11@gmail.com';
+        final String? profileImagePath = profileArgs is Map<String, dynamic>
+            ? profileArgs['imagePath'] as String?
+            : null;
+
         return defaultTargetPlatform == TargetPlatform.iOS
-            ? CupertinoPageRoute(builder: (context) => const ProfileScreen())
+            ? CupertinoPageRoute(
+                builder: (context) => ProfileScreen(
+                  name: profileName,
+                  email: profileEmail,
+                  imagePath: profileImagePath,
+                ),
+              )
             : _FadedTransitionRoute(
-                widget: const ProfileScreen(), settings: settings);
+                widget: ProfileScreen(
+                  name: profileName,
+                  email: profileEmail,
+                  imagePath: profileImagePath,
+                ),
+                settings: settings);
       
 
       case Routes.contractorsScreen:
@@ -258,10 +299,32 @@ final class RouteGenerator {
                 widget: const Faq(), settings: settings);
 
       case Routes.editProfileScreen:
+        final editProfileArgs = settings.arguments;
+        final String editProfileName = editProfileArgs is Map<String, dynamic> && editProfileArgs['name'] is String
+            ? editProfileArgs['name'] as String
+            : '';
+        final String editProfileEmail = editProfileArgs is Map<String, dynamic> && editProfileArgs['email'] is String
+            ? editProfileArgs['email'] as String
+            : '';
+        final String? editProfileImagePath = editProfileArgs is Map<String, dynamic>
+            ? editProfileArgs['imagePath'] as String?
+            : null;
+
         return defaultTargetPlatform == TargetPlatform.iOS
-            ? CupertinoPageRoute(builder: (context) => const EditProfileScreen())
+            ? CupertinoPageRoute(
+                builder: (context) => EditProfileScreen(
+                  initialName: editProfileName,
+                  initialEmail: editProfileEmail,
+                  initialImagePath: editProfileImagePath,
+                ),
+              )
             : _FadedTransitionRoute(
-                widget: const EditProfileScreen(), settings: settings);
+                widget: EditProfileScreen(
+                  initialName: editProfileName,
+                  initialEmail: editProfileEmail,
+                  initialImagePath: editProfileImagePath,
+                ),
+                settings: settings);
 
       default:
         return null;
