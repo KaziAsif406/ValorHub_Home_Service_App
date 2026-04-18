@@ -68,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const ServiceCategoriesSection(),
                 UIHelper.verticalSpace(24.h),
                 const PopularServicesSection(),
-                UIHelper.verticalSpace(10.h),
+                UIHelper.verticalSpace(24.h),
                 const WhyChooseUsSection(),
                 UIHelper.verticalSpace(24.h),
                 const ReviewsSection(),

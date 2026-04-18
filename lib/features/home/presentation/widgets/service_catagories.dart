@@ -22,18 +22,9 @@ class ServiceCategoriesSection extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Row(
-            children: [
-              Text(
-                'Service Categories',
-                style: TextFontStyle.textStyle16c0A0A0AInter700,
-              ),
-              const Spacer(),
-              Text(
-                'See All >',
-                style: TextFontStyle.textStyle14cBE1E2DInter500,
-              ),
-            ],
+          child: Text(
+            'Service Categories',
+            style: TextFontStyle.textStyle16c0A0A0AInter700,
           ),
         ),
         UIHelper.verticalSpace(12.h),

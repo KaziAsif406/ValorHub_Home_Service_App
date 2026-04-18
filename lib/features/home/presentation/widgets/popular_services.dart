@@ -29,22 +29,13 @@ class PopularServicesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Text(
-                'Popular Services',
-                style: TextFontStyle.textStyle16c0A0A0AInter700,
-              ),
-              const Spacer(),
-              Text(
-                'See All >',
-                style: TextFontStyle.textStyle14cBE1E2DInter500,
-              ),
-            ],
+          Text(
+            'Popular Services',
+            style: TextFontStyle.textStyle16c0A0A0AInter700,
           ),
           UIHelper.verticalSpace(16.h),
           GridView.builder(

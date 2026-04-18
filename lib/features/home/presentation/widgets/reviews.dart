@@ -26,19 +26,10 @@ class ReviewsSection extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Row(
-            children: [
-              Text(
-                'What Homeowners Say',
-                style: TextFontStyle.textStyle16c0A0A0AInter700,
-              ),
-              const Spacer(),
-              Text(
-                'See All >',
-                style: TextFontStyle.textStyle14cBE1E2DInter500,
-              ),
-            ],
-          ),
+          child: Text(
+            'What Homeowners Say',
+            style: TextFontStyle.textStyle16c0A0A0AInter700,
+          ),    
         ),
         UIHelper.verticalSpace(16.h),
         SizedBox(
