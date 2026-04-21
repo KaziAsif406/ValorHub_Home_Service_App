@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
+import 'package:template_flutter/helpers/all_routes.dart';
+import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 
 class ServiceCategoriesSection extends StatelessWidget {
@@ -21,7 +23,7 @@ class ServiceCategoriesSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0),
           child: Text(
             'Service Categories',
             style: TextFontStyle.textStyle16c0A0A0AInter700,
@@ -58,33 +60,41 @@ class _CategoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 56.w,
-          height: 56.w,
-          decoration: BoxDecoration(
-            color: AppColors.cE54545.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(18.r),
-          ),
-          child: Center(
-            child: Image.asset(
-              category.iconPath,
-              width: 24.w,
-              height: 24.h,
+    return GestureDetector(
+      onTap: () {
+        NavigationService.navigateToWithArgs(
+          Routes.findLocationScreen,
+          {'category': category.label},
+        );
+      },
+      child: Column(
+        children: [
+          Container(
+            width: 56.w,
+            height: 56.w,
+            decoration: BoxDecoration(
+              color: AppColors.cE54545.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(18.r),
+            ),
+            child: Center(
+              child: Image.asset(
+                category.iconPath,
+                width: 24.w,
+                height: 24.h,
+              ),
             ),
           ),
-        ),
-        UIHelper.verticalSpace(6.h),
-        SizedBox(
-          width: 80.w,
-          child: Text(
-            category.label,
-            textAlign: TextAlign.center,
-            style: TextFontStyle.textStyle12c0A0A0AInter400,
+          UIHelper.verticalSpace(6.h),
+          SizedBox(
+            width: 80.w,
+            child: Text(
+              category.label,
+              textAlign: TextAlign.center,
+              style: TextFontStyle.textStyle12c0A0A0AInter400,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
