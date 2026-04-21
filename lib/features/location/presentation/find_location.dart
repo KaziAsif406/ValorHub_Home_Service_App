@@ -11,7 +11,35 @@ import 'package:template_flutter/helpers/ui_helpers.dart';
 
 
 class FindLocationScreen extends StatefulWidget {
-  const FindLocationScreen({super.key});
+  const FindLocationScreen({super.key, this.categoryName});
+
+  final String? categoryName;
+
+  String get headingText {
+    final category = categoryName?.trim();
+    if (category == null || category.isEmpty) {
+      return 'Compare quotes from top-rated Addition & Remodeling Contractors';
+    }
+
+    return 'Compare quotes from top-rated ${_resolveCategoryTitle(category)} Contractors.';
+  }
+
+  static String _resolveCategoryTitle(String category) {
+    switch (category.toLowerCase()) {
+      case 'plumbing':
+        return 'Plumbing';
+      case 'hvac':
+        return 'HVAC';
+      case 'roofing':
+        return 'Roofing';
+      case 'electrical':
+        return 'Electrical';
+      case 'cleaning':
+        return 'Cleaning';
+      default:
+        return category;
+    }
+  }
 
   @override
   State<FindLocationScreen> createState() => _FindLocationScreenState();
@@ -43,7 +71,7 @@ class _FindLocationScreenState extends State<FindLocationScreen> {
               // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Compare quotes from top-rated Addition & Remodeling Contractors',
+                  widget.headingText,
                   style: TextFontStyle.textStyle18c14181FInter600,
                   textAlign: TextAlign.center,
                 ),
@@ -57,7 +85,7 @@ class _FindLocationScreenState extends State<FindLocationScreen> {
                   width: double.infinity,
                   padding: EdgeInsets.all(16.w),
                   decoration: BoxDecoration(
-                    color: AppColors.c6A7181.withValues(alpha: 0.2),
+                    color: AppColors.c6A7181.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(16.r),
                   ),
                   child: Column(
@@ -65,13 +93,13 @@ class _FindLocationScreenState extends State<FindLocationScreen> {
                       Row(
                         children: [
                           CustomTextFormField(
-                            width: 225.w,
+                            width: 244.w,
                             height: 42.h,
                             hintText: 'Zip code',
                           ),
                           UIHelper.horizontalSpace(12.w),
                           Container(
-                            width: 42.w,
+                            width: 45.w,
                             height: 42.h,
                             decoration: BoxDecoration(
                               color: AppColors.scaffoldColor,
@@ -92,7 +120,10 @@ class _FindLocationScreenState extends State<FindLocationScreen> {
                         width: double.infinity,
                         label: 'Find Contractor',
                         onPressed: () {
-                          NavigationService.navigateTo(Routes.contractorsScreen);
+                          NavigationService.navigateToWithArgs(
+                            Routes.locationSurveyScreen,
+                            {'category': widget.categoryName ?? ''},
+                          );
                         },
                       )
                     ],
