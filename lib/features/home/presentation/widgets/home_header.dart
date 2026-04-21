@@ -100,12 +100,12 @@ class HomeHeader extends StatelessWidget {
                 Row(
                   children: [
                     CustomTextFormField(
-                      width: 216.w,
+                      width: 239.w,
                       hintText: 'Zip code',
                     ),
                     UIHelper.horizontalSpace(12.7.w),
                     CustomButton(
-                      width: 85.w,
+                      width: 88.w,
                       label: 'Search',
                       onPressed: () {
                         NavigationService.navigateTo(Routes.findLocationScreen);
