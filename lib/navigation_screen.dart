@@ -27,6 +27,7 @@ class NavigationScreen extends StatefulWidget {
 
 class _NavigationScreenState extends State<NavigationScreen> {
   late int _selectedIndex;
+  late final PageController _pageController;
 
   static final List<_NavigationItem> _items = [
     _NavigationItem(icon: Icons.home_outlined, label: 'Home'),
@@ -37,8 +38,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   late final List<Widget> _pages = [
     const HomeScreen(),
-    const SavedContractorsScreen(),
-    const ContractorsScreen(),
+    SavedContractorsScreen(onBackToHome: () => _onItemTapped(0)),
+    ContractorsScreen(onBackToHome: () => _onItemTapped(0)),
     ProfileScreen(
       name: widget.profileName,
       email: widget.profileEmail,
@@ -50,21 +51,48 @@ class _NavigationScreenState extends State<NavigationScreen> {
   void initState() {
     super.initState();
     _selectedIndex = widget.initialIndex.clamp(0, _pages.length - 1);
+    _pageController = PageController(initialPage: _selectedIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   void _onItemTapped(int index) {
+    if (index == _selectedIndex) {
+      return;
+    }
+
     setState(() {
       _selectedIndex = index;
     });
+
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 320),
+      curve: Curves.easeOutCubic,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _pages,
+      body: PageView(
+        controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(),
+        onPageChanged: (index) {
+          if (_selectedIndex != index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          }
+        },
+        children: _pages
+            .map((page) => _KeepAlivePage(child: page))
+            .toList(growable: false),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(context),
     );
@@ -159,4 +187,25 @@ class _NavigationItem {
   final String label;
 
   const _NavigationItem({required this.icon, required this.label});
+}
+
+class _KeepAlivePage extends StatefulWidget {
+  const _KeepAlivePage({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_KeepAlivePage> createState() => _KeepAlivePageState();
+}
+
+class _KeepAlivePageState extends State<_KeepAlivePage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
+  }
 }

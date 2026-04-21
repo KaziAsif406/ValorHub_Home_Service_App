@@ -11,8 +11,10 @@ import 'package:template_flutter/features/contractors/presentation/contractor_pr
 import 'package:template_flutter/features/contractors/presentation/contractors_screen.dart';
 import 'package:template_flutter/features/contractors/presentation/widgets/contractor_info.dart';
 import 'package:template_flutter/features/location/presentation/find_location.dart';
+// import 'package:template_flutter/features/location/presentation/survey.dart';
 import 'package:template_flutter/features/home/presentation/home.dart';
 import 'package:template_flutter/features/home/presentation/notifications.dart';
+import 'package:template_flutter/features/location/survey.dart';
 import 'package:template_flutter/features/onboarding/presentation/onboarding_flow.dart';
 import 'package:template_flutter/features/quotes/presentation/quote_sent.dart';
 import 'package:template_flutter/features/quotes/presentation/request_quote.dart';
@@ -57,6 +59,7 @@ final class Routes {
   static const String onboardingFlow = '/onboarding_flow';
   static const String contractorsScreen = '/contractors_screen';
   static const String findLocationScreen = '/find_location_screen';
+  static const String locationSurveyScreen = '/location_survey_screen';
   static const String notificationScreen = '/notification_screen';
   static const String contractorProfileScreen = '/contractor_profile_screen';
   static const String requestQuoteScreen = '/request_quote_screen';
@@ -243,16 +246,49 @@ final class RouteGenerator {
       
 
       case Routes.contractorsScreen:
+        final contractorArgs = settings.arguments;
+        final String? filterCategory = contractorArgs is Map<String, dynamic>
+            ? contractorArgs['filterCategory'] as String?
+            : null;
         return defaultTargetPlatform == TargetPlatform.iOS
-            ? CupertinoPageRoute(builder: (context) => const ContractorsScreen())
+            ? CupertinoPageRoute(
+                builder: (context) => ContractorsScreen(
+                  filterCategory: filterCategory,
+                ),
+              )
             : _FadedTransitionRoute(
-                widget: const ContractorsScreen(), settings: settings);
+                widget: ContractorsScreen(filterCategory: filterCategory),
+                settings: settings);
 
       case Routes.findLocationScreen:
+        final findLocationArgs = settings.arguments;
+        final String categoryName = findLocationArgs is Map<String, dynamic> && findLocationArgs['category'] is String
+            ? findLocationArgs['category'] as String
+            : '';
         return defaultTargetPlatform == TargetPlatform.iOS
-            ? CupertinoPageRoute(builder: (context) => const FindLocationScreen())
+            ? CupertinoPageRoute(
+                builder: (context) => FindLocationScreen(
+                  categoryName: categoryName,
+                ),
+              )
             : _FadedTransitionRoute(
-                widget: const FindLocationScreen(), settings: settings);
+                widget: FindLocationScreen(categoryName: categoryName),
+                settings: settings);
+
+      case Routes.locationSurveyScreen:
+        final surveyArgs = settings.arguments;
+        final String categoryName = surveyArgs is Map<String, dynamic> && surveyArgs['category'] is String
+            ? surveyArgs['category'] as String
+            : '';
+        return defaultTargetPlatform == TargetPlatform.iOS
+            ? CupertinoPageRoute(
+                builder: (context) => SurveyScreen(
+                  categoryName: categoryName,
+                ),
+              )
+            : _FadedTransitionRoute(
+                widget: SurveyScreen(categoryName: categoryName),
+                settings: settings);
 
       case Routes.notificationScreen:
         return defaultTargetPlatform == TargetPlatform.iOS
