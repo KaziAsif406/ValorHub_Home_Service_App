@@ -8,7 +8,20 @@ import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 
 class SavedContractorsScreen extends StatelessWidget {
-	const SavedContractorsScreen({super.key});
+	const SavedContractorsScreen({super.key, this.onBackToHome});
+
+	final VoidCallback? onBackToHome;
+
+	void _handleBack(BuildContext context) {
+		if (onBackToHome != null) {
+			onBackToHome!();
+			return;
+		}
+
+		if (Navigator.of(context).canPop()) {
+			Navigator.of(context).pop();
+		}
+	}
 
 	static const List<contractorData> _contractors = [
 		contractorData(
@@ -56,9 +69,7 @@ class SavedContractorsScreen extends StatelessWidget {
             size: 20.sp,
             color: AppColors.c14181F,
           ),
-          onPressed: () {
-						NavigationService.goBack;
-          },
+					onPressed: () => _handleBack(context),
         ),
         title: Text(
           'Saved Contractors',
