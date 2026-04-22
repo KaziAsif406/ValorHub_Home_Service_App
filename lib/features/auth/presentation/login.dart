@@ -7,6 +7,7 @@ import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
+import 'package:template_flutter/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
 	const LoginScreen({super.key});
@@ -18,6 +19,29 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
 	final TextEditingController _emailController = TextEditingController();
 	final TextEditingController _passwordController = TextEditingController();
+  final _auth = AuthService();
+  bool _isLoading = false;
+
+  Future<void> _signIn() async {
+    setState(() => _isLoading = true);
+    try {
+      final cred = await _auth.signIn(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      // Optional: block unverified users
+      if (!cred.user!.emailVerified) {
+        await _auth.signOut();
+        throw 'Please verify your email before signing in.';
+      }
+      if (mounted) NavigationService.navigateToReplacement(Routes.navigationScreen);
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
 	@override
 	void dispose() {
@@ -122,12 +146,11 @@ class _LoginScreenState extends State<LoginScreen> {
 								),
 							),
 							UIHelper.verticalSpace(24.h),
-							CustomButton(
+              _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : CustomButton(
 								label: 'Sign In',
-								onPressed: () {
-                  // To Do - Handle sign in logic
-                  NavigationService.navigateToReplacement(Routes.navigationScreen);
-                },
+								onPressed: _signIn,
 								height: 40.h,
 								borderRadius: 12.r,
 								width: double.infinity,
