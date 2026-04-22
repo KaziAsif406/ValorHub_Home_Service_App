@@ -7,6 +7,7 @@ import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
+import 'package:template_flutter/services/auth_service.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
 	const ResetPasswordScreen({super.key});
@@ -18,6 +19,37 @@ class ResetPasswordScreen extends StatefulWidget {
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 	final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
+  final _auth = AuthService();
+  bool _isLoading = false;
+
+  Future<void> _resetPassword() async {
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Passwords do not match.')),
+      );
+      return;
+    }
+    setState(() => _isLoading = true);
+    final oobCode = ModalRoute.of(context)!.settings.arguments as String;
+    try {
+      await _auth.confirmPasswordReset(
+        oobCode: oobCode,
+        newPassword: _passwordController.text,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Password reset successful! Please sign in.')),
+        );
+        NavigationService.navigateToUntilReplacement(Routes.loginScreen);
+        // Navigator.pushNamedAndRemoveUntil(context, '/signin', (_) => false);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
 	@override
 	void dispose() {
@@ -106,11 +138,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 								),
 							),
 							UIHelper.verticalSpace(24.h),
-							CustomButton(
+              _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : CustomButton(
 								label: 'Confirm',
-								onPressed: () {
-                  NavigationService.navigateToReplacement(Routes.loginScreen);
-                },
+								onPressed: _resetPassword,
 								height: 40.h,
 								borderRadius: 12.r,
 								width: double.infinity,
