@@ -12,7 +12,6 @@ android {
     namespace = "com.example.template_flutter"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "29.0.13599879"
-    compileSdkVersion 34
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -29,7 +28,6 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
-        minSdkVersion 21
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
