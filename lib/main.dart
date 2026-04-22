@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:auto_animated/auto_animated.dart';
+import 'package:template_flutter/loading_screen.dart';
 import 'package:template_flutter/navigation_screen.dart';
 // import '../../../loading_screen.dart';
 import 'constants/custome_theme.dart';
@@ -78,7 +79,7 @@ class UtillScreenMobile extends StatelessWidget {
               },
               navigatorKey: NavigationService.navigatorKey,
               onGenerateRoute: RouteGenerator.generateRoute,
-              home: const NavigationScreen()),
+              home: const LoadingScreen()),
         );
       },
     );
