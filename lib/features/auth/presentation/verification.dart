@@ -6,6 +6,7 @@ import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
+import 'package:template_flutter/services/auth_service.dart';
 import 'widgets/otp_input_field.dart';
 
 class VerificationCodeScreen extends StatefulWidget {
@@ -16,8 +17,34 @@ class VerificationCodeScreen extends StatefulWidget {
 }
 
 class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
+  final TextEditingController _otpController = TextEditingController();
+  final _auth = AuthService();
+  bool _isLoading = false;
+
+  Future<void> _verifyCode() async {
+    setState(() => _isLoading = true);
+    try {
+      // Verify the code is valid and get the associated email
+      final email = await _auth.verifyResetCode(_otpController.text.trim());
+      if (mounted) {
+        NavigationService.navigateToWithObject(Routes.resetPassword, _otpController.text.trim());
+        // Navigator.pushNamed(
+        //   context,
+        //   '/new-password',
+        //   arguments: _otpController.text.trim(), // pass oobCode forward
+        // );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
 	@override
 	void dispose() {
+		_otpController.dispose();
 		super.dispose();
 	}
 
@@ -77,11 +104,11 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
 								},
 							),
 							UIHelper.verticalSpace(24.h),
-							CustomButton(
+              _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : CustomButton(
 								label: 'Verify',
-								onPressed: () {
-                  NavigationService.navigateTo(Routes.resetPassword);
-                },
+								onPressed: _verifyCode,
 								height: 40.h,
 								borderRadius: 12.r,
 								width: double.infinity,
