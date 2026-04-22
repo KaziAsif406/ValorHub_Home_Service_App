@@ -7,6 +7,7 @@ import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
+import 'package:template_flutter/services/auth_service.dart';
 
 class SignUpScreen extends StatefulWidget {
 	const SignUpScreen({super.key});
@@ -22,8 +23,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
 	final TextEditingController _confirmPasswordController =
 			TextEditingController();
 
+  final _auth = AuthService();
+  bool _isLoading = false;
+
 	bool _isCustomer = true;
 	bool _agreeToTerms = false;
+
+
+  Future<void> _signUp() async {
+    setState(() => _isLoading = true);
+    try {
+      await _auth.signUp(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Account created! Check your email to verify.'),
+          ),
+        );
+        NavigationService.navigateTo(Routes.loginScreen);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
 	@override
 	void dispose() {
@@ -237,11 +265,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
 								),
 							),
 							UIHelper.verticalSpace(24.h),
-							CustomButton(
+              _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : CustomButton(
 								label: 'Create Account',
-								onPressed: () {
-                  NavigationService.navigateToReplacement(Routes.navigationScreen);
-                },
+								onPressed: _agreeToTerms ? _signUp : null,
 								height: 40.h,
 								borderRadius: 12.r,
 								width: double.infinity,
