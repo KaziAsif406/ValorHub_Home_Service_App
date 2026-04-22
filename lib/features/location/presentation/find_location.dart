@@ -91,27 +91,34 @@ class _FindLocationScreenState extends State<FindLocationScreen> {
                   child: Column(
                     children: [
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CustomTextFormField(
-                            width: 244.w,
-                            height: 42.h,
-                            hintText: 'Zip code',
+                          Flexible(
+                            child: CustomTextFormField(
+                              height: 42.h,
+                              hintText: 'Zip code',
+                            ),
                           ),
                           UIHelper.horizontalSpace(12.w),
-                          Container(
-                            width: 45.w,
-                            height: 42.h,
-                            decoration: BoxDecoration(
-                              color: AppColors.scaffoldColor,
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                            child: Center(
-                              child: Image.asset(
-                                'assets/icons/locator.png',
-                                width: 24.w,
-                                height: 24.h,
+                          Column(
+                            children: [
+                              UIHelper.verticalSpace(2.h),
+                              Container(
+                                width: 43.w,
+                                height: 42.h,
+                                decoration: BoxDecoration(
+                                  color: AppColors.scaffoldColor,
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                child: Center(
+                                  child: Image.asset(
+                                    'assets/icons/locator.png',
+                                    width: 20.w,
+                                    height: 20.h,
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           )
                         ],
                       ),

@@ -99,9 +99,10 @@ class HomeHeader extends StatelessWidget {
                 UIHelper.verticalSpace(8.h),
                 Row(
                   children: [
-                    CustomTextFormField(
-                      width: 239.w,
-                      hintText: 'Zip code',
+                    Flexible(
+                      child: CustomTextFormField(
+                        hintText: 'Zip code',
+                      ),
                     ),
                     UIHelper.horizontalSpace(12.7.w),
                     CustomButton(

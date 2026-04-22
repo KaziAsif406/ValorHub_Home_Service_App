@@ -29,7 +29,7 @@ class ReviewsSection extends StatelessWidget {
           child: Text(
             'What Homeowners Say',
             style: TextFontStyle.textStyle16c0A0A0AInter700,
-          ),    
+          ),
         ),
         UIHelper.verticalSpace(16.h),
         SizedBox(

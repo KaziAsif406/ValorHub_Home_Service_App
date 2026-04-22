@@ -74,8 +74,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           if (widget.label != null && widget.label!.isNotEmpty) ...[
             Text(
               widget.label!,
-              style:
-                  widget.labelStyle ?? TextFontStyle.textStyle14c14181FInter500,
+              style: widget.labelStyle ?? 
+              TextFontStyle.textStyle14c14181FInter500,
             ),
             SizedBox(height: 8.h),
           ],
@@ -101,7 +101,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                             : Icons.visibility_outlined,
                         size: 20.w,
                         color: AppColors.c808080,
-                      ))
+                      )
+                    )
                   : widget.suffixIcon,
               contentPadding: widget.contentPadding ??
                   EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
