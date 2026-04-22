@@ -7,6 +7,7 @@ import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
+import 'package:template_flutter/services/auth_service.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
 	const ForgetPasswordScreen({super.key});
@@ -17,6 +18,28 @@ class ForgetPasswordScreen extends StatefulWidget {
 
 class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
 	final TextEditingController _emailController = TextEditingController();
+  final _auth = AuthService();
+  bool _isLoading = false;
+
+  Future<void> _sendResetEmail() async {
+    setState(() => _isLoading = true);
+    try {
+      await _auth.sendPasswordResetEmail(_emailController.text);
+      if (mounted) {
+        NavigationService.navigateToWithObject(Routes.otpScreen, _emailController.text.trim());
+        // Navigator.pushNamed(
+        //   context,
+        //   '/verify-code',
+        //   arguments: _emailController.text.trim(),
+        // );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
 	@override
 	void dispose() {
@@ -86,11 +109,11 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
 								),
 							),
 							UIHelper.verticalSpace(24.h),
-							CustomButton(
+              _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : CustomButton(
 								label: 'Continue',
-								onPressed: () {
-                  NavigationService.navigateTo(Routes.otpScreen);
-                },
+								onPressed: _sendResetEmail,
 								height: 40.h,
 								borderRadius: 12.r,
 								width: double.infinity,
