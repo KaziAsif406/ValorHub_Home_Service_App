@@ -10,4 +10,14 @@ class AppPrefs {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool('onboarding_seen') ?? false;
   }
+
+  static Future<void> setLoggedIn(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('logged_in', value);
+  }
+
+  static Future<bool> isLoggedIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('logged_in') ?? false;
+  }
 }
