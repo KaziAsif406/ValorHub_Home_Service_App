@@ -9,6 +9,7 @@ import '../../../common_widgets/custom_button.dart';
 // import '../../../gen/assets.gen.dart';
 import '../../../gen/colors.gen.dart';
 import 'widgets/onboarding_dots.dart';
+import 'package:template_flutter/helpers/app_preferences.dart';
 
 final class OnboardingFlow extends StatefulWidget {
   const OnboardingFlow({super.key});
@@ -48,7 +49,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
     ),
   ];
 
-  void _onNextTap() {
+  Future<void> _onNextTap() async {
     if (_currentIndex < _pages.length - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
@@ -56,10 +57,12 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
       );
       return;
     }
+    await AppPrefs.setOnboardingSeen();
     NavigationService.navigateToReplacement(Routes.loginScreen);
   }
 
-  void _onSkipTap() {
+  Future<void> _onSkipTap() async {
+    await AppPrefs.setOnboardingSeen();
     NavigationService.navigateToReplacement(Routes.loginScreen);
   }
 
