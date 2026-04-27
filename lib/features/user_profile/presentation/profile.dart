@@ -29,7 +29,26 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final AuthService _authService = AuthService();
-  final TextEditingController _deletePasswordController = TextEditingController();
+  final TextEditingController _deletePasswordController =
+      TextEditingController();
+  String? _storedImagePath;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStoredImagePath();
+  }
+
+  Future<void> _loadStoredImagePath() async {
+    final String? storedImagePath = await AppPrefs.getProfileImagePath();
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _storedImagePath = storedImagePath;
+    });
+  }
 
   @override
   void dispose() {
@@ -39,7 +58,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ImageProvider<Object>? profileImage = _buildProfileImage();
+    final String? resolvedImagePath = widget.imagePath ?? _storedImagePath;
+    final ImageProvider<Object>? profileImage =
+        _buildProfileImage(resolvedImagePath);
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
@@ -82,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         {
                           'name': widget.name,
                           'email': widget.email,
-                          'imagePath': widget.imagePath,
+                          'imagePath': resolvedImagePath,
                         },
                       );
                     },
@@ -163,7 +184,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     iconColor: AppColors.c6B7280,
                     imagePath: 'assets/icons/heart.png',
                     onTap: () {
-                      NavigationService.navigateTo(Routes.savedContractorsScreen);
+                      NavigationService.navigateTo(
+                          Routes.savedContractorsScreen);
                     },
                   ),
                   UIHelper.verticalSpace(10.h),
@@ -272,7 +294,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               actions: [
                 TextButton(
-                  onPressed: isLoading ? null : () => Navigator.pop(dialogContext),
+                  onPressed:
+                      isLoading ? null : () => Navigator.pop(dialogContext),
                   child: const Text('Cancel'),
                 ),
                 TextButton(
@@ -281,7 +304,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ? SizedBox(
                           width: 16.w,
                           height: 16.w,
-                          child: const CircularProgressIndicator(strokeWidth: 2),
+                          child:
+                              const CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Text('Delete'),
                 ),
@@ -292,7 +316,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
     );
   }
-
 
   Future<void> _showLogoutDialog() async {
     final BuildContext screenContext = context;
@@ -348,7 +371,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               actions: [
                 TextButton(
-                  onPressed: isLoading ? null : () => Navigator.pop(dialogContext),
+                  onPressed:
+                      isLoading ? null : () => Navigator.pop(dialogContext),
                   child: const Text('Cancel'),
                 ),
                 TextButton(
@@ -357,7 +381,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ? SizedBox(
                           width: 16.w,
                           height: 16.w,
-                          child: const CircularProgressIndicator(strokeWidth: 2),
+                          child:
+                              const CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Text('Logout'),
                 ),
@@ -369,17 +394,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-ImageProvider<Object>? _buildProfileImage() {
-  final String? imagePath = widget.imagePath;
-
-  if (imagePath != null && imagePath.isNotEmpty) {
-    final File file = File(imagePath);
-    if (file.existsSync()) {
-      return FileImage(file);
+  ImageProvider<Object>? _buildProfileImage(String? imagePath) {
+    if (imagePath != null && imagePath.isNotEmpty) {
+      final File file = File(imagePath);
+      if (file.existsSync()) {
+        return FileImage(file);
+      }
     }
-  }
 
-  return const AssetImage('assets/icons/profile.png');
+    return const AssetImage('assets/icons/profile.png');
   }
 }
 
