@@ -33,6 +33,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Future<void> _signUp() async {
     setState(() => _isLoading = true);
     try {
+      await _auth.signOut();
       await _auth.signUp(
         name: _nameController.text,
         email: _emailController.text,

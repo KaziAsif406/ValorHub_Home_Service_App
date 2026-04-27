@@ -62,7 +62,13 @@ class AuthService {
       );
 
       await user.reauthenticateWithCredential(credential);
-      await user.delete();
+      await _auth.currentUser?.reload();
+      final User? refreshedUser = _auth.currentUser;
+      if (refreshedUser == null) {
+        throw 'Unable to confirm signed-in user for deletion.';
+      }
+
+      await refreshedUser.delete();
       await _auth.signOut();
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
