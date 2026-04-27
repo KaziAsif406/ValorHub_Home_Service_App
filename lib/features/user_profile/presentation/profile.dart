@@ -38,7 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Widget profileImage = _buildProfileImage();
+    final ImageProvider<Object>? profileImage = _buildProfileImage();
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
@@ -59,7 +59,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 child: Padding(
                   padding: EdgeInsets.all(1.w),
-                  child: ClipOval(child: profileImage),
+                  child: CircleAvatar(
+                    radius: 50.r,
+                    backgroundImage: profileImage,
+                  ),
                 ),
               ),
               UIHelper.verticalSpace(16.h),
@@ -292,25 +295,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileImage() {
-    final String? imagePath = widget.imagePath;
+ImageProvider<Object>? _buildProfileImage() {
+  final String? imagePath = widget.imagePath;
 
-    if (imagePath != null && imagePath.isNotEmpty) {
-      final File file = File(imagePath);
-      if (file.existsSync()) {
-        return Image.file(
-          file,
-          fit: BoxFit.cover,
-        );
-      }
+  if (imagePath != null && imagePath.isNotEmpty) {
+    final File file = File(imagePath);
+    if (file.existsSync()) {
+      return FileImage(file);
     }
+  }
 
-    return Image.asset(
-      'assets/icons/profile.png',
-      height: 40.h,
-      width: 40.w,
-      // fit: BoxFit.contain,
-    );
+  return const AssetImage('assets/icons/profile.png');
   }
 }
 
