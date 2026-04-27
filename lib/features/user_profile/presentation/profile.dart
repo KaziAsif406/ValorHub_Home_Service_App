@@ -28,6 +28,13 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final AuthService _authService = AuthService();
+  final TextEditingController _deletePasswordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _deletePasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -199,7 +206,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _showDeleteAccountDialog() async {
     final BuildContext screenContext = context;
-    final TextEditingController passwordController = TextEditingController();
 
     await showDialog<void>(
       context: context,
@@ -210,7 +216,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             Future<void> deleteAccount() async {
-              if (passwordController.text.trim().isEmpty) {
+              if (_deletePasswordController.text.trim().isEmpty) {
                 ScaffoldMessenger.of(screenContext).showSnackBar(
                   const SnackBar(
                     content: Text('Enter your password to delete the account.'),
@@ -222,17 +228,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
               setState(() => isLoading = true);
               try {
                 await _authService.deleteAccount(
-                  password: passwordController.text.trim(),
+                  password: _deletePasswordController.text.trim(),
                 );
                 await AppPrefs.setLoggedIn(false);
                 if (mounted) {
-                  // ignore: use_build_context_synchronously
                   Navigator.of(dialogContext).pop();
                   NavigationService.navigateToReplacement(Routes.signUpScreen);
                 }
               } catch (error) {
                 if (mounted) {
-                  // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(screenContext).showSnackBar(
                     SnackBar(content: Text(error.toString())),
                   );
@@ -257,7 +261,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   SizedBox(height: 16.h),
                   TextField(
-                    controller: passwordController,
+                    controller: _deletePasswordController,
                     obscureText: true,
                     decoration: const InputDecoration(
                       labelText: 'Password',
@@ -286,8 +290,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         );
       },
     );
-
-    passwordController.dispose();
   }
 
   Widget _buildProfileImage() {
