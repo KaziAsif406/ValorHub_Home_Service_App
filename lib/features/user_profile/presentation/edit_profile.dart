@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:template_flutter/helpers/all_routes.dart';
+// import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/common_widgets/custom_button.dart';
 import 'package:template_flutter/common_widgets/custom_textform_field.dart';
 import 'package:template_flutter/constants/text_font_style.dart';

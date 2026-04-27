@@ -25,6 +25,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
     setState(() => _isLoading = true);
     try {
       // Verify the code is valid and get the associated email
+      // ignore: unused_local_variable
       final email = await _auth.verifyResetCode(_otpController.text.trim());
       if (mounted) {
         NavigationService.navigateToWithObject(Routes.resetPassword, _otpController.text.trim());
