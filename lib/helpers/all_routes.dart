@@ -9,6 +9,7 @@ import 'package:template_flutter/features/auth/presentation/signup.dart';
 import 'package:template_flutter/features/auth/presentation/verification.dart';
 import 'package:template_flutter/features/contractors/presentation/contractor_profile.dart';
 import 'package:template_flutter/features/contractors/presentation/contractors_screen.dart';
+import 'package:template_flutter/features/contractors/presentation/saved_contractors.dart';
 import 'package:template_flutter/features/contractors/presentation/widgets/contractor_info.dart';
 import 'package:template_flutter/features/location/presentation/find_location.dart';
 import 'package:template_flutter/features/location/presentation/survey.dart';
@@ -66,6 +67,7 @@ final class Routes {
   static const String contactUsScreen = '/contact_us_screen';
   static const String faqScreen = '/faq_screen';
   static const String editProfileScreen = '/edit_profile_screen';
+  static const String savedContractorsScreen = '/saved_contractors_screen';
 }
 
 final class RouteGenerator {
@@ -148,6 +150,13 @@ final class RouteGenerator {
             ? CupertinoPageRoute(builder: (context) => const ResetPasswordInsideProfileScreen())
             : _FadedTransitionRoute(
                 widget: const ResetPasswordInsideProfileScreen(), settings: settings);
+
+
+      case Routes.savedContractorsScreen:
+        return defaultTargetPlatform == TargetPlatform.iOS
+            ? CupertinoPageRoute(builder: (context) => const SavedContractorsScreen())
+            : _FadedTransitionRoute(
+                widget: const SavedContractorsScreen(), settings: settings);
 
       // case Routes.productsWithPagination:
       //   return defaultTargetPlatform == TargetPlatform.iOS
@@ -375,22 +384,41 @@ class _FadedTransitionRoute extends PageRouteBuilder {
   _FadedTransitionRoute({required this.widget, required this.settings})
       : super(
           settings: settings,
-          reverseTransitionDuration: const Duration(milliseconds: 1),
+          reverseTransitionDuration: const Duration(milliseconds: 320),
           pageBuilder: (BuildContext context, Animation<double> animation,
               Animation<double> secondaryAnimation) {
             return widget;
           },
-          transitionDuration: const Duration(milliseconds: 1),
+          transitionDuration: const Duration(milliseconds: 520),
           transitionsBuilder: (BuildContext context,
               Animation<double> animation,
               Animation<double> secondaryAnimation,
               Widget child) {
+            final curvedAnimation = CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutBack,
+              reverseCurve: Curves.easeInCubic,
+            );
+
+            final offsetAnimation = Tween<Offset>(
+              begin: const Offset(0.18, 0.06),
+              end: Offset.zero,
+            ).animate(curvedAnimation);
+
+            final scaleAnimation = Tween<double>(
+              begin: 0.90,
+              end: 1.0,
+            ).animate(curvedAnimation);
+
             return FadeTransition(
-              opacity: CurvedAnimation(
-                parent: animation,
-                curve: Curves.ease,
+              opacity: curvedAnimation,
+              child: SlideTransition(
+                position: offsetAnimation,
+                child: ScaleTransition(
+                  scale: scaleAnimation,
+                  child: child,
+                ),
               ),
-              child: child,
             );
           },
         );
