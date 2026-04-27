@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:template_flutter/features/auth/presentation/forget_password.dart';
 import 'package:template_flutter/features/auth/presentation/login.dart';
 import 'package:template_flutter/features/auth/presentation/reset_password.dart';
@@ -108,12 +109,13 @@ final class RouteGenerator {
             routeArgs is Map<String, dynamic> && routeArgs['initialIndex'] is int
                 ? routeArgs['initialIndex'] as int
                 : 0;
+        final User? currentUser = FirebaseAuth.instance.currentUser;
         final String profileName = routeArgs is Map<String, dynamic> && routeArgs['name'] is String
-            ? routeArgs['name'] as String
-            : 'Md Riyad';
+          ? routeArgs['name'] as String
+          : currentUser?.displayName ?? 'Md Riyad';
         final String profileEmail = routeArgs is Map<String, dynamic> && routeArgs['email'] is String
-            ? routeArgs['email'] as String
-            : 'mdriyadpc11@gmail.com';
+          ? routeArgs['email'] as String
+          : currentUser?.email ?? 'mdriyadpc11@gmail.com';
         final String? profileImagePath = routeArgs is Map<String, dynamic>
             ? routeArgs['imagePath'] as String?
             : null;
@@ -226,12 +228,13 @@ final class RouteGenerator {
 
       case Routes.profile:
         final profileArgs = settings.arguments;
+        final User? currentUser = FirebaseAuth.instance.currentUser;
         final String profileName = profileArgs is Map<String, dynamic> && profileArgs['name'] is String
-            ? profileArgs['name'] as String
-            : 'Md Riyad';
+          ? profileArgs['name'] as String
+          : currentUser?.displayName ?? 'Md Riyad';
         final String profileEmail = profileArgs is Map<String, dynamic> && profileArgs['email'] is String
-            ? profileArgs['email'] as String
-            : 'mdriyadpc11@gmail.com';
+          ? profileArgs['email'] as String
+          : currentUser?.email ?? 'mdriyadpc11@gmail.com';
         final String? profileImagePath = profileArgs is Map<String, dynamic>
             ? profileArgs['imagePath'] as String?
             : null;

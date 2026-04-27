@@ -9,6 +9,7 @@ class AuthService {
 
   // ── SIGN UP ──────────────────────────────────────────
   Future<UserCredential> signUp({
+    required String name,
     required String email,
     required String password,
   }) async {
@@ -17,6 +18,8 @@ class AuthService {
         email: email.trim(),
         password: password,
       );
+      await credential.user?.updateDisplayName(name.trim());
+      await credential.user?.reload();
       // Send email verification right after sign up
       await credential.user?.sendEmailVerification();
       return credential;

@@ -37,7 +37,22 @@ class _LoginScreenState extends State<LoginScreen> {
       }
       if (mounted) {
         await AppPrefs.setLoggedIn(true);
-        NavigationService.navigateToReplacement(Routes.navigationScreen);
+        final String profileName =
+            cred.user?.displayName?.trim().isNotEmpty == true
+                ? cred.user!.displayName!.trim()
+                : _emailController.text.trim();
+        final String profileEmail =
+            cred.user?.email?.trim().isNotEmpty == true
+                ? cred.user!.email!.trim()
+                : _emailController.text.trim();
+
+        NavigationService.navigateToReplacementWithArgs(
+          Routes.navigationScreen,
+          {
+            'name': profileName,
+            'email': profileEmail,
+          },
+        );
       }
     } catch (e) {
       ScaffoldMessenger.of(context)

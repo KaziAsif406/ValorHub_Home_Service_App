@@ -34,6 +34,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() => _isLoading = true);
     try {
       await _auth.signUp(
+        name: _nameController.text,
         email: _emailController.text,
         password: _passwordController.text,
       );
