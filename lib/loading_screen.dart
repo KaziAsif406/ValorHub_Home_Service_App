@@ -15,16 +15,21 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen> {
   bool? seen;
+  bool? loggedIn;
 
 
   @override
   void initState() {
     super.initState();
     _checkOnboardingStatus().then((_) {
-      Future.delayed(const Duration(seconds: 4), () {
-        if (seen == true) {
+      Future.delayed(const Duration(seconds: 2), () {
+        if (seen == true && loggedIn == true) {
+          NavigationService.navigateTo(Routes.navigationScreen);
+        }
+        else if (seen == true && loggedIn == false) {
           NavigationService.navigateTo(Routes.loginScreen);
-        } else {
+        }
+        else {
           NavigationService.navigateTo(Routes.onboardingFlow);
         }
       });
@@ -33,9 +38,11 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   Future<void> _checkOnboardingStatus() async {
     final hasSeen = await AppPrefs.hasSeenOnboarding();
+    final isLoggedIn = await AppPrefs.isLoggedIn();
     if (!mounted) return;
     setState(() {
       seen = hasSeen;
+      loggedIn = isLoggedIn;
     });
   }
   
