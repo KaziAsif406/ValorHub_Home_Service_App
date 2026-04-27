@@ -5,6 +5,7 @@ import 'package:template_flutter/common_widgets/custom_textform_field.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
+import 'package:template_flutter/helpers/app_preferences.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 import 'package:template_flutter/services/auth_service.dart';
@@ -34,7 +35,10 @@ class _LoginScreenState extends State<LoginScreen> {
         await _auth.signOut();
         throw 'Please verify your email before signing in.';
       }
-      if (mounted) NavigationService.navigateToReplacement(Routes.navigationScreen);
+      if (mounted) {
+        await AppPrefs.setLoggedIn(true);
+        NavigationService.navigateToReplacement(Routes.navigationScreen);
+      }
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.toString())));
