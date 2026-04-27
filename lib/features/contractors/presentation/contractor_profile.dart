@@ -15,10 +15,12 @@ import 'package:template_flutter/helpers/ui_helpers.dart';
 
 class ContractorProfile extends StatefulWidget {
   final contractorData contractor;
+  final bool isFavorite;
 
   const ContractorProfile({
     super.key,
     required this.contractor,
+    this.isFavorite = false,
   });
 
   @override
@@ -26,6 +28,14 @@ class ContractorProfile extends StatefulWidget {
 }
 
 class _ContractorProfileState extends State<ContractorProfile> {
+  late bool isFavorite;
+
+  @override
+  void initState() {
+    super.initState();
+    isFavorite = widget.isFavorite;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,6 +55,41 @@ class _ContractorProfileState extends State<ContractorProfile> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 18.0),
+            child: Container(
+              height: 40.h,
+              width: 40.w,
+              decoration: BoxDecoration(
+                color: AppColors.scaffoldColor.withValues(alpha: 0.00),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: AppColors.c000000.withValues(alpha: 0.20),
+                  width: 2,
+                ),
+              ),
+              child: IconButton(
+                onPressed: () {
+                  setState(() {
+                    isFavorite = !isFavorite;
+                  });
+                },
+                icon: isFavorite
+                    ? Image.asset(
+                        'assets/icons/filled_heart.png',
+                        width: 20.w,
+                        height: 20.h,
+                      )
+                    : Image.asset(
+                        'assets/icons/heart_outlined.png',
+                        width: 20.w,
+                        height: 20.h,
+                      ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
