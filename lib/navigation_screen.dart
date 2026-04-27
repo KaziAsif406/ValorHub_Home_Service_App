@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/features/contractors/presentation/contractors_screen.dart';
-import 'package:template_flutter/features/contractors/presentation/saved_contractors.dart';
 import 'package:template_flutter/features/home/presentation/home.dart';
+import 'package:template_flutter/features/inbox/presentation/chat_list.dart';
 import 'package:template_flutter/features/user_profile/presentation/profile.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
@@ -30,15 +30,31 @@ class _NavigationScreenState extends State<NavigationScreen> {
   late final PageController _pageController;
 
   static final List<_NavigationItem> _items = [
-    _NavigationItem(icon: Icons.home_outlined, label: 'Home'),
-    _NavigationItem(icon: Icons.favorite_border, label: 'Saved'),
-    _NavigationItem(icon: Icons.list, label: 'List'),
-    _NavigationItem(icon: Icons.person_outline, label: 'Profile'),
+    _NavigationItem(
+      filledAssetPath: 'assets/icons/nav_home_filled.png',
+      outlinedAssetPath: 'assets/icons/nav_home_outlined.png',
+      label: 'Home',
+    ),
+    _NavigationItem(
+      filledAssetPath: 'assets/icons/nav_chat_filled.png',
+      outlinedAssetPath: 'assets/icons/nav_chat_outlined.png',
+      label: 'Inbox',
+    ),
+    _NavigationItem(
+      filledAssetPath: 'assets/icons/nav_list_filled.png',
+      outlinedAssetPath: 'assets/icons/nav_list_outlined.png',
+      label: 'List',
+    ),
+    _NavigationItem(
+      filledAssetPath: 'assets/icons/nav_profile_filled.png',
+      outlinedAssetPath: 'assets/icons/nav_profile_outlined.png',
+      label: 'Profile',
+    ),
   ];
 
   late final List<Widget> _pages = [
     const HomeScreen(),
-    SavedContractorsScreen(onBackToHome: () => _onItemTapped(0)),
+    ChatListScreen(onBackToHome: () => _onItemTapped(0)),
     ContractorsScreen(onBackToHome: () => _onItemTapped(0)),
     ProfileScreen(
       name: widget.profileName,
@@ -71,7 +87,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
     _pageController.animateToPage(
       index,
-      duration: const Duration(milliseconds: 320),
+      duration: const Duration(milliseconds: 420),
       curve: Curves.easeOutCubic,
     );
   }
@@ -145,26 +161,27 @@ class _NavigationScreenState extends State<NavigationScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 13.w),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            item.icon,
-                            size: 22.sp,
-                            color: selected
-                                ? AppColors.allPrimaryColor
-                                : AppColors.c8E8E93,
+                          Image.asset(
+                            selected
+                                ? item.filledAssetPath
+                                : item.outlinedAssetPath,
+                            width: 22.sp,
+                            height: 22.sp,
+                            fit: BoxFit.contain,
                           ),
                           if (selected) ...[
                             UIHelper.horizontalSpace(8.w),
-                            Expanded(
-                              child: Text(
-                                item.label,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: AppColors.allPrimaryColor,
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            Text(
+                              item.label,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: AppColors.allPrimaryColor,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ],
@@ -183,10 +200,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
 }
 
 class _NavigationItem {
-  final IconData icon;
+  final String filledAssetPath;
+  final String outlinedAssetPath;
   final String label;
 
-  const _NavigationItem({required this.icon, required this.label});
+  const _NavigationItem({
+    required this.filledAssetPath,
+    required this.outlinedAssetPath,
+    required this.label,
+  });
 }
 
 class _KeepAlivePage extends StatefulWidget {
