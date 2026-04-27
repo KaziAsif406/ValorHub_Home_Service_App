@@ -31,12 +31,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final AuthService _authService = AuthService();
   final TextEditingController _deletePasswordController =
       TextEditingController();
+  late String _displayName;
+  late String _displayEmail;
   String? _storedImagePath;
 
   @override
   void initState() {
     super.initState();
+    _displayName = widget.name;
+    _displayEmail = widget.email;
     _loadStoredImagePath();
+  }
+
+  @override
+  void didUpdateWidget(covariant ProfileScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.name != widget.name) {
+      _displayName = widget.name;
+    }
+    if (oldWidget.email != widget.email) {
+      _displayEmail = widget.email;
+    }
+    if (oldWidget.imagePath != widget.imagePath) {
+      _storedImagePath = widget.imagePath;
+    }
   }
 
   Future<void> _loadStoredImagePath() async {
@@ -92,20 +110,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    widget.name,
+                    _displayName,
                     style: TextFontStyle.textStyle24c0A0A0AInter700,
                   ),
                   UIHelper.horizontalSpace(8.w),
                   GestureDetector(
-                    onTap: () {
-                      NavigationService.navigateToWithArgs(
+                    onTap: () async {
+                      final dynamic result = await NavigationService.navigateToWithArgs(
                         Routes.editProfileScreen,
                         {
-                          'name': widget.name,
-                          'email': widget.email,
+                          'name': _displayName,
+                          'email': _displayEmail,
                           'imagePath': resolvedImagePath,
                         },
                       );
+
+                      if (!mounted || result is! Map) {
+                        return;
+                      }
+
+                      setState(() {
+                        _displayName = (result['name'] as String?) ?? _displayName;
+                        _displayEmail = (result['email'] as String?) ?? _displayEmail;
+                        _storedImagePath =
+                            result['imagePath'] as String? ?? _storedImagePath;
+                      });
                     },
                     child: Image.asset(
                       'assets/icons/edit.png',
@@ -117,7 +146,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               UIHelper.verticalSpace(10.h),
               Text(
-                widget.email,
+                _displayEmail,
                 style: TextFontStyle.textStyle14c6A7181Inter400,
               ),
               UIHelper.verticalSpace(24.h),

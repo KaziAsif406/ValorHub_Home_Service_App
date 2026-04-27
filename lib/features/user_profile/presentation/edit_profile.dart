@@ -236,15 +236,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                   await AppPrefs.setProfileImagePath(localImagePath);
 
-                  NavigationService.popAndReplaceWihArgs(
-                    Routes.navigationScreen,
-                    {
-                      'initialIndex': 3,
-                      'name': _nameController.text.trim(),
-                      'email': _emailController.text.trim(),
-                      'imagePath': localImagePath,
-                    },
-                  );
+                  if (mounted) {
+                    Navigator.pop(
+                      context,
+                      {
+                        'name': _nameController.text.trim(),
+                        'email': _emailController.text.trim(),
+                        'imagePath': localImagePath,
+                      },
+                    );
+                  }
                 },
                 width: double.infinity,
                 height: 40.h,
