@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:io';
 import 'package:template_flutter/helpers/all_routes.dart';
+import 'package:template_flutter/helpers/app_preferences.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/features/user_profile/presentation/widgets/analytics_card.dart';
+import 'package:template_flutter/services/auth_service.dart';
 import '../../../constants/text_font_style.dart';
 import '../../../gen/colors.gen.dart';
 import '../../../helpers/ui_helpers.dart';
@@ -25,6 +27,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final AuthService _authService = AuthService();
+
   @override
   Widget build(BuildContext context) {
     final Widget profileImage = _buildProfileImage();
@@ -171,9 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     imagePath: 'assets/icons/delete.png',
                     iconColor: AppColors.allPrimaryColor,
                     textColor: AppColors.allPrimaryColor,
-                    onTap: () {
-                      NavigationService.navigateToReplacement(Routes.signUpScreen);
-                    },
+                    onTap: _showDeleteAccountDialog,
                   ),
                   UIHelper.verticalSpace(10.h),
                   _ProfileActionRow(
@@ -181,7 +183,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     imagePath: 'assets/icons/logout.png',
                     iconColor: AppColors.allPrimaryColor,
                     textColor: AppColors.allPrimaryColor,
-                    onTap: () {
+                    onTap: () async {
+                      await AppPrefs.setLoggedIn(false);
                       NavigationService.navigateToReplacement(Routes.loginScreen);
                     },
                   ),
@@ -192,6 +195,99 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _showDeleteAccountDialog() async {
+    final BuildContext screenContext = context;
+    final TextEditingController passwordController = TextEditingController();
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        bool isLoading = false;
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            Future<void> deleteAccount() async {
+              if (passwordController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(screenContext).showSnackBar(
+                  const SnackBar(
+                    content: Text('Enter your password to delete the account.'),
+                  ),
+                );
+                return;
+              }
+
+              setState(() => isLoading = true);
+              try {
+                await _authService.deleteAccount(
+                  password: passwordController.text.trim(),
+                );
+                await AppPrefs.setLoggedIn(false);
+                if (mounted) {
+                  // ignore: use_build_context_synchronously
+                  Navigator.of(dialogContext).pop();
+                  NavigationService.navigateToReplacement(Routes.signUpScreen);
+                }
+              } catch (error) {
+                if (mounted) {
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(screenContext).showSnackBar(
+                    SnackBar(content: Text(error.toString())),
+                  );
+                }
+              } finally {
+                if (mounted) {
+                  setState(() => isLoading = false);
+                }
+              }
+            }
+
+            return AlertDialog(
+              title: const Text('Delete Account'),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'This will permanently delete your Firebase account. Enter your password to confirm.',
+                  ),
+                  SizedBox(height: 16.h),
+                  TextField(
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Password',
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isLoading ? null : () => Navigator.pop(dialogContext),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: isLoading ? null : deleteAccount,
+                  child: isLoading
+                      ? SizedBox(
+                          width: 16.w,
+                          height: 16.w,
+                          child: const CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Delete'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    passwordController.dispose();
   }
 
   Widget _buildProfileImage() {

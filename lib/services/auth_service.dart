@@ -43,6 +43,29 @@ class AuthService {
   // ── SIGN OUT ─────────────────────────────────────────
   Future<void> signOut() => _auth.signOut();
 
+  // ── DELETE ACCOUNT ───────────────────────────────────
+  Future<void> deleteAccount({required String password}) async {
+    try {
+      final User? user = _auth.currentUser;
+      final String? email = user?.email;
+
+      if (user == null || email == null) {
+        throw 'No signed-in user found.';
+      }
+
+      final credential = EmailAuthProvider.credential(
+        email: email,
+        password: password,
+      );
+
+      await user.reauthenticateWithCredential(credential);
+      await user.delete();
+      await _auth.signOut();
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    }
+  }
+
   // ── PASSWORD RESET (sends email with link/code) ──────
   Future<void> sendPasswordResetEmail(String email) async {
     try {
@@ -90,6 +113,8 @@ class AuthService {
         return 'No account found with this email.';
       case 'wrong-password':
         return 'Incorrect password.';
+      case 'requires-recent-login':
+        return 'Please sign in again before deleting your account.';
       case 'invalid-action-code':
         return 'The reset code is invalid or expired.';
       case 'too-many-requests':
