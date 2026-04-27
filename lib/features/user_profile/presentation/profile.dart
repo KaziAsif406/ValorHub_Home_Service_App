@@ -9,6 +9,7 @@ import 'package:template_flutter/services/auth_service.dart';
 import '../../../constants/text_font_style.dart';
 import '../../../gen/colors.gen.dart';
 import '../../../helpers/ui_helpers.dart';
+import 'widgets/profile_action_row.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({
@@ -126,7 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               UIHelper.verticalSpace(18.h),
               _ProfileActionCard(
                 children: [
-                  _ProfileActionRow(
+                  ProfileActionRow(
                     title: 'Change Password',
                     textColor: AppColors.c6B7280,
                     iconColor: AppColors.c6B7280,
@@ -136,7 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                   ),
                   UIHelper.verticalSpace(10.h),
-                  _ProfileActionRow(
+                  ProfileActionRow(
                     title: 'Contact Us',
                     textColor: AppColors.c6B7280,
                     iconColor: AppColors.c6B7280,
@@ -146,7 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                   ),
                   UIHelper.verticalSpace(10.h),
-                  _ProfileActionRow(
+                  ProfileActionRow(
                     title: 'My Requests',
                     textColor: AppColors.c6B7280,
                     iconColor: AppColors.c6B7280,
@@ -156,7 +157,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                   ),
                   UIHelper.verticalSpace(10.h),
-                  _ProfileActionRow(
+                  ProfileActionRow(
                     title: 'Saved Contractors',
                     textColor: AppColors.c6B7280,
                     iconColor: AppColors.c6B7280,
@@ -166,7 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                   ),
                   UIHelper.verticalSpace(10.h),
-                  _ProfileActionRow(
+                  ProfileActionRow(
                     title: 'FAQ',
                     textColor: AppColors.c6B7280,
                     iconColor: AppColors.c6B7280,
@@ -180,7 +181,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               UIHelper.verticalSpace(14.h),
               _ProfileActionCard(
                 children: [
-                  _ProfileActionRow(
+                  ProfileActionRow(
                     title: 'Delete Account',
                     imagePath: 'assets/icons/delete.png',
                     iconColor: AppColors.allPrimaryColor,
@@ -188,15 +189,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onTap: _showDeleteAccountDialog,
                   ),
                   UIHelper.verticalSpace(10.h),
-                  _ProfileActionRow(
+                  ProfileActionRow(
                     title: 'Log Out',
                     imagePath: 'assets/icons/logout.png',
                     iconColor: AppColors.allPrimaryColor,
                     textColor: AppColors.allPrimaryColor,
-                    onTap: () async {
-                      await AppPrefs.setLoggedIn(false);
-                      NavigationService.navigateToReplacement(Routes.loginScreen);
-                    },
+                    onTap: _showLogoutDialog,
                   ),
                 ],
               ),
@@ -260,7 +258,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
-                    'This will permanently delete your Firebase account. Enter your password to confirm.',
+                    'This will permanently delete your account. Enter your password to confirm.',
                   ),
                   SizedBox(height: 16.h),
                   TextField(
@@ -286,6 +284,82 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: const CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Text('Delete'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+
+  Future<void> _showLogoutDialog() async {
+    final BuildContext screenContext = context;
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        bool isLoading = false;
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            Future<void> logout() async {
+              ScaffoldMessenger.of(screenContext).showSnackBar(
+                const SnackBar(
+                  content: Text('Logged out successfully.'),
+                ),
+              );
+
+              setState(() => isLoading = true);
+              try {
+                await AppPrefs.setLoggedIn(false);
+                if (mounted) {
+                  Navigator.of(dialogContext).pop();
+                  NavigationService.navigateToReplacement(Routes.loginScreen);
+                }
+              } catch (error) {
+                if (mounted) {
+                  ScaffoldMessenger.of(screenContext).showSnackBar(
+                    SnackBar(content: Text(error.toString())),
+                  );
+                }
+              } finally {
+                if (mounted) {
+                  setState(() => isLoading = false);
+                }
+              }
+            }
+
+            return AlertDialog(
+              title: const Text('Logout'),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Are you sure you want to logout?',
+                  ),
+                  SizedBox(height: 16.h),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isLoading ? null : () => Navigator.pop(dialogContext),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: isLoading ? null : logout,
+                  child: isLoading
+                      ? SizedBox(
+                          width: 16.w,
+                          height: 16.w,
+                          child: const CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Logout'),
                 ),
               ],
             );
@@ -331,56 +405,6 @@ class _ProfileActionCard extends StatelessWidget {
         ],
       ),
       child: Column(children: children),
-    );
-  }
-}
-
-class _ProfileActionRow extends StatelessWidget {
-  const _ProfileActionRow({
-    required this.title,
-    required this.imagePath,
-    required this.onTap,
-    required this.iconColor,
-    required this.textColor,
-  });
-
-  final String title;
-  final String imagePath;
-  final VoidCallback onTap;
-  final Color iconColor;
-  final Color textColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(14.r),
-      onTap: onTap,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
-        child: Row(
-          children: [
-            Image.asset(
-              imagePath,
-              width: 24.sp,
-              height: 24.sp,
-            ),
-            UIHelper.horizontalSpace(16.w),
-            Expanded(
-              child: Text(
-                title,
-                style: TextFontStyle.textStyle14c14181FInter400.copyWith(
-                  color: textColor,
-                ),
-              ),
-            ),
-            Icon(
-              Icons.chevron_right,
-              size: 24.sp,
-              color: textColor,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
