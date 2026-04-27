@@ -7,7 +7,7 @@ import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 import 'package:template_flutter/services/auth_service.dart';
-import 'widgets/otp_input_field.dart';
+import 'widget/otp_input_field.dart';
 
 class VerificationCodeScreen extends StatefulWidget {
 	const VerificationCodeScreen({super.key});
