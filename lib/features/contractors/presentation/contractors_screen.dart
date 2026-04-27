@@ -13,10 +13,11 @@ import 'package:template_flutter/helpers/ui_helpers.dart';
 
 
 class ContractorsScreen extends StatefulWidget {
-  const ContractorsScreen({super.key, this.onBackToHome, this.filterCategory});
+  ContractorsScreen({super.key, this.onBackToHome, this.filterCategory});
 
   final VoidCallback? onBackToHome;
   final String? filterCategory;
+  final FocusNode _searchFocusNode = FocusNode();
 
   @override
   State<ContractorsScreen> createState() => _ContractorsScreenState();
@@ -56,6 +57,8 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
   }
 
   Future<void> _showFilterBottomSheet() async {
+    widget._searchFocusNode.unfocus();
+
     final selectedFilters = await showModalBottomSheet<Map<String, String>>(
       context: context,
       isScrollControlled: true,
@@ -114,6 +117,7 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
                     height: 40.h,
                     hintText: 'Search contractors...',
                     prefixIcon: Icon(Icons.search),
+                    focusNode: widget._searchFocusNode,
                   ),
                 ),
                 UIHelper.horizontalSpace(8.w),

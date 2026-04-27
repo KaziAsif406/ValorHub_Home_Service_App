@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: GestureDetector(
-        behavior: HitTestBehavior.opaque, // 👈 important
+        behavior: HitTestBehavior.opaque,
         onTap: () => FocusScope.of(context).unfocus(),
         child: SafeArea(
           child: SingleChildScrollView(
