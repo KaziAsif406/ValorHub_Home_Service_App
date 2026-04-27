@@ -74,84 +74,88 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           onPressed: () => NavigationService.goBack,
         ),
       ),
-			body: SafeArea(
-				child: SingleChildScrollView(
-					padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-					child: Column(
-						crossAxisAlignment: CrossAxisAlignment.start,
-						children: [
-							Center(
-								child: Image.asset(
-									'assets/icons/logo.png',
-									width: 126.w,
-                  height: 82.h,
-									fit: BoxFit.contain,
-								),
-							),
-							UIHelper.verticalSpace(16.h),
-							Center(
-								child: Text(
-									'Reset Password',
-									style: TextFontStyle.textStyle24c0A0A0AInter700.copyWith(
-                    fontWeight: FontWeight.w900,
+			body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Image.asset(
+                    'assets/icons/logo.png',
+                    width: 126.w,
+                          height: 82.h,
+                    fit: BoxFit.contain,
                   ),
-								),
-							),
-							UIHelper.verticalSpace(40.h),
-							CustomTextFormField(
-								label: 'New Password',
-								labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
-								hintText: 'Password',
-								controller: _passwordController,
-                obscureText: true,
-								contentPadding: EdgeInsets.symmetric(
-									horizontal: 16.w,
-									vertical: 14.h,
-								),
-								prefixIcon: Padding(
-									padding: EdgeInsets.symmetric(horizontal: 14.w),
-									child: Image.asset(
-                    'assets/icons/lock.png',
-                    width: 20.w,
-                    height: 20.h,
+                ),
+                UIHelper.verticalSpace(16.h),
+                Center(
+                  child: Text(
+                    'Reset Password',
+                    style: TextFontStyle.textStyle24c0A0A0AInter700.copyWith(
+                            fontWeight: FontWeight.w900,
+                          ),
                   ),
-								),
-							),
-							UIHelper.verticalSpace(24.h),
-							CustomTextFormField(
-								label: 'Confirm New Password',
-								labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
-								hintText: 'Confirm password',
-								controller: _confirmPasswordController,
-								obscureText: true,
-								contentPadding: EdgeInsets.symmetric(
-									horizontal: 16.w,
-									vertical: 14.h,
-								),
-								prefixIcon: Padding(
-									padding: EdgeInsets.symmetric(horizontal: 14.w),
-									child: Image.asset(
-                    'assets/icons/lock.png',
-                    width: 20.w,
-                    height: 20.h,
+                ),
+                UIHelper.verticalSpace(40.h),
+                CustomTextFormField(
+                  label: 'New Password',
+                  labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
+                  hintText: 'Password',
+                  controller: _passwordController,
+                        obscureText: true,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 14.h,
                   ),
-								),
-							),
-							UIHelper.verticalSpace(24.h),
-              _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : CustomButton(
-								label: 'Confirm',
-								onPressed: _resetPassword,
-								height: 40.h,
-								borderRadius: 12.r,
-								width: double.infinity,
-								textStyle: TextFontStyle.textStyle16cFFFFFFInter700,
-							),
-						],
-					),
-				),
-			),
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 14.w),
+                    child: Image.asset(
+                            'assets/icons/lock.png',
+                            width: 20.w,
+                            height: 20.h,
+                          ),
+                  ),
+                ),
+                UIHelper.verticalSpace(24.h),
+                CustomTextFormField(
+                  label: 'Confirm New Password',
+                  labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
+                  hintText: 'Confirm password',
+                  controller: _confirmPasswordController,
+                  obscureText: true,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 14.h,
+                  ),
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 14.w),
+                    child: Image.asset(
+                            'assets/icons/lock.png',
+                            width: 20.w,
+                            height: 20.h,
+                          ),
+                  ),
+                ),
+                UIHelper.verticalSpace(24.h),
+                      _isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : CustomButton(
+                  label: 'Confirm',
+                  onPressed: _resetPassword,
+                  height: 40.h,
+                  borderRadius: 12.r,
+                  width: double.infinity,
+                  textStyle: TextFontStyle.textStyle16cFFFFFFInter700,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
 		);
 	}
 }

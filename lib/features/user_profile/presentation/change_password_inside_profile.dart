@@ -48,30 +48,73 @@ class _ResetPasswordInsideProfileScreenState extends State<ResetPasswordInsidePr
           onPressed: () => NavigationService.goBack,
         ),
       ),
-			body: SafeArea(
-				child: SingleChildScrollView(
-					padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-					child: Container(
-            padding: EdgeInsets.all(16.w),
-            decoration: BoxDecoration(
-              color: AppColors.scaffoldColor,
-              borderRadius: BorderRadius.circular(12.r),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.c000000.withValues(alpha: 0.12),
-                  blurRadius: 8.r,
-                  offset: Offset(0, 3.h),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomTextFormField(
-                  label: 'Old Password',
+			body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+            child: Container(
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: AppColors.scaffoldColor,
+                borderRadius: BorderRadius.circular(12.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.c000000.withValues(alpha: 0.12),
+                    blurRadius: 8.r,
+                    offset: Offset(0, 3.h),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomTextFormField(
+                    label: 'Old Password',
+                      labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
+                      hintText: 'Password',
+                      controller: _currentPasswordController,
+                      obscureText: true,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 14.h,
+                      ),
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 14.w),
+                        child: Image.asset(
+                          'assets/icons/lock.png',
+                          width: 20.w,
+                          height: 20.h,
+                        ),
+                      ),
+                    ),
+                    UIHelper.verticalSpace(24.h),
+                    CustomTextFormField(
+                      label: 'New Password',
+                      labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
+                      hintText: 'Password',
+                      controller: _passwordController,
+                      obscureText: true,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 14.h,
+                      ),
+                      prefixIcon: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 14.w),
+                      child: Image.asset(
+                        'assets/icons/lock.png',
+                        width: 20.w,
+                        height: 20.h,
+                      ),
+                    ),
+                  ),
+                  UIHelper.verticalSpace(24.h),
+                  CustomTextFormField(
+                    label: 'Confirm New Password',
                     labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
-                    hintText: 'Password',
-                    controller: _currentPasswordController,
+                    hintText: 'Confirm password',
+                    controller: _confirmPasswordController,
                     obscureText: true,
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: 16.w,
@@ -87,61 +130,22 @@ class _ResetPasswordInsideProfileScreenState extends State<ResetPasswordInsidePr
                     ),
                   ),
                   UIHelper.verticalSpace(24.h),
-                  CustomTextFormField(
-                    label: 'New Password',
-                    labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
-                    hintText: 'Password',
-                    controller: _passwordController,
-                    obscureText: true,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 14.h,
-                    ),
-                    prefixIcon: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 14.w),
-                    child: Image.asset(
-                      'assets/icons/lock.png',
-                      width: 20.w,
-                      height: 20.h,
-                    ),
+                  CustomButton(
+                    label: 'Confirm',
+                    onPressed: () {
+                      NavigationService.navigateToReplacement(Routes.loginScreen);
+                    },
+                    height: 40.h,
+                    borderRadius: 12.r,
+                    width: double.infinity,
+                    textStyle: TextFontStyle.textStyle16cFFFFFFInter700,
                   ),
-                ),
-                UIHelper.verticalSpace(24.h),
-                CustomTextFormField(
-                  label: 'Confirm New Password',
-                  labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
-                  hintText: 'Confirm password',
-                  controller: _confirmPasswordController,
-                  obscureText: true,
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 14.h,
-                  ),
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 14.w),
-                    child: Image.asset(
-                      'assets/icons/lock.png',
-                      width: 20.w,
-                      height: 20.h,
-                    ),
-                  ),
-                ),
-                UIHelper.verticalSpace(24.h),
-                CustomButton(
-                  label: 'Confirm',
-                  onPressed: () {
-                    NavigationService.navigateToReplacement(Routes.loginScreen);
-                  },
-                  height: 40.h,
-                  borderRadius: 12.r,
-                  width: double.infinity,
-                  textStyle: TextFontStyle.textStyle16cFFFFFFInter700,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-				),
-			),
+        ),
+      ),
 		);
 	}
 }

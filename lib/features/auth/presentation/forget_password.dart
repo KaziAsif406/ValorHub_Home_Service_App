@@ -65,64 +65,68 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           },
         ),
       ),
-			body: SafeArea(
-				child: SingleChildScrollView(
-					padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 32.h),
-					child: Column(
-						crossAxisAlignment: CrossAxisAlignment.start,
-						children: [
-							Center(
-								child: Image.asset(
-									'assets/icons/logo.png',
-									width: 126.w,
-                  height: 82.h,
-									fit: BoxFit.contain,
-								),
-							),
-							UIHelper.verticalSpace(16.h),
-							Center(
-								child: Text(
-									'Enter Email Address',
-									style: TextFontStyle.textStyle24c0A0A0AInter700.copyWith(
-                    fontWeight: FontWeight.w900,
+			body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 32.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Image.asset(
+                    'assets/icons/logo.png',
+                    width: 126.w,
+                          height: 82.h,
+                    fit: BoxFit.contain,
                   ),
-								),
-							),
-							UIHelper.verticalSpace(40.h),
-							CustomTextFormField(
-								label: 'Email Address',
-								labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
-								hintText: 'your.email@example.com',
-								controller: _emailController,
-								keyboardType: TextInputType.emailAddress,
-								contentPadding: EdgeInsets.symmetric(
-									horizontal: 16.w,
-									vertical: 14.h,
-								),
-								prefixIcon: Padding(
-									padding: EdgeInsets.symmetric(horizontal: 14.w),
-									child: Image.asset(
-                    'assets/icons/mail.png',
-                    width: 20.w,
-                    height: 20.h,
+                ),
+                UIHelper.verticalSpace(16.h),
+                Center(
+                  child: Text(
+                    'Enter Email Address',
+                    style: TextFontStyle.textStyle24c0A0A0AInter700.copyWith(
+                            fontWeight: FontWeight.w900,
+                          ),
                   ),
-								),
-							),
-							UIHelper.verticalSpace(24.h),
-              _isLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : CustomButton(
-								label: 'Continue',
-								onPressed: _sendResetEmail,
-								height: 40.h,
-								borderRadius: 12.r,
-								width: double.infinity,
-								textStyle: TextFontStyle.textStyle16cFFFFFFInter700,
-							),
-						],
-					),
-				),
-			),
+                ),
+                UIHelper.verticalSpace(40.h),
+                CustomTextFormField(
+                  label: 'Email Address',
+                  labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
+                  hintText: 'your.email@example.com',
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 14.h,
+                  ),
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 14.w),
+                    child: Image.asset(
+                            'assets/icons/mail.png',
+                            width: 20.w,
+                            height: 20.h,
+                          ),
+                  ),
+                ),
+                UIHelper.verticalSpace(24.h),
+                      _isLoading
+                          ? Center(child: CircularProgressIndicator())
+                          : CustomButton(
+                  label: 'Continue',
+                  onPressed: _sendResetEmail,
+                  height: 40.h,
+                  borderRadius: 12.r,
+                  width: double.infinity,
+                  textStyle: TextFontStyle.textStyle16cFFFFFFInter700,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
 		);
 	}
 }
