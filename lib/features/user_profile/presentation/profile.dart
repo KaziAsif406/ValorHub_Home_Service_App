@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:io';
 import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
+import 'package:template_flutter/features/user_profile/presentation/widgets/analytics_card.dart';
 import '../../../constants/text_font_style.dart';
 import '../../../gen/colors.gen.dart';
 import '../../../helpers/ui_helpers.dart';
@@ -46,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(6.w),
+                  padding: EdgeInsets.all(1.w),
                   child: ClipOval(child: profileImage),
                 ),
               ),
@@ -84,6 +85,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: TextFontStyle.textStyle14c6A7181Inter400,
               ),
               UIHelper.verticalSpace(24.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: AnalyticsCard(
+                      title: 'Favorites',
+                      value: '5',
+                    ),
+                  ),
+                  UIHelper.horizontalSpace(10.w),
+                  Expanded(
+                    child: AnalyticsCard(
+                      title: 'Total Requests',
+                      value: '12',
+                    ),
+                  ),
+                  UIHelper.horizontalSpace(10.w),
+                  Expanded(
+                    child: AnalyticsCard(
+                      title: 'Pending',
+                      value: '3',
+                    ),
+                  ),
+                ],
+              ),
+              UIHelper.verticalSpace(18.h),
               _ProfileActionCard(
                 children: [
                   _ProfileActionRow(
@@ -100,9 +126,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: 'Contact Us',
                     textColor: AppColors.c6B7280,
                     iconColor: AppColors.c6B7280,
-                    imagePath: 'assets/icons/shield.png',
+                    imagePath: 'assets/icons/contact_us.png',
                     onTap: () {
                       NavigationService.navigateTo(Routes.contactUsScreen);
+                    },
+                  ),
+                  UIHelper.verticalSpace(10.h),
+                  _ProfileActionRow(
+                    title: 'My Requests',
+                    textColor: AppColors.c6B7280,
+                    iconColor: AppColors.c6B7280,
+                    imagePath: 'assets/icons/quote.png',
+                    onTap: () {
+                      NavigationService.navigateTo(Routes.contactUsScreen);
+                    },
+                  ),
+                  UIHelper.verticalSpace(10.h),
+                  _ProfileActionRow(
+                    title: 'Saved Contractors',
+                    textColor: AppColors.c6B7280,
+                    iconColor: AppColors.c6B7280,
+                    imagePath: 'assets/icons/heart.png',
+                    onTap: () {
+                      NavigationService.navigateTo(Routes.savedContractorsScreen);
                     },
                   ),
                   UIHelper.verticalSpace(10.h),
@@ -163,7 +209,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Image.asset(
       'assets/icons/profile.png',
-      fit: BoxFit.cover,
+      height: 40.h,
+      width: 40.w,
+      // fit: BoxFit.contain,
     );
   }
 }
