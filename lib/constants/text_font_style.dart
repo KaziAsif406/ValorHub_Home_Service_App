@@ -57,14 +57,14 @@ class TextFontStyle {
   static final textStyle10c1A6EF4Inter500 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.c1A6EF4,
+    color: AppColors.contractor_secondary,
     fontSize: 10.sp,
     fontWeight: FontWeight.w500,
   );
   static final textStyle10c1A6EF4Inter600 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.c1A6EF4,
+    color: AppColors.contractor_secondary,
     fontSize: 10.sp,
     fontWeight: FontWeight.w600,
   );
@@ -218,7 +218,7 @@ class TextFontStyle {
   static final textStyle12c1E3A8AInter600 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.contractor_secondary,
+    color: AppColors.c1E3A8A,
     fontSize: 12.sp,
     fontWeight: FontWeight.w600,
   );
@@ -463,7 +463,7 @@ class TextFontStyle {
   static final textStyle13c1E3A8AInter400 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.contractor_secondary,
+    color: AppColors.c1E3A8A,
     fontSize: 13.sp,
     fontWeight: FontWeight.w400,
   );
@@ -631,28 +631,28 @@ class TextFontStyle {
   static final textStyle14c1A6EF4Inter500 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.c1A6EF4,
+    color: AppColors.contractor_secondary,
     fontSize: 14.sp,
     fontWeight: FontWeight.w500,
   );
   static final textStyle14c1E3A8AInter400 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.contractor_secondary,
+    color: AppColors.c1E3A8A,
     fontSize: 14.sp,
     fontWeight: FontWeight.w400,
   );
   static final textStyle14c1E3A8AInter600 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.contractor_secondary,
+    color: AppColors.c1E3A8A,
     fontSize: 14.sp,
     fontWeight: FontWeight.w600,
   );
   static final textStyle14c1E3A8AInter700 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.contractor_secondary,
+    color: AppColors.c1E3A8A,
     fontSize: 14.sp,
     fontWeight: FontWeight.w700,
   );
@@ -932,14 +932,14 @@ class TextFontStyle {
   static final textStyle15c1E3A8AInter400 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.contractor_secondary,
+    color: AppColors.c1E3A8A,
     fontSize: 15.sp,
     fontWeight: FontWeight.w400,
   );
   static final textStyle15c1E3A8AInter700 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.contractor_secondary,
+    color: AppColors.c1E3A8A,
     fontSize: 15.sp,
     fontWeight: FontWeight.w700,
   );
@@ -1079,7 +1079,7 @@ class TextFontStyle {
   static final textStyle16c1E3A8AInter400 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.contractor_secondary,
+    color: AppColors.c1E3A8A,
     fontSize: 16.sp,
     fontWeight: FontWeight.w400,
   );
@@ -1226,7 +1226,7 @@ class TextFontStyle {
   static final textStyle17c1E3A8AInter400 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.contractor_secondary,
+    color: AppColors.c1E3A8A,
     fontSize: 17.sp,
     fontWeight: FontWeight.w400,
   );
@@ -1352,14 +1352,14 @@ class TextFontStyle {
   static final textStyle18c1E3A8AInter500 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.contractor_secondary,
+    color: AppColors.c1E3A8A,
     fontSize: 18.sp,
     fontWeight: FontWeight.w500,
   );
   static final textStyle18c1E3A8AInter700 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.contractor_secondary,
+    color: AppColors.c1E3A8A,
     fontSize: 18.sp,
     fontWeight: FontWeight.w700,
   );
@@ -1660,7 +1660,7 @@ class TextFontStyle {
   static final textStyle30c1E3A8AInter700 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.contractor_secondary,
+    color: AppColors.c1E3A8A,
     fontSize: 30.sp,
     fontWeight: FontWeight.w700,
   );
@@ -1681,7 +1681,7 @@ class TextFontStyle {
   static final textStyle31c1E3A8AInter700 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.contractor_secondary,
+    color: AppColors.c1E3A8A,
     fontSize: 31.sp,
     fontWeight: FontWeight.w700,
   );
@@ -1744,7 +1744,7 @@ class TextFontStyle {
   static final textStyle52c1E3A8AInter700 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.contractor_secondary,
+    color: AppColors.c1E3A8A,
     fontSize: 52.sp,
     fontWeight: FontWeight.w700,
   );

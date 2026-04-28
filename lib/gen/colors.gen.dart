@@ -60,7 +60,7 @@ class AppColors {
   static const Color c18C8FF = Color(0xFF18C8FF);
 
   /// Color: #FF1A6EF4
-  static const Color c1A6EF4 = Color(0xFF1A6EF4);
+  static const Color contractor_secondary = Color(0xFF1A6EF4);
 
   /// Color: #FF1B1B1B
   static const Color c1B1B1B = Color(0xFF1B1B1B);
@@ -72,7 +72,7 @@ class AppColors {
   static const Color c1E1E1E = Color(0xFF1E1E1E);
 
   /// Color: #FF1E3A8A
-  static const Color contractor_secondary = Color(0xFF1E3A8A);
+  static const Color c1E3A8A = Color(0xFF1E3A8A);
 
   /// Color: #FF1E838A
   static const Color c1E838A = Color(0xFF1E838A);
