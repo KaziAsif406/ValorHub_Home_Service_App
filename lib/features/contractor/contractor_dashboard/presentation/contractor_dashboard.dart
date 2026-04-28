@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/common_widgets/custom_button.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
-import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
+import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/services/auth_service.dart';
 
-class ContractorDashboardScreen extends StatelessWidget {
-  ContractorDashboardScreen({
+import 'widgets/contractor_dashboard_app_bar.dart';
+import 'widgets/contractor_dashboard_drawer.dart';
+import 'widgets/dashboard_inbox_section.dart';
+import 'widgets/dashboard_overview_section.dart';
+import 'widgets/dashboard_profile_section.dart';
+import 'widgets/dashboard_reviews_section.dart';
+import 'widgets/dashboard_services_section.dart';
+
+enum ContractorDashboardSection { overview, inbox, services, profile, reviews }
+
+class ContractorDashboardScreen extends StatefulWidget {
+  const ContractorDashboardScreen({
     super.key,
     required this.profileName,
     required this.profileEmail,
@@ -17,76 +26,99 @@ class ContractorDashboardScreen extends StatelessWidget {
 
   final String profileName;
   final String profileEmail;
+
+  @override
+  State<ContractorDashboardScreen> createState() =>
+      _ContractorDashboardScreenState();
+}
+
+class _ContractorDashboardScreenState extends State<ContractorDashboardScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final AuthService _auth = AuthService();
+  ContractorDashboardSection _selectedSection =
+      ContractorDashboardSection.overview;
 
   Future<void> _signOut() async {
     await _auth.signOut();
     NavigationService.navigateToReplacement(Routes.loginScreen);
   }
 
+  void _openSection(ContractorDashboardSection section) {
+    Navigator.of(context).pop();
+    setState(() {
+      _selectedSection = section;
+    });
+  }
+
+  void _openDrawer() {
+    _scaffoldKey.currentState?.openDrawer();
+  }
+
+  void _setInboxSection() {
+    setState(() {
+      _selectedSection = ContractorDashboardSection.inbox;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: AppColors.scaffoldColor,
+      drawer: ContractorDashboardDrawer(
+        profileName: widget.profileName,
+        profileEmail: widget.profileEmail,
+        selectedSection: _selectedSection,
+        onSectionSelected: _openSection,
+        onSignOut: _signOut,
+      ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Contractor Dashboard',
-                style: TextFontStyle.textStyle24c0A0A0AInter700.copyWith(
-                  fontWeight: FontWeight.w900,
-                ),
+        child: Column(
+          children: [
+            ContractorDashboardAppBar(
+              profileName: widget.profileName,
+              onMenuPressed: _openDrawer,
+              onInboxPressed: _setInboxSection,
+            ),
+            Expanded(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 220),
+                child: _buildSection(_selectedSection),
               ),
-              UIHelper.verticalSpace(12.h),
-              Text(
-                profileName,
-                style: TextFontStyle.textStyle18c0A0A0AInter700,
-              ),
-              UIHelper.verticalSpace(4.h),
-              Text(
-                profileEmail,
-                style: TextFontStyle.textStyle14c64748BInter400,
-              ),
-              UIHelper.verticalSpace(24.h),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(18.w),
-                decoration: BoxDecoration(
-                  color: AppColors.contractor_primary,
-                  borderRadius: BorderRadius.circular(16.r),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'This dashboard is routed from Firestore user type.',
-                      style: TextFontStyle.textStyle16cFFFFFFInter700,
-                    ),
-                    UIHelper.verticalSpace(8.h),
-                    Text(
-                      'Replace this screen with your production contractor dashboard when ready.',
-                      style: TextFontStyle.textStyle14cFFFFFFInter400,
-                    ),
-                  ],
-                ),
-              ),
-              const Spacer(),
-              CustomButton(
-                label: 'Sign Out',
-                onPressed: _signOut,
-                height: 44.h,
-                width: double.infinity,
-                borderRadius: 12.r,
-                color: AppColors.contractor_primary,
-                textStyle: TextFontStyle.textStyle16cFFFFFFInter700,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  Widget _buildSection(ContractorDashboardSection section) {
+    switch (section) {
+      case ContractorDashboardSection.overview:
+        return DashboardOverviewSection(
+          key: const ValueKey<String>('overview'),
+          profileName: widget.profileName,
+          profileEmail: widget.profileEmail,
+        );
+      case ContractorDashboardSection.inbox:
+        return DashboardInboxSection(
+          key: const ValueKey<String>('inbox'),
+        );
+      case ContractorDashboardSection.services:
+        return DashboardServicesSection(
+          key: const ValueKey<String>('services'),
+        );
+      case ContractorDashboardSection.profile:
+        return DashboardProfileSection(
+          key: const ValueKey<String>('profile'),
+          profileName: widget.profileName,
+          profileEmail: widget.profileEmail,
+          onSignOut: _signOut,
+        );
+      case ContractorDashboardSection.reviews:
+        return DashboardReviewsSection(
+          key: const ValueKey<String>('reviews'),
+        );
+    }
   }
 }
