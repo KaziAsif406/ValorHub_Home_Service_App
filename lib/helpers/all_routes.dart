@@ -151,11 +151,12 @@ final class RouteGenerator {
         final String profileName = contractorArgs is Map<String, dynamic> &&
                 contractorArgs['name'] is String
             ? contractorArgs['name'] as String
-            : 'Contractor';
+            : FirebaseAuth.instance.currentUser?.displayName ?? 'Contractor';
         final String profileEmail = contractorArgs is Map<String, dynamic> &&
                 contractorArgs['email'] is String
             ? contractorArgs['email'] as String
-            : 'contractor@example.com';
+            : FirebaseAuth.instance.currentUser?.email ??
+                'contractor@example.com';
         return defaultTargetPlatform == TargetPlatform.iOS
             ? CupertinoPageRoute(
                 builder: (context) => ContractorDashboardScreen(
