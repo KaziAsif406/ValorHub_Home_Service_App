@@ -8,6 +8,7 @@ import 'package:template_flutter/features/common_screens/auth/presentation/login
 import 'package:template_flutter/features/common_screens/auth/presentation/reset_password.dart';
 import 'package:template_flutter/features/common_screens/auth/presentation/signup.dart';
 import 'package:template_flutter/features/common_screens/auth/presentation/verification.dart';
+import 'package:template_flutter/features/common_screens/contractor_dashboard/presentation/contractor_dashboard.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/contractor_profile.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/contractors_screen.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/saved_contractors.dart';
@@ -56,6 +57,8 @@ final class Routes {
   // Main App Routes
   static const String homeScreen = '/home_screen';
   static const String navigationScreen = '/NavigationScreen';
+  static const String contractorDashboardScreen =
+      '/contractor_dashboard_screen';
   static const String profile = '/Profile';
   static const String welcomeScreen = '/welcome_screen';
   static const String onboardingFlow = '/onboarding_flow';
@@ -139,6 +142,31 @@ final class RouteGenerator {
                   profileName: profileName,
                   profileEmail: profileEmail,
                   profileImagePath: profileImagePath,
+                ),
+                settings: settings,
+              );
+
+      case Routes.contractorDashboardScreen:
+        final contractorArgs = settings.arguments;
+        final String profileName = contractorArgs is Map<String, dynamic> &&
+                contractorArgs['name'] is String
+            ? contractorArgs['name'] as String
+            : 'Contractor';
+        final String profileEmail = contractorArgs is Map<String, dynamic> &&
+                contractorArgs['email'] is String
+            ? contractorArgs['email'] as String
+            : 'contractor@example.com';
+        return defaultTargetPlatform == TargetPlatform.iOS
+            ? CupertinoPageRoute(
+                builder: (context) => ContractorDashboardScreen(
+                  profileName: profileName,
+                  profileEmail: profileEmail,
+                ),
+              )
+            : _FadedTransitionRoute(
+                widget: ContractorDashboardScreen(
+                  profileName: profileName,
+                  profileEmail: profileEmail,
                 ),
                 settings: settings,
               );
