@@ -7,13 +7,13 @@ import 'package:template_flutter/helpers/ui_helpers.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/services/auth_service.dart';
 
-import 'widgets/contractor_dashboard_app_bar.dart';
-import 'widgets/contractor_dashboard_drawer.dart';
-import 'widgets/dashboard_inbox_section.dart';
-import 'widgets/dashboard_overview_section.dart';
-import 'widgets/dashboard_profile_section.dart';
-import 'widgets/dashboard_reviews_section.dart';
-import 'widgets/dashboard_services_section.dart';
+import 'widget/contractor_dashboard_app_bar.dart';
+import 'widget/contractor_dashboard_drawer.dart';
+import 'dashboard_inbox_screen.dart';
+import 'widget/dashboard_overview_section.dart';
+import 'dashboard_profile_screen.dart';
+import 'dashboard_reviews_screen.dart';
+import 'dashboard_services_screen.dart';
 
 enum ContractorDashboardSection { overview, inbox, services, profile, reviews }
 
