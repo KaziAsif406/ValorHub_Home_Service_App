@@ -1,11 +1,11 @@
 import 'package:rxdart/rxdart.dart';
-import '../../../../constants/app_constants.dart';
-import '../../../../helpers/di.dart';
-import '../../../../helpers/error_message_handler.dart';
+import '../../../../../constants/app_constants.dart';
+import '../../../../../helpers/di.dart';
+import '../../../../../helpers/error_message_handler.dart';
 
-import '../../../../helpers/post_login.dart';
-import '../../../../networks/dio/dio.dart';
-import '../../../../networks/rx_base.dart';
+import '../../../../../helpers/post_login.dart';
+import '../../../../../networks/dio/dio.dart';
+import '../../../../../networks/rx_base.dart';
 import 'api.dart';
 
 final class PostSignupRx extends RxResponseInt {

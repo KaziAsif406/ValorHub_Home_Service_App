@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../gen/colors.gen.dart';
+import '../../../../../gen/colors.gen.dart';
 
 Widget socialLoginButton({
   required IconData icon,

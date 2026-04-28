@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import '../../../../networks/dio/dio.dart';
-import '../../../../networks/endpoints.dart';
-import '../../../../networks/exception_handler/data_source.dart';
+import '../../../../../networks/dio/dio.dart';
+import '../../../../../networks/endpoints.dart';
+import '../../../../../networks/exception_handler/data_source.dart';
 
 final class PostLoginApi {
   static final PostLoginApi _singleton = PostLoginApi._internal();

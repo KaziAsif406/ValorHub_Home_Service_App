@@ -5,9 +5,9 @@ import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 // import 'package:template_flutter/navigation_screen.dart';
-import '../../../common_widgets/custom_button.dart';
+import '../../../../common_widgets/custom_button.dart';
 // import '../../../gen/assets.gen.dart';
-import '../../../gen/colors.gen.dart';
+import '../../../../gen/colors.gen.dart';
 import 'widgets/onboarding_dots.dart';
 import 'package:template_flutter/helpers/app_preferences.dart';
 

@@ -3,11 +3,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:template_flutter/features/auth/presentation/forget_password.dart';
-import 'package:template_flutter/features/auth/presentation/login.dart';
-import 'package:template_flutter/features/auth/presentation/reset_password.dart';
-import 'package:template_flutter/features/auth/presentation/signup.dart';
-import 'package:template_flutter/features/auth/presentation/verification.dart';
+import 'package:template_flutter/features/common_screens/auth/presentation/forget_password.dart';
+import 'package:template_flutter/features/common_screens/auth/presentation/login.dart';
+import 'package:template_flutter/features/common_screens/auth/presentation/reset_password.dart';
+import 'package:template_flutter/features/common_screens/auth/presentation/signup.dart';
+import 'package:template_flutter/features/common_screens/auth/presentation/verification.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/contractor_profile.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/contractors_screen.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/saved_contractors.dart';
@@ -17,7 +17,7 @@ import 'package:template_flutter/features/customer/location/presentation/survey.
 import 'package:template_flutter/features/customer/home/presentation/home.dart';
 import 'package:template_flutter/features/customer/home/presentation/notifications.dart';
 import 'package:template_flutter/features/customer/quotes/presentation/my_requests.dart';
-import 'package:template_flutter/features/onboarding/presentation/onboarding_flow.dart';
+import 'package:template_flutter/features/common_screens/onboarding/presentation/onboarding_flow.dart';
 import 'package:template_flutter/features/customer/quotes/presentation/quote_sent.dart';
 import 'package:template_flutter/features/customer/quotes/presentation/request_quote.dart';
 import 'package:template_flutter/features/customer/user_profile/presentation/change_password_inside_profile.dart';
