@@ -18,13 +18,13 @@ class QuoteRequestCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.scaffoldColor.withValues(alpha: 0.82),
         borderRadius: BorderRadius.circular(18.r),
-        border: Border.all(color: AppColors.c0A0A0A),
+        border: Border.all(color: AppColors.c0A0A0A.withValues(alpha: 0.12)),
         boxShadow: [
           BoxShadow(
             color: AppColors.c0A0A0A.withValues(alpha: 0.05),
-            blurRadius: 10.r,
+            blurRadius: 3.r,
             offset: Offset(0, 4.h),
           ),
         ],
@@ -52,22 +52,21 @@ class QuoteRequestCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Expanded(
-                      child: Text(
-                        request.fullName,
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.c14181F,
-                        ),
+                    Text(
+                      request.fullName,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.c14181F,
                       ),
                     ),
+                    UIHelper.horizontalSpace(8.w),
                     Container(
                       padding:
                           EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                       decoration: BoxDecoration(
                         color:
-                            isCompleted ? AppColors.cDCFCE7 : AppColors.c0A0A0A,
+                            isCompleted ? AppColors.cDCFCE7 : AppColors.contractor_primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(999.r),
                       ),
                       child: Text(
@@ -83,30 +82,34 @@ class QuoteRequestCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                UIHelper.verticalSpace(4.h),
-                Text(
-                  request.serviceCategory,
-                  style: TextStyle(
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.c14181F,
-                  ),
-                ),
-                UIHelper.verticalSpace(3.h),
-                Text(
-                  request.zipCode,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.c6A7181,
-                  ),
-                ),
-                UIHelper.verticalSpace(3.h),
-                Text(
-                  _formatDate(request.submittedAt),
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    color: AppColors.c6A7181,
-                  ),
+                UIHelper.verticalSpace(8.h),
+                Row(
+                  children: [
+                    Text(
+                      request.serviceCategory,
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.c14181F,
+                      ),
+                    ),
+                    UIHelper.horizontalSpace(8.w),
+                    Text(
+                      request.zipCode,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppColors.c6A7181,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      _formatDate(request.submittedAt),
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        color: AppColors.c6A7181,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
