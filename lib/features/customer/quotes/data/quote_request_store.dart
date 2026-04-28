@@ -53,8 +53,7 @@ final class QuoteRequestStore {
   static final QuoteRequestStore instance = QuoteRequestStore._internal();
 
   final BehaviorSubject<List<QuoteRequestModel>> _requestsController =
-      BehaviorSubject<List<QuoteRequestModel>>.seeded(
-          const <QuoteRequestModel>[]);
+      BehaviorSubject<List<QuoteRequestModel>>.seeded(_seedRequests());
 
   ValueStream<List<QuoteRequestModel>> get requestsStream =>
       _requestsController.stream;
@@ -109,5 +108,56 @@ final class QuoteRequestStore {
 
   void dispose() {
     _requestsController.close();
+  }
+
+  static List<QuoteRequestModel> _seedRequests() {
+    final DateTime now = DateTime.now();
+    return <QuoteRequestModel>[
+      QuoteRequestModel(
+        id: 'rq-1001',
+        fullName: 'Sarah Mitchell',
+        email: 'sarah.mitchell@example.com',
+        phone: '(347) 555-0124',
+        zipCode: '11215',
+        serviceCategory: 'Bathroom Remodel',
+        projectDetails:
+            'Need a full bathroom update with new tiles and fixtures.',
+        submittedAt: now.subtract(const Duration(minutes: 45)),
+        status: QuoteRequestStatus.pending,
+      ),
+      QuoteRequestModel(
+        id: 'rq-1002',
+        fullName: 'James Parker',
+        email: 'james.parker@example.com',
+        phone: '(646) 555-0148',
+        zipCode: '10011',
+        serviceCategory: 'Kitchen Plumbing',
+        projectDetails: 'Leak under the sink and faucet replacement needed.',
+        submittedAt: now.subtract(const Duration(hours: 2)),
+        status: QuoteRequestStatus.pending,
+      ),
+      QuoteRequestModel(
+        id: 'rq-1003',
+        fullName: 'Olivia Brown',
+        email: 'olivia.brown@example.com',
+        phone: '(718) 555-0186',
+        zipCode: '10023',
+        serviceCategory: 'Electrical Repair',
+        projectDetails: 'Circuit breaker trips when the oven is used.',
+        submittedAt: now.subtract(const Duration(days: 1, hours: 1)),
+        status: QuoteRequestStatus.completed,
+      ),
+      QuoteRequestModel(
+        id: 'rq-1004',
+        fullName: 'Daniel Brooks',
+        email: 'daniel.brooks@example.com',
+        phone: '(212) 555-0102',
+        zipCode: '10458',
+        serviceCategory: 'Roof Inspection',
+        projectDetails: 'Need a roof inspection after recent storm damage.',
+        submittedAt: now.subtract(const Duration(days: 1, hours: 4)),
+        status: QuoteRequestStatus.pending,
+      ),
+    ];
   }
 }
