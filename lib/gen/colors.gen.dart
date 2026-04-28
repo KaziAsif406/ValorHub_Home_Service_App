@@ -81,7 +81,7 @@ class AppColors {
   static const Color c1E868A = Color(0xFF1E868A);
 
   /// Color: #FF20356F
-  static const Color c20356F = Color(0xFF20356F);
+  static const Color contractor_primary = Color(0xFF20356F);
 
   /// Color: #FF21C45D
   static const Color c21C45D = Color(0xFF21C45D);

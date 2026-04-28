@@ -231,7 +231,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               _agreeToTerms = value ?? false;
                             });
                           },
-                          activeColor: AppColors.allPrimaryColor,
+                          activeColor: _isCustomer
+                              ? AppColors.allPrimaryColor
+                              : AppColors.contractor_primary,
                           side: const BorderSide(color: AppColors.c808080),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(2.5.r),
@@ -250,8 +252,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                               TextSpan(
                                 text: 'Terms of Service',
-                                style:
-                                    TextFontStyle.textStyle13cBE1E2DInter400,
+                                style: _isCustomer
+                                    ? TextFontStyle.textStyle13cBE1E2DInter400
+                                    : TextFontStyle.textStyle13cBE1E2DInter400.copyWith(
+                                      color: AppColors.contractor_primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                               ),
                               TextSpan(
                                 text: ' and ',
@@ -259,8 +265,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                               TextSpan(
                                 text: 'Privacy Policy',
-                                style:
-                                    TextFontStyle.textStyle13cBE1E2DInter400,
+                                style: _isCustomer
+                                    ? TextFontStyle.textStyle13cBE1E2DInter400
+                                    : TextFontStyle.textStyle13cBE1E2DInter400.copyWith(
+                                      color: AppColors.contractor_primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                               ),
                             ],
                           ),
@@ -277,6 +287,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   onPressed: _agreeToTerms ? _signUp : null,
                   height: 40.h,
                   borderRadius: 12.r,
+                  color: _isCustomer
+                      ? AppColors.allPrimaryColor
+                      : AppColors.contractor_primary,
                   width: double.infinity,
                   textStyle: TextFontStyle.textStyle16cFFFFFFInter700,
                 ),
@@ -296,8 +309,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             },
                             child: Text(
                               'Sign in',
-                              style: TextFontStyle.textStyle13cBE1E2DInter400
-                                  .copyWith(fontWeight: FontWeight.w700),
+                              style: _isCustomer
+                                  ? TextFontStyle.textStyle13cBE1E2DInter400
+                                  : TextFontStyle.textStyle13cBE1E2DInter400.copyWith(
+                                      color: AppColors.contractor_primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                             ),
                           ),
                         ),
@@ -329,9 +346,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 					borderRadius: BorderRadius.circular(12.r),
 					child: Ink(
 						decoration: BoxDecoration(
-							color: selected
-									? AppColors.allPrimaryColor
-									: AppColors.cF8FAFC,
+							color: _isCustomer
+                  ? selected ? AppColors.allPrimaryColor : AppColors.cF8FAFC
+                  : selected ? AppColors.contractor_primary : AppColors.cF8FAFC,
 							borderRadius: BorderRadius.circular(12.r),
 						),
 						child: Center(
