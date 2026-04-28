@@ -47,6 +47,7 @@ const String kKeyFirstName = 'first_name';
 const String kKeyLastName = 'lst_name';
 const String kKeyDeviceID = 'device_id';
 const String kKeyUserID = 'user_id';
+const String kKeyUserType = 'user_type';
 
 const String kKeyIsExploring = 'exploring';
 //kKeyFCMToken

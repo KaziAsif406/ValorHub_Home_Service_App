@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:template_flutter/constants/app_constants.dart';
+import 'package:template_flutter/helpers/di.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -12,13 +14,21 @@ class AuthService {
     required String name,
     required String email,
     required String password,
+    required String userType,
   }) async {
     try {
+      final normalizedUserType = userType.trim().toLowerCase();
+      if (normalizedUserType != 'customer' &&
+          normalizedUserType != 'contractor') {
+        throw 'Invalid user type selected.';
+      }
+
       final credential = await _auth.createUserWithEmailAndPassword(
         email: email.trim(),
         password: password,
       );
       await credential.user?.updateDisplayName(name.trim());
+      await appData.write(kKeyUserType, normalizedUserType);
       await credential.user?.reload();
       // Send email verification right after sign up
       await credential.user?.sendEmailVerification();
@@ -44,7 +54,10 @@ class AuthService {
   }
 
   // ── SIGN OUT ─────────────────────────────────────────
-  Future<void> signOut() => _auth.signOut();
+  Future<void> signOut() async {
+    await appData.remove(kKeyUserType);
+    await _auth.signOut();
+  }
 
   // ── DELETE ACCOUNT ───────────────────────────────────
   Future<void> deleteAccount({required String password}) async {
@@ -86,7 +99,7 @@ class AuthService {
 
   // ── CONFIRM PASSWORD RESET (with OTP code) ───────────
   Future<void> confirmPasswordReset({
-    required String oobCode,   // the code from the reset email
+    required String oobCode, // the code from the reset email
     required String newPassword,
   }) async {
     try {
