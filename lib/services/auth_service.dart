@@ -1,9 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:template_flutter/constants/app_constants.dart';
-import 'package:template_flutter/helpers/di.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // ── Current user stream ──────────────────────────────
   Stream<User?> get authStateChanges => _auth.authStateChanges();
@@ -17,24 +18,36 @@ class AuthService {
     required String userType,
   }) async {
     try {
+      final normalizedEmail = email.trim().toLowerCase();
       final normalizedUserType = userType.trim().toLowerCase();
-      if (normalizedUserType != 'customer' &&
-          normalizedUserType != 'contractor') {
+      if (normalizedUserType != kUserTypeCustomer &&
+          normalizedUserType != kUserTypeContractor) {
         throw 'Invalid user type selected.';
       }
 
       final credential = await _auth.createUserWithEmailAndPassword(
-        email: email.trim(),
+        email: normalizedEmail,
         password: password,
       );
-      await credential.user?.updateDisplayName(name.trim());
-      await appData.write(kKeyUserType, normalizedUserType);
-      await credential.user?.reload();
-      // Send email verification right after sign up
-      await credential.user?.sendEmailVerification();
-      return credential;
+      try {
+        await credential.user?.updateDisplayName(name.trim());
+        await _saveUserProfile(
+          email: normalizedEmail,
+          userType: normalizedUserType,
+          name: name.trim(),
+        );
+        await credential.user?.reload();
+        // Send email verification right after sign up
+        await credential.user?.sendEmailVerification();
+        return credential;
+      } catch (error) {
+        await credential.user?.delete();
+        rethrow;
+      }
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
+    } catch (error) {
+      throw error.toString();
     }
   }
 
@@ -53,11 +66,31 @@ class AuthService {
     }
   }
 
-  // ── SIGN OUT ─────────────────────────────────────────
-  Future<void> signOut() async {
-    await appData.remove(kKeyUserType);
-    await _auth.signOut();
+  Future<String> getUserTypeByEmail(String email) async {
+    final normalizedEmail = email.trim().toLowerCase();
+    final snapshot = await _firestore
+        .collection(kFirestoreUsersCollection)
+        .doc(normalizedEmail)
+        .get();
+
+    if (!snapshot.exists) {
+      throw 'No user profile found for this email.';
+    }
+
+    final data = snapshot.data();
+    final String? userType = data?[kKeyUserType] as String?;
+    final normalizedUserType = (userType ?? '').trim().toLowerCase();
+
+    if (normalizedUserType != kUserTypeCustomer &&
+        normalizedUserType != kUserTypeContractor) {
+      throw 'User type is missing for this account.';
+    }
+
+    return normalizedUserType;
   }
+
+  // ── SIGN OUT ─────────────────────────────────────────
+  Future<void> signOut() async => _auth.signOut();
 
   // ── DELETE ACCOUNT ───────────────────────────────────
   Future<void> deleteAccount({required String password}) async {
@@ -146,5 +179,21 @@ class AuthService {
       default:
         return e.message ?? 'An error occurred.';
     }
+  }
+
+  Future<void> _saveUserProfile({
+    required String email,
+    required String userType,
+    required String name,
+  }) async {
+    await _firestore.collection(kFirestoreUsersCollection).doc(email).set(
+      {
+        kEmail: email,
+        kKeyUserType: userType,
+        'displayName': name,
+        'updatedAt': FieldValue.serverTimestamp(),
+      },
+      SetOptions(merge: true),
+    );
   }
 }

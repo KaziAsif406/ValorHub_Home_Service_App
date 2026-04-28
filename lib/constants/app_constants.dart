@@ -48,6 +48,9 @@ const String kKeyLastName = 'lst_name';
 const String kKeyDeviceID = 'device_id';
 const String kKeyUserID = 'user_id';
 const String kKeyUserType = 'user_type';
+const String kFirestoreUsersCollection = 'users';
+const String kUserTypeCustomer = 'customer';
+const String kUserTypeContractor = 'contractor';
 
 const String kKeyIsExploring = 'exploring';
 //kKeyFCMToken
