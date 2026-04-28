@@ -8,7 +8,7 @@ import 'package:template_flutter/features/common_screens/auth/presentation/login
 import 'package:template_flutter/features/common_screens/auth/presentation/reset_password.dart';
 import 'package:template_flutter/features/common_screens/auth/presentation/signup.dart';
 import 'package:template_flutter/features/common_screens/auth/presentation/verification.dart';
-import 'package:template_flutter/features/common_screens/contractor_dashboard/presentation/contractor_dashboard.dart';
+import 'package:template_flutter/features/contractor/contractor_dashboard/presentation/contractor_dashboard.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/contractor_profile.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/contractors_screen.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/saved_contractors.dart';
