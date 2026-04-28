@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
         final String profileEmail = cred.user?.email?.trim().isNotEmpty == true
             ? cred.user!.email!.trim()
             : _emailController.text.trim();
-        final String userType = await _auth.getUserTypeByEmail(profileEmail);
+        final String userType = await _auth.getUserTypeByUserId(cred.user!.uid);
         await AppPrefs.setLoggedIn(true);
 
         final Map<String, dynamic> routeArgs = {

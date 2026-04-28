@@ -29,9 +29,14 @@ class AuthService {
         email: normalizedEmail,
         password: password,
       );
+      final userId = credential.user?.uid;
+      if (userId == null || userId.isEmpty) {
+        throw 'Unable to create user profile. Missing user id.';
+      }
       try {
         await credential.user?.updateDisplayName(name.trim());
         await _saveUserProfile(
+          userId: userId,
           email: normalizedEmail,
           userType: normalizedUserType,
           name: name.trim(),
@@ -66,11 +71,10 @@ class AuthService {
     }
   }
 
-  Future<String> getUserTypeByEmail(String email) async {
-    final normalizedEmail = email.trim().toLowerCase();
+  Future<String> getUserTypeByUserId(String userId) async {
     final snapshot = await _firestore
         .collection(kFirestoreUsersCollection)
-        .doc(normalizedEmail)
+        .doc(userId)
         .get();
 
     if (!snapshot.exists) {
@@ -182,11 +186,12 @@ class AuthService {
   }
 
   Future<void> _saveUserProfile({
+    required String userId,
     required String email,
     required String userType,
     required String name,
   }) async {
-    await _firestore.collection(kFirestoreUsersCollection).doc(email).set(
+    await _firestore.collection(kFirestoreUsersCollection).doc(userId).set(
       {
         kEmail: email,
         kKeyUserType: userType,
