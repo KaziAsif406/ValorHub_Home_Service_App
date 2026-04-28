@@ -25,7 +25,7 @@ class WelcomeBanner extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(24.r),
+        borderRadius: BorderRadius.circular(18.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,8 +33,8 @@ class WelcomeBanner extends StatelessWidget {
           Text(
             'WELCOME BACK',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.82),
-              fontSize: 12.sp,
+              color: AppColors.allSecondaryColor.withValues(alpha: 0.52),
+              fontSize: 10.sp,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.0,
             ),
@@ -46,55 +46,44 @@ class WelcomeBanner extends StatelessWidget {
                 TextSpan(
                   text: 'Good morning, $profileName ',
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24.sp,
+                    color: AppColors.allSecondaryColor,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
                 TextSpan(
                   text: '👋',
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22.sp,
+                    color: AppColors.allSecondaryColor,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
               ],
             ),
           ),
-          UIHelper.verticalSpace(4.h),
-          Text(
-            profileEmail,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.76),
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
           UIHelper.verticalSpace(10.h),
           Text(
             'You have 2 new quote requests and 3 unread messages waiting for your attention.',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.88),
+              color: AppColors.allSecondaryColor.withValues(alpha: 0.88),
               fontSize: 14.sp,
               height: 1.45,
               fontWeight: FontWeight.w500,
             ),
           ),
           UIHelper.verticalSpace(14.h),
-          SizedBox(
-            width: 182.w,
-            child: CustomButton(
-              label: 'View Requests',
-              onPressed: () {},
-              height: 46.h,
-              borderRadius: 14.r,
-              color: Colors.white,
-              textStyle: TextStyle(
-                color: AppColors.contractor_primary,
-                fontSize: 15.sp,
-                fontWeight: FontWeight.w800,
-              ),
+          CustomButton(
+            label: 'View Requests',
+            onPressed: () {},
+            height: 35.h,
+            width: 130.w,
+            borderRadius: 14.r,
+            color: AppColors.allSecondaryColor,
+            textStyle: TextStyle(
+              color: AppColors.contractor_primary,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w800,
             ),
           ),
         ],
