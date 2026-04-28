@@ -16,6 +16,7 @@ import 'package:template_flutter/features/location/presentation/find_location.da
 import 'package:template_flutter/features/location/presentation/survey.dart';
 import 'package:template_flutter/features/home/presentation/home.dart';
 import 'package:template_flutter/features/home/presentation/notifications.dart';
+import 'package:template_flutter/features/quotes/presentation/my_requests.dart';
 import 'package:template_flutter/features/onboarding/presentation/onboarding_flow.dart';
 import 'package:template_flutter/features/quotes/presentation/quote_sent.dart';
 import 'package:template_flutter/features/quotes/presentation/request_quote.dart';
@@ -30,7 +31,7 @@ import 'package:template_flutter/welcome_screen.dart';
 // import '../features/auth/presentation/signup.dart';
 // import '../features/product/presentation/product_details.dart';
 // import '../features/product/presentation/products_with_pagination.dart'
-    // as products_pagination;
+// as products_pagination;
 import '../features/user_profile/presentation/profile.dart';
 
 final class Routes {
@@ -64,6 +65,7 @@ final class Routes {
   static const String notificationScreen = '/notification_screen';
   static const String contractorProfileScreen = '/contractor_profile_screen';
   static const String requestQuoteScreen = '/request_quote_screen';
+  static const String myRequestsScreen = '/my_requests_screen';
   static const String quoteSentScreen = '/quote_sent_screen';
   static const String contactUsScreen = '/contact_us_screen';
   static const String faqScreen = '/faq_screen';
@@ -105,17 +107,19 @@ final class RouteGenerator {
 
       case Routes.navigationScreen:
         final routeArgs = settings.arguments;
-        final initialIndex =
-            routeArgs is Map<String, dynamic> && routeArgs['initialIndex'] is int
-                ? routeArgs['initialIndex'] as int
-                : 0;
+        final initialIndex = routeArgs is Map<String, dynamic> &&
+                routeArgs['initialIndex'] is int
+            ? routeArgs['initialIndex'] as int
+            : 0;
         final User? currentUser = FirebaseAuth.instance.currentUser;
-        final String profileName = routeArgs is Map<String, dynamic> && routeArgs['name'] is String
-          ? routeArgs['name'] as String
-          : currentUser?.displayName ?? 'Md Riyad';
-        final String profileEmail = routeArgs is Map<String, dynamic> && routeArgs['email'] is String
-          ? routeArgs['email'] as String
-          : currentUser?.email ?? 'mdriyadpc11@gmail.com';
+        final String profileName =
+            routeArgs is Map<String, dynamic> && routeArgs['name'] is String
+                ? routeArgs['name'] as String
+                : currentUser?.displayName ?? 'Md Riyad';
+        final String profileEmail =
+            routeArgs is Map<String, dynamic> && routeArgs['email'] is String
+                ? routeArgs['email'] as String
+                : currentUser?.email ?? 'mdriyadpc11@gmail.com';
         final String? profileImagePath = routeArgs is Map<String, dynamic>
             ? routeArgs['imagePath'] as String?
             : null;
@@ -139,24 +143,25 @@ final class RouteGenerator {
                 settings: settings,
               );
 
-
       case Routes.resetPassword:
         return defaultTargetPlatform == TargetPlatform.iOS
-            ? CupertinoPageRoute(builder: (context) => const ResetPasswordScreen())
+            ? CupertinoPageRoute(
+                builder: (context) => const ResetPasswordScreen())
             : _FadedTransitionRoute(
                 widget: const ResetPasswordScreen(), settings: settings);
 
-
       case Routes.resetInsidePassword:
         return defaultTargetPlatform == TargetPlatform.iOS
-            ? CupertinoPageRoute(builder: (context) => const ResetPasswordInsideProfileScreen())
+            ? CupertinoPageRoute(
+                builder: (context) => const ResetPasswordInsideProfileScreen())
             : _FadedTransitionRoute(
-                widget: const ResetPasswordInsideProfileScreen(), settings: settings);
-
+                widget: const ResetPasswordInsideProfileScreen(),
+                settings: settings);
 
       case Routes.savedContractorsScreen:
         return defaultTargetPlatform == TargetPlatform.iOS
-            ? CupertinoPageRoute(builder: (context) => const SavedContractorsScreen())
+            ? CupertinoPageRoute(
+                builder: (context) => const SavedContractorsScreen())
             : _FadedTransitionRoute(
                 widget: const SavedContractorsScreen(), settings: settings);
 
@@ -185,17 +190,17 @@ final class RouteGenerator {
 
       case Routes.forgotPWScreen:
         return defaultTargetPlatform == TargetPlatform.iOS
-            ? CupertinoPageRoute(builder: (context) => const ForgetPasswordScreen())
+            ? CupertinoPageRoute(
+                builder: (context) => const ForgetPasswordScreen())
             : _FadedTransitionRoute(
                 widget: const ForgetPasswordScreen(), settings: settings);
 
-
       case Routes.otpScreen:
         return defaultTargetPlatform == TargetPlatform.iOS
-            ? CupertinoPageRoute(builder: (context) => const VerificationCodeScreen())
+            ? CupertinoPageRoute(
+                builder: (context) => const VerificationCodeScreen())
             : _FadedTransitionRoute(
                 widget: const VerificationCodeScreen(), settings: settings);
-
 
       // case Routes.otpScreen:
       //   final args = settings.arguments as Map;
@@ -219,7 +224,8 @@ final class RouteGenerator {
       case Routes.homeScreen:
         return defaultTargetPlatform == TargetPlatform.iOS
             ? CupertinoPageRoute(builder: (context) => const HomeScreen())
-            : _FadedTransitionRoute(widget: const HomeScreen(), settings: settings);
+            : _FadedTransitionRoute(
+                widget: const HomeScreen(), settings: settings);
 
       // case Routes.navigationScreen:
       //   return defaultTargetPlatform == TargetPlatform.iOS
@@ -229,12 +235,14 @@ final class RouteGenerator {
       case Routes.profile:
         final profileArgs = settings.arguments;
         final User? currentUser = FirebaseAuth.instance.currentUser;
-        final String profileName = profileArgs is Map<String, dynamic> && profileArgs['name'] is String
-          ? profileArgs['name'] as String
-          : currentUser?.displayName ?? 'Md Riyad';
-        final String profileEmail = profileArgs is Map<String, dynamic> && profileArgs['email'] is String
-          ? profileArgs['email'] as String
-          : currentUser?.email ?? 'mdriyadpc11@gmail.com';
+        final String profileName =
+            profileArgs is Map<String, dynamic> && profileArgs['name'] is String
+                ? profileArgs['name'] as String
+                : currentUser?.displayName ?? 'Md Riyad';
+        final String profileEmail = profileArgs is Map<String, dynamic> &&
+                profileArgs['email'] is String
+            ? profileArgs['email'] as String
+            : currentUser?.email ?? 'mdriyadpc11@gmail.com';
         final String? profileImagePath = profileArgs is Map<String, dynamic>
             ? profileArgs['imagePath'] as String?
             : null;
@@ -254,7 +262,6 @@ final class RouteGenerator {
                   imagePath: profileImagePath,
                 ),
                 settings: settings);
-      
 
       case Routes.contractorsScreen:
         final contractorArgs = settings.arguments;
@@ -273,7 +280,8 @@ final class RouteGenerator {
 
       case Routes.findLocationScreen:
         final findLocationArgs = settings.arguments;
-        final String categoryName = findLocationArgs is Map<String, dynamic> && findLocationArgs['category'] is String
+        final String categoryName = findLocationArgs is Map<String, dynamic> &&
+                findLocationArgs['category'] is String
             ? findLocationArgs['category'] as String
             : '';
         return defaultTargetPlatform == TargetPlatform.iOS
@@ -288,7 +296,8 @@ final class RouteGenerator {
 
       case Routes.locationSurveyScreen:
         final surveyArgs = settings.arguments;
-        final String categoryName = surveyArgs is Map<String, dynamic> && surveyArgs['category'] is String
+        final String categoryName = surveyArgs is Map<String, dynamic> &&
+                surveyArgs['category'] is String
             ? surveyArgs['category'] as String
             : '';
         return defaultTargetPlatform == TargetPlatform.iOS
@@ -303,10 +312,10 @@ final class RouteGenerator {
 
       case Routes.notificationScreen:
         return defaultTargetPlatform == TargetPlatform.iOS
-            ? CupertinoPageRoute(builder: (context) => const NotificationsScreen())
+            ? CupertinoPageRoute(
+                builder: (context) => const NotificationsScreen())
             : _FadedTransitionRoute(
                 widget: const NotificationsScreen(), settings: settings);
-
 
       case Routes.contractorProfileScreen:
         final contractor = settings.arguments as contractorData;
@@ -317,13 +326,33 @@ final class RouteGenerator {
                 widget: ContractorProfile(contractor: contractor),
                 settings: settings);
 
-
       case Routes.requestQuoteScreen:
-        return defaultTargetPlatform == TargetPlatform.iOS
-            ? CupertinoPageRoute(builder: (context) => const RequestQuote())
-            : _FadedTransitionRoute(
-                widget: const RequestQuote(), settings: settings);
+        final dynamic requestArgs = settings.arguments;
+        final contractorData? contractor =
+            requestArgs is contractorData ? requestArgs : null;
 
+        return defaultTargetPlatform == TargetPlatform.iOS
+            ? CupertinoPageRoute(
+                builder: (context) => RequestQuote(
+                  initialServiceCategory: contractor?.service,
+                  initialContractorName: contractor?.name,
+                ),
+              )
+            : _FadedTransitionRoute(
+                widget: RequestQuote(
+                  initialServiceCategory: contractor?.service,
+                  initialContractorName: contractor?.name,
+                ),
+                settings: settings,
+              );
+
+      case Routes.myRequestsScreen:
+        return defaultTargetPlatform == TargetPlatform.iOS
+            ? CupertinoPageRoute(builder: (context) => const MyRequestsScreen())
+            : _FadedTransitionRoute(
+                widget: const MyRequestsScreen(),
+                settings: settings,
+              );
 
       case Routes.quoteSentScreen:
         return defaultTargetPlatform == TargetPlatform.iOS
@@ -331,31 +360,33 @@ final class RouteGenerator {
             : _FadedTransitionRoute(
                 widget: const QuoteSent(), settings: settings);
 
-
       case Routes.contactUsScreen:
         return defaultTargetPlatform == TargetPlatform.iOS
             ? CupertinoPageRoute(builder: (context) => const ContactUs())
             : _FadedTransitionRoute(
                 widget: const ContactUs(), settings: settings);
 
-
       case Routes.faqScreen:
         return defaultTargetPlatform == TargetPlatform.iOS
             ? CupertinoPageRoute(builder: (context) => const Faq())
-            : _FadedTransitionRoute(
-                widget: const Faq(), settings: settings);
+            : _FadedTransitionRoute(widget: const Faq(), settings: settings);
 
       case Routes.editProfileScreen:
         final editProfileArgs = settings.arguments;
-        final String editProfileName = editProfileArgs is Map<String, dynamic> && editProfileArgs['name'] is String
-            ? editProfileArgs['name'] as String
-            : '';
-        final String editProfileEmail = editProfileArgs is Map<String, dynamic> && editProfileArgs['email'] is String
-            ? editProfileArgs['email'] as String
-            : '';
-        final String? editProfileImagePath = editProfileArgs is Map<String, dynamic>
-            ? editProfileArgs['imagePath'] as String?
-            : null;
+        final String editProfileName =
+            editProfileArgs is Map<String, dynamic> &&
+                    editProfileArgs['name'] is String
+                ? editProfileArgs['name'] as String
+                : '';
+        final String editProfileEmail =
+            editProfileArgs is Map<String, dynamic> &&
+                    editProfileArgs['email'] is String
+                ? editProfileArgs['email'] as String
+                : '';
+        final String? editProfileImagePath =
+            editProfileArgs is Map<String, dynamic>
+                ? editProfileArgs['imagePath'] as String?
+                : null;
 
         return defaultTargetPlatform == TargetPlatform.iOS
             ? CupertinoPageRoute(

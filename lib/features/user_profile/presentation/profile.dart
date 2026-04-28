@@ -116,7 +116,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   UIHelper.horizontalSpace(8.w),
                   GestureDetector(
                     onTap: () async {
-                      final dynamic result = await NavigationService.navigateToWithArgs(
+                      final dynamic result =
+                          await NavigationService.navigateToWithArgs(
                         Routes.editProfileScreen,
                         {
                           'name': _displayName,
@@ -130,8 +131,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }
 
                       setState(() {
-                        _displayName = (result['name'] as String?) ?? _displayName;
-                        _displayEmail = (result['email'] as String?) ?? _displayEmail;
+                        _displayName =
+                            (result['name'] as String?) ?? _displayName;
+                        _displayEmail =
+                            (result['email'] as String?) ?? _displayEmail;
                         _storedImagePath =
                             result['imagePath'] as String? ?? _storedImagePath;
                       });
@@ -203,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     iconColor: AppColors.c6B7280,
                     imagePath: 'assets/icons/quote.png',
                     onTap: () {
-                      NavigationService.navigateTo(Routes.contactUsScreen);
+                      NavigationService.navigateTo(Routes.myRequestsScreen);
                     },
                   ),
                   UIHelper.verticalSpace(10.h),
