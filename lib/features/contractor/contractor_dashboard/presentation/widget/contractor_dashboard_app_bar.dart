@@ -27,80 +27,45 @@ class ContractorDashboardAppBar extends StatelessWidget {
           BoxShadow(
             color: AppColors.c0A0A0A.withValues(alpha: 0.06),
             blurRadius: 10.r,
-            offset: Offset(0, 3.h),
+            offset: Offset(0, 4.h),
           ),
         ],
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           IconButton(
             onPressed: onMenuPressed,
             icon: const Icon(Icons.menu_rounded, color: AppColors.c0A0A0A),
-          ),
-          Container(
-            padding: EdgeInsets.all(7.w),
-            decoration: BoxDecoration(
-              color: AppColors.contractor_primary,
-              borderRadius: BorderRadius.circular(11.r),
-            ),
-            child: Text(
-              'VH',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+            iconSize: 26.sp,
           ),
           UIHelper.horizontalSpace(10.w),
-          Expanded(
-            child: Text(
-              'VALOR HUB',
-              style: TextStyle(
-                fontSize: 17.sp,
-                fontWeight: FontWeight.w800,
-                color: AppColors.c0A0A0A,
-                letterSpacing: 0.2,
-              ),
-            ),
+          Image.asset(
+            'assets/icons/logo_home.png',
+            height: 28.h,
           ),
+          Spacer(),
           IconButton(
             onPressed: onInboxPressed,
             icon: Stack(
               clipBehavior: Clip.none,
               children: [
                 const Icon(Icons.notifications_none_rounded,
-                    color: AppColors.c0A0A0A),
+                    color: AppColors.c0A0A0A,
+                    size: 28),
                 Positioned(
-                  right: 0,
+                  right: 2,
                   top: 0,
                   child: Container(
                     width: 8.w,
                     height: 8.h,
                     decoration: const BoxDecoration(
-                      color: Colors.red,
+                      color: AppColors.allPrimaryColor,
                       shape: BoxShape.circle,
                     ),
                   ),
                 ),
               ],
-            ),
-          ),
-          Container(
-            width: 34.w,
-            height: 34.w,
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              color: AppColors.cF1F5F9,
-              shape: BoxShape.circle,
-            ),
-            child: Text(
-              initials,
-              style: TextStyle(
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w800,
-                color: AppColors.contractor_primary,
-              ),
             ),
           ),
         ],
