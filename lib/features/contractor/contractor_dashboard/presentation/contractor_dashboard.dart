@@ -9,11 +9,11 @@ import 'package:template_flutter/services/auth_service.dart';
 
 import 'widget/contractor_dashboard_app_bar.dart';
 import 'widget/contractor_dashboard_drawer.dart';
-import 'dashboard_inbox_screen.dart';
+import '../../inbox/presentation/dashboard_inbox_screen.dart';
 import 'widget/dashboard_overview_section.dart';
-import 'dashboard_profile_screen.dart';
-import 'dashboard_reviews_screen.dart';
-import 'dashboard_services_screen.dart';
+import '../../profile/presentation/dashboard_profile_screen.dart';
+import '../../reviews/presentation/dashboard_reviews_screen.dart';
+import '../../services/presentation/dashboard_services_screen.dart';
 
 enum ContractorDashboardSection { overview, inbox, services, profile, reviews }
 
