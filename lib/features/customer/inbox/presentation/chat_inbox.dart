@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:template_flutter/features/contractors/presentation/widgets/contractor_info.dart';
-import 'package:template_flutter/features/inbox/presentation/widget/chat_bubble.dart';
-import 'package:template_flutter/features/inbox/presentation/widget/composer.dart';
-import 'package:template_flutter/features/inbox/presentation/widget/inbox_header.dart';
+import 'package:template_flutter/features/customer/contractors/presentation/widgets/contractor_info.dart';
+import 'package:template_flutter/features/customer/inbox/presentation/widget/chat_bubble.dart';
+import 'package:template_flutter/features/customer/inbox/presentation/widget/composer.dart';
+import 'package:template_flutter/features/customer/inbox/presentation/widget/inbox_header.dart';
 
 class ChatInboxScreen extends StatefulWidget {
   const ChatInboxScreen({

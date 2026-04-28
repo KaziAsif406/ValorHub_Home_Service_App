@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
-import 'package:template_flutter/features/home/presentation/widgets/notification_tile.dart';
+import 'package:template_flutter/features/customer/home/presentation/widgets/notification_tile.dart';
 
 class NotificationsScreen extends StatelessWidget {
 	const NotificationsScreen({super.key});

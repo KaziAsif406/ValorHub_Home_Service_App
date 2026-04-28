@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/common_widgets/custom_button.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
-import 'package:template_flutter/features/quotes/data/quote_request_store.dart';
+import 'package:template_flutter/features/customer/quotes/data/quote_request_store.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 

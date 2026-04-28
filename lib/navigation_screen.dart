@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:template_flutter/features/contractors/presentation/contractors_screen.dart';
-import 'package:template_flutter/features/home/presentation/home.dart';
-import 'package:template_flutter/features/inbox/presentation/chat_list.dart';
-import 'package:template_flutter/features/user_profile/presentation/profile.dart';
+import 'package:template_flutter/features/customer/contractors/presentation/contractors_screen.dart';
+import 'package:template_flutter/features/customer/home/presentation/home.dart';
+import 'package:template_flutter/features/customer/inbox/presentation/chat_list.dart';
+import 'package:template_flutter/features/customer/user_profile/presentation/profile.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 

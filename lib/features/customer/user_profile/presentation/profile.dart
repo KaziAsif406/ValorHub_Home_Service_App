@@ -4,11 +4,11 @@ import 'dart:io';
 import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/app_preferences.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
-import 'package:template_flutter/features/user_profile/presentation/widgets/analytics_card.dart';
+import 'package:template_flutter/features/customer/user_profile/presentation/widgets/analytics_card.dart';
 import 'package:template_flutter/services/auth_service.dart';
-import '../../../constants/text_font_style.dart';
-import '../../../gen/colors.gen.dart';
-import '../../../helpers/ui_helpers.dart';
+import '../../../../constants/text_font_style.dart';
+import '../../../../gen/colors.gen.dart';
+import '../../../../helpers/ui_helpers.dart';
 import 'widgets/profile_action_row.dart';
 
 class ProfileScreen extends StatefulWidget {
