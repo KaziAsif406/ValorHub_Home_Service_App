@@ -39,7 +39,7 @@ class AuthService {
         password: password,
       );
     } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
+      throw 'No account found with this email.';
     }
   }
 
@@ -114,6 +114,8 @@ class AuthService {
     switch (e.code) {
       case 'email-already-in-use':
         return 'This email is already registered.';
+      case 'account-does-not-exist':
+        return 'No account found with this email.';
       case 'invalid-email':
         return 'Invalid email address.';
       case 'weak-password':

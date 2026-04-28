@@ -279,8 +279,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       await profileDirectory.create(recursive: true);
     }
 
+    final String extension = imageFile.path.contains('.')
+      ? imageFile.path.split('.').last
+      : 'jpg';
+    final String fileName =
+      'profile_image_${DateTime.now().millisecondsSinceEpoch}.$extension';
     final String savedPath =
-        '${profileDirectory.path}${Platform.pathSeparator}profile_image.jpg';
+      '${profileDirectory.path}${Platform.pathSeparator}$fileName';
     await imageFile.copy(savedPath);
     _savedImagePath = savedPath;
     return savedPath;
