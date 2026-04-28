@@ -17,7 +17,6 @@ class ContractorDashboardAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String initials = _initials(profileName);
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
@@ -71,24 +70,5 @@ class ContractorDashboardAppBar extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _initials(String value) {
-    final List<String> words = value
-        .trim()
-        .split(' ')
-        .where((String part) => part.isNotEmpty)
-        .toList();
-
-    if (words.isEmpty) {
-      return 'VH';
-    }
-
-    if (words.length == 1) {
-      return words.first.characters.first.toUpperCase();
-    }
-
-    return (words.first.characters.first + words.last.characters.first)
-        .toUpperCase();
   }
 }
