@@ -13,19 +13,20 @@ class MetricCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: AppColors.c0A0A0A),
+        color: AppColors.allSecondaryColor,
+        borderRadius: BorderRadius.circular(18.r),
+        border: Border.all(color: AppColors.c0A0A0A.withValues(alpha: 0.12)),
         boxShadow: [
           BoxShadow(
             color: AppColors.c0A0A0A.withValues(alpha: 0.05),
-            blurRadius: 10.r,
+            blurRadius: 5.r,
             offset: Offset(0, 4.h),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
             width: 32.w,
@@ -41,7 +42,7 @@ class MetricCard extends StatelessWidget {
               color: data.iconColor,
             ),
           ),
-          const Spacer(),
+          UIHelper.verticalSpace(12.h),
           Text(
             data.value,
             style: TextStyle(
