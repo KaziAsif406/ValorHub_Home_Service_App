@@ -1,6 +1,6 @@
 import 'package:rxdart/rxdart.dart';
 
-enum QuoteRequestStatus { pending, completed }
+enum QuoteRequestStatus { pending, accepted, rejected, completed }
 
 final class QuoteRequestModel {
   QuoteRequestModel({
@@ -114,41 +114,51 @@ final class QuoteRequestStore {
     final DateTime now = DateTime.now();
     return <QuoteRequestModel>[
       QuoteRequestModel(
-        id: 'rq-1001',
+        id: 'rq-3042',
         fullName: 'Sarah Mitchell',
         email: 'sarah.mitchell@example.com',
         phone: '(347) 555-0124',
         zipCode: '11215',
         serviceCategory: 'Bathroom Remodel',
-        projectDetails:
-            'Need a full bathroom update with new tiles and fixtures.',
+        projectDetails: 'Full master bathroom renovation incl. tile + vanity.',
         submittedAt: now.subtract(const Duration(minutes: 45)),
         status: QuoteRequestStatus.pending,
       ),
       QuoteRequestModel(
-        id: 'rq-1002',
-        fullName: 'James Parker',
-        email: 'james.parker@example.com',
+        id: 'rq-3041',
+        fullName: 'David Chen',
+        email: 'david.chen@example.com',
         phone: '(646) 555-0148',
-        zipCode: '10011',
+        zipCode: '07302',
         serviceCategory: 'Kitchen Plumbing',
-        projectDetails: 'Leak under the sink and faucet replacement needed.',
+        projectDetails: 'Replace kitchen sink + dishwasher hookup.',
         submittedAt: now.subtract(const Duration(hours: 2)),
         status: QuoteRequestStatus.pending,
       ),
       QuoteRequestModel(
-        id: 'rq-1003',
+        id: 'rq-3038',
+        fullName: 'Amelia Brooks',
+        email: 'amelia.brooks@example.com',
+        phone: '(718) 555-0186',
+        zipCode: '07030',
+        serviceCategory: 'Deck Construction',
+        projectDetails: 'Build a 12\'x16\' cedar deck in backyard.',
+        submittedAt: now.subtract(const Duration(days: 1)),
+        status: QuoteRequestStatus.accepted,
+      ),
+      QuoteRequestModel(
+        id: 'rq-3037',
         fullName: 'Olivia Brown',
         email: 'olivia.brown@example.com',
-        phone: '(718) 555-0186',
+        phone: '(212) 555-0102',
         zipCode: '10023',
         serviceCategory: 'Electrical Repair',
         projectDetails: 'Circuit breaker trips when the oven is used.',
         submittedAt: now.subtract(const Duration(days: 1, hours: 1)),
-        status: QuoteRequestStatus.completed,
+        status: QuoteRequestStatus.rejected,
       ),
       QuoteRequestModel(
-        id: 'rq-1004',
+        id: 'rq-3036',
         fullName: 'Daniel Brooks',
         email: 'daniel.brooks@example.com',
         phone: '(212) 555-0102',
@@ -156,7 +166,7 @@ final class QuoteRequestStore {
         serviceCategory: 'Roof Inspection',
         projectDetails: 'Need a roof inspection after recent storm damage.',
         submittedAt: now.subtract(const Duration(days: 1, hours: 4)),
-        status: QuoteRequestStatus.pending,
+        status: QuoteRequestStatus.completed,
       ),
     ];
   }
