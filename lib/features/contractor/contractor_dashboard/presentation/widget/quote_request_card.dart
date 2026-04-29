@@ -14,6 +14,29 @@ class QuoteRequestCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final String initials = _initials(request.fullName);
     final bool isCompleted = request.status == QuoteRequestStatus.completed;
+    final bool isAccepted = request.status == QuoteRequestStatus.accepted;
+    final bool isRejected = request.status == QuoteRequestStatus.rejected;
+    final String statusLabel = isCompleted
+        ? 'Completed'
+        : isAccepted
+            ? 'Accepted'
+            : isRejected
+                ? 'Rejected'
+                : 'New';
+    final Color statusBackground = isCompleted
+        ? AppColors.cDCFCE7
+        : isAccepted
+            ? AppColors.cDCFCE7
+            : isRejected
+                ? AppColors.allPrimaryColor.withValues(alpha: 0.12)
+                : AppColors.contractor_primary.withValues(alpha: 0.12);
+    final Color statusForeground = isCompleted
+        ? AppColors.c008236
+        : isAccepted
+            ? AppColors.c008236
+            : isRejected
+            ? AppColors.allPrimaryColor
+            : AppColors.contractor_primary;
 
     return Container(
       padding: EdgeInsets.all(14.w),
@@ -65,18 +88,15 @@ class QuoteRequestCard extends StatelessWidget {
                       padding:
                           EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                       decoration: BoxDecoration(
-                        color:
-                            isCompleted ? AppColors.cDCFCE7 : AppColors.contractor_primary.withValues(alpha: 0.12),
+                        color: statusBackground,
                         borderRadius: BorderRadius.circular(999.r),
                       ),
                       child: Text(
-                        isCompleted ? 'Completed' : 'New',
+                        statusLabel,
                         style: TextStyle(
                           fontSize: 11.sp,
                           fontWeight: FontWeight.w700,
-                          color: isCompleted
-                              ? AppColors.c008236
-                              : AppColors.contractor_primary,
+                          color: statusForeground,
                         ),
                       ),
                     ),
