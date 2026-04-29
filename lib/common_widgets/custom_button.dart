@@ -14,11 +14,11 @@ class CustomButton extends StatelessWidget {
     this.color = AppColors.allPrimaryColor,
     this.textStyle,
     this.padding,
-    this.enabled = true,
     this.leading,
     this.trailing,
     this.isOutlined = false,
     this.borderColor = AppColors.allPrimaryColor,
+    this.gap = true,
   });
 
   final String label;
@@ -29,15 +29,15 @@ class CustomButton extends StatelessWidget {
   final Color color;
   final TextStyle? textStyle;
   final EdgeInsetsGeometry? padding;
-  final bool enabled;
   final Widget? leading;
   final Widget? trailing;
   final bool isOutlined;
   final Color borderColor;
+  final bool gap;
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = enabled ? (isOutlined ? AppColors.scaffoldColor : color) : AppColors.cE8E8E8.withValues(alpha: 0.0);
+    final bgColor = isOutlined ? AppColors.scaffoldColor : color;
     final border = isOutlined ? Border.all(color: borderColor, width: 1.5.w) : null;
     final labelStyle = textStyle ??
         TextStyle(
@@ -53,22 +53,13 @@ class CustomButton extends StatelessWidget {
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(borderRadius.r),
         child: InkWell(
-          onTap: enabled ? onPressed : null,
+          onTap: onPressed,
           borderRadius: BorderRadius.circular(borderRadius.r),
           child: Ink(
             decoration: BoxDecoration(
               color: bgColor,
               border: border,
               borderRadius: BorderRadius.circular(borderRadius.r),
-              boxShadow: enabled
-                  ? [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.12),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ]
-                  : null,
             ),
             child: Padding(
               padding: padding ?? EdgeInsets.symmetric(horizontal: 20.w),
@@ -78,11 +69,11 @@ class CustomButton extends StatelessWidget {
                 children: [
                   if (leading != null) ...[
                     leading!,
-                    SizedBox(width: 10.w),
+                    SizedBox(width: gap ? 10.w : 0),
                   ],
                   Text(label, style: labelStyle),
                   if (trailing != null) ...[
-                    SizedBox(width: 10.w),
+                    SizedBox(width: gap ? 10.w : 0),
                     trailing!,
                   ],
                 ],
