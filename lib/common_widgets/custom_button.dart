@@ -37,7 +37,7 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = enabled ? (isOutlined ? AppColors.scaffoldColor : color) : AppColors.cE8E8E8;
+    final bgColor = enabled ? (isOutlined ? AppColors.scaffoldColor : color) : AppColors.cE8E8E8.withValues(alpha: 0.0);
     final border = isOutlined ? Border.all(color: borderColor, width: 1.5.w) : null;
     final labelStyle = textStyle ??
         TextStyle(
