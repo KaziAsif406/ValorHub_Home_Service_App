@@ -19,13 +19,13 @@ class ContractorDashboardAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 5.h),
       decoration: BoxDecoration(
         color: AppColors.scaffoldColor,
         boxShadow: [
           BoxShadow(
             color: AppColors.c0A0A0A.withValues(alpha: 0.06),
-            blurRadius: 10.r,
+            blurRadius: 2.r,
             offset: Offset(0, 4.h),
           ),
         ],
