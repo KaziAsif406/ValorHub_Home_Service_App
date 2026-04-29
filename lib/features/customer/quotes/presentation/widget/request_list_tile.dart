@@ -21,11 +21,29 @@ class RequestListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isCompleted = request.status == QuoteRequestStatus.completed;
-    final Color statusTextColor =
-        isCompleted ? AppColors.c008236 : AppColors.cA65F00;
+    final bool isAccepted = request.status == QuoteRequestStatus.accepted;
+    final bool isRejected = request.status == QuoteRequestStatus.rejected;
+    final String statusLabel = isCompleted
+        ? 'Completed'
+        : isAccepted
+            ? 'Accepted'
+            : isRejected
+                ? 'Rejected'
+                : 'Pending';
+    final Color statusTextColor = isCompleted
+        ? AppColors.c008236
+        : isAccepted
+            ? AppColors.c008236
+            : isRejected
+                ? AppColors.allPrimaryColor
+                : AppColors.cA65F00;
     final Color statusBgColor = isCompleted
         ? AppColors.cDCFCE7
-        : AppColors.cFEF9C2;
+        : isAccepted
+            ? AppColors.cDCFCE7
+            : isRejected
+                ? AppColors.allPrimaryColor.withValues(alpha: 0.12)
+                : AppColors.cFEF9C2;
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
@@ -81,7 +99,7 @@ class RequestListTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Text(
-                    isCompleted ? 'Completed' : 'Pending',
+                    statusLabel,
                     style: TextFontStyle.textStyle10c000000Inter500.copyWith(
                       color: statusTextColor,
                     ),
