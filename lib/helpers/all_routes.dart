@@ -9,6 +9,7 @@ import 'package:template_flutter/features/common_screens/auth/presentation/reset
 import 'package:template_flutter/features/common_screens/auth/presentation/signup.dart';
 import 'package:template_flutter/features/common_screens/auth/presentation/verification.dart';
 import 'package:template_flutter/features/contractor/contractor_dashboard/presentation/contractor_dashboard.dart';
+import 'package:template_flutter/features/contractor/contractor_info/presentation/basic_info.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/contractor_profile.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/contractors_screen.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/saved_contractors.dart';
@@ -59,6 +60,7 @@ final class Routes {
   static const String navigationScreen = '/NavigationScreen';
   static const String contractorDashboardScreen =
       '/contractor_dashboard_screen';
+  static const String basicInfoScreen = '/basic_info_screen';
   static const String profile = '/Profile';
   static const String welcomeScreen = '/welcome_screen';
   static const String onboardingFlow = '/onboarding_flow';
@@ -168,6 +170,35 @@ final class RouteGenerator {
                 widget: ContractorDashboardScreen(
                   profileName: profileName,
                   profileEmail: profileEmail,
+                ),
+                settings: settings,
+              );
+
+      case Routes.basicInfoScreen:
+        final basicInfoArgs = settings.arguments;
+        return defaultTargetPlatform == TargetPlatform.iOS
+            ? CupertinoPageRoute(
+                builder: (context) => BasicInfoScreen(
+                  contractorName: basicInfoArgs is Map<String, dynamic> &&
+                          basicInfoArgs['name'] is String
+                      ? basicInfoArgs['name'] as String
+                      : null,
+                  contractorEmail: basicInfoArgs is Map<String, dynamic> &&
+                          basicInfoArgs['email'] is String
+                      ? basicInfoArgs['email'] as String
+                      : null,
+                ),
+              )
+            : _FadedTransitionRoute(
+                widget: BasicInfoScreen(
+                  contractorName: basicInfoArgs is Map<String, dynamic> &&
+                          basicInfoArgs['name'] is String
+                      ? basicInfoArgs['name'] as String
+                      : null,
+                  contractorEmail: basicInfoArgs is Map<String, dynamic> &&
+                          basicInfoArgs['email'] is String
+                      ? basicInfoArgs['email'] as String
+                      : null,
                 ),
                 settings: settings,
               );
