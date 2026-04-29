@@ -27,30 +27,24 @@ class _QuoteRequestCardState extends State<QuoteRequestCard> {
   @override
   Widget build(BuildContext context) {
     final String initials = _initials(widget.request.fullName);
-    final bool isCompleted = widget.request.status == QuoteRequestStatus.completed;
+    final bool isNew = widget.request.status == QuoteRequestStatus.pending;
     final bool isAccepted = widget.request.status == QuoteRequestStatus.accepted;
     final bool isRejected = widget.request.status == QuoteRequestStatus.rejected;
-    final String statusLabel = isCompleted
-        ? 'Completed'
-        : isAccepted
-            ? 'Accepted'
-            : isRejected
-                ? 'Rejected'
-                : 'New';
-    final Color statusBackground = isCompleted
-        ? AppColors.cDCFCE7
-        : isAccepted
-            ? AppColors.cDCFCE7
-            : isRejected
-                ? AppColors.allPrimaryColor.withValues(alpha: 0.12)
-                : AppColors.contractor_primary.withValues(alpha: 0.12);
-    final Color statusForeground = isCompleted
-        ? AppColors.c008236
-        : isAccepted
-            ? AppColors.c008236
-            : isRejected
-                ? AppColors.allPrimaryColor
-                : AppColors.contractor_primary;
+    final String statusLabel = isAccepted
+      ? 'Accepted'
+      : isRejected
+        ? 'Rejected'
+        : 'New';
+    final Color statusBackground = isAccepted
+      ? AppColors.cDCFCE7
+      : isRejected
+        ? AppColors.allPrimaryColor.withValues(alpha: 0.12)
+        : AppColors.contractor_primary.withValues(alpha: 0.12);
+    final Color statusForeground = isAccepted
+      ? AppColors.c008236
+      : isRejected
+        ? AppColors.allPrimaryColor
+        : AppColors.contractor_primary;
 
     return Container(
       padding: EdgeInsets.all(16.w),
@@ -160,73 +154,69 @@ class _QuoteRequestCardState extends State<QuoteRequestCard> {
             ),
           ),
           UIHelper.verticalSpace(14.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Expanded(
-                child: CustomButton(
-                  label: 'View',
-                  onPressed: widget.onView,
-                  color: AppColors.cCCCCCC.withValues(alpha: 0.22),
-                  textStyle: TextStyle(
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.contractor_primary,
+          if (isNew) ...[
+            UIHelper.verticalSpace(14.h),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomButton(
+                    label: 'View',
+                    onPressed: widget.onView,
+                    color: AppColors.cCCCCCC.withValues(alpha: 0.22),
+                    textStyle: TextStyle(
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.contractor_primary,
+                    ),
+                    borderRadius: 14.r,
+                    padding: EdgeInsets.zero,
+                    leading: Icon(
+                      Icons.visibility_outlined,
+                      color: AppColors.contractor_primary,
+                      size: 18.sp,
+                    ),
                   ),
+                ),
+                UIHelper.horizontalSpace(10.w),
+                Expanded(
+                  child: CustomButton(
+                    label: 'Accept',
+                    onPressed: widget.onAccept,
+                    isOutlined: false,
+                    color: AppColors.c3FAD46,
+                    borderColor: AppColors.contractor_primary,
+                    textStyle: TextStyle(
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.scaffoldColor,
+                    ),
+                    borderRadius: 14.r,
+                    padding: EdgeInsets.zero,
+                    leading: Icon(
+                      Icons.check_rounded,
+                      color: AppColors.scaffoldColor,
+                      size: 18.sp,
+                    ),
+                  ),
+                ),
+                UIHelper.horizontalSpace(10.w),
+                CustomButton(
+                  width: 45.w,
+                  label: '',
+                  gap: false,
+                  onPressed: widget.onReject,
+                  color: AppColors.allPrimaryColor.withValues(alpha: 0.12),
                   borderRadius: 14.r,
                   padding: EdgeInsets.zero,
                   leading: Icon(
-                    Icons.visibility_outlined,
-                    color: AppColors.contractor_primary,
-                    size: 18.sp,
+                    Icons.close_rounded,
+                    color: AppColors.allPrimaryColor,
+                    size: 25.sp,
                   ),
                 ),
-              ),
-              UIHelper.horizontalSpace(10.w),
-              Expanded(
-                child: CustomButton(
-                  label: 'Accept',
-                  onPressed: widget.onAccept,
-                  isOutlined: false,
-                  color: AppColors.c3FAD46,
-                  borderColor: AppColors.contractor_primary,
-                  textStyle: TextStyle(
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.scaffoldColor,
-                  ),
-                  borderRadius: 14.r,
-                  padding: EdgeInsets.zero,
-                  leading: Icon(
-                    Icons.check_rounded,
-                    color: AppColors.scaffoldColor,
-                    size: 18.sp,
-                  ),
-                ),
-                // _ActionButton(
-                //   label: 'Accept',
-                //   icon: Icons.check_rounded,
-                //   onTap: onAccept,
-                //   isPrimary: true,
-                // ),
-              ),
-              UIHelper.horizontalSpace(10.w),
-              CustomButton(
-                width: 45.w,
-                label: '',
-                gap: false,
-                onPressed: widget.onReject,
-                color: AppColors.allPrimaryColor.withValues(alpha: 0.12),
-                borderRadius: 14.r,
-                padding: EdgeInsets.zero,
-                leading: Icon(
-                  Icons.close_rounded,
-                  color: AppColors.allPrimaryColor,
-                  size: 25.sp,
-                ),
-              )
-            ],
-          ),
+              ],
+            ),
+          ],
         ],
       ),
     );

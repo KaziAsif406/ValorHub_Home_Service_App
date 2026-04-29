@@ -166,7 +166,7 @@ final class QuoteRequestStore {
         serviceCategory: 'Roof Inspection',
         projectDetails: 'Need a roof inspection after recent storm damage.',
         submittedAt: now.subtract(const Duration(days: 1, hours: 4)),
-        status: QuoteRequestStatus.completed,
+        status: QuoteRequestStatus.rejected,
       ),
     ];
   }
