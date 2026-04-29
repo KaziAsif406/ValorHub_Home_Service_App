@@ -115,7 +115,14 @@ class ContractorDashboardDrawer extends StatelessWidget {
                       onSectionSelected(ContractorDashboardSection.overview),
                 ),
                 _DrawerTile(
-                  icon: Icons.inbox_outlined,
+                  icon: Icons.format_quote_outlined,
+                  label: 'Quotes Requests',
+                  selected:
+                      selectedSection == ContractorDashboardSection.requests,
+                  onTap: () => onSectionSelected(ContractorDashboardSection.requests),
+                ),
+                _DrawerTile(
+                  icon: Icons.chat_outlined,
                   label: 'Inbox',
                   selected: selectedSection == ContractorDashboardSection.inbox,
                   onTap: () =>
@@ -156,7 +163,6 @@ class ContractorDashboardDrawer extends StatelessWidget {
                   ),
                   leading: const Icon(Icons.logout_rounded, color: AppColors.scaffoldColor),
                   isOutlined: true,
-                  enabled: false,
                   borderColor: AppColors.scaffoldColor.withValues(alpha: 0.00),
                 )
                 // OutlinedButton.icon(
