@@ -21,9 +21,9 @@ class _AllRequestsScreenState extends State<AllRequestsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.scaffoldColor,
-      body: SafeArea(
+    return Padding(
+      padding: EdgeInsets.only(top: 10.h),
+      child: SafeArea(
         child: StreamBuilder<List<QuoteRequestModel>>(
           stream: QuoteRequestStore.instance.requestsStream,
           initialData: QuoteRequestStore.instance.requests,
@@ -43,15 +43,15 @@ class _AllRequestsScreenState extends State<AllRequestsScreen> {
                   Padding(
                     padding: EdgeInsets.fromLTRB(14.w, 18.h, 14.w, 0),
                     child: Text(
-                      'Quick Filters',
+                      'Quote Requests',
                       style: TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: 22.sp,
                         fontWeight: FontWeight.w500,
                         color: AppColors.c14181F,
                       ),
                     ),
                   ),
-                  UIHelper.verticalSpace(12.h),
+                  UIHelper.verticalSpace(18.h),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(

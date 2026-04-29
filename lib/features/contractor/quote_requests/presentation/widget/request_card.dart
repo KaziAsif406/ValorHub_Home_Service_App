@@ -201,7 +201,7 @@ class _QuoteRequestCardState extends State<QuoteRequestCard> {
                 ),
                 UIHelper.horizontalSpace(10.w),
                 CustomButton(
-                  width: 45.w,
+                  width: 40.w,
                   label: '',
                   gap: false,
                   onPressed: widget.onReject,
