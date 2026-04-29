@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:template_flutter/features/contractor/quote_requests/presentation/all_requessts.dart';
 // import 'package:template_flutter/common_widgets/custom_button.dart';
 // import 'package:template_flutter/constants/text_font_style.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
@@ -15,7 +16,7 @@ import '../../profile/presentation/dashboard_profile_screen.dart';
 import '../../reviews/presentation/dashboard_reviews_screen.dart';
 import '../../services/presentation/dashboard_services_screen.dart';
 
-enum ContractorDashboardSection { overview, inbox, services, profile, reviews }
+enum ContractorDashboardSection { overview, inbox, requests, services, profile, reviews }
 
 class ContractorDashboardScreen extends StatefulWidget {
   const ContractorDashboardScreen({
@@ -103,6 +104,10 @@ class _ContractorDashboardScreenState extends State<ContractorDashboardScreen> {
       case ContractorDashboardSection.inbox:
         return DashboardInboxSection(
           key: const ValueKey<String>('inbox'),
+        );
+      case ContractorDashboardSection.requests:
+        return AllRequestsScreen(
+          key: const ValueKey<String>('requests'),
         );
       case ContractorDashboardSection.services:
         return DashboardServicesSection(
