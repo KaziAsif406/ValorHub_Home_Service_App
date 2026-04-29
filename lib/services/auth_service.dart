@@ -93,6 +93,36 @@ class AuthService {
     return normalizedUserType;
   }
 
+  Future<void> saveContractorBasicInfo({
+    required String userId,
+    required String name,
+    required String email,
+    required String serviceCategory,
+    required int experienceYears,
+    required String city,
+    required String state,
+    required String zipCode,
+    required String mobileNumber,
+  }) async {
+    await _firestore.collection(kFirestoreUsersCollection).doc(userId).set(
+      {
+        'displayName': name.trim(),
+        kEmail: email.trim().toLowerCase(),
+        kKeyUserType: kUserTypeContractor,
+        kKeyServiceCategory: serviceCategory.trim(),
+        kKeyExperienceYears: experienceYears,
+        kKeyCity: city.trim(),
+        kKeyState: state.trim(),
+        kKeyZipCode: zipCode.trim(),
+        kKeyMobileNumber: mobileNumber.trim(),
+        kKeyProfileCompleted: true,
+        kKeyProfileCompletedAt: FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      },
+      SetOptions(merge: true),
+    );
+  }
+
   // ── SIGN OUT ─────────────────────────────────────────
   Future<void> signOut() async => _auth.signOut();
 
