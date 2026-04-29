@@ -23,6 +23,31 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final _auth = AuthService();
   bool _isLoading = false;
+  bool _didShowRouteMessage = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_didShowRouteMessage) {
+      return;
+    }
+
+    final Object? arguments = ModalRoute.of(context)?.settings.arguments;
+    final String? message = arguments is Map<String, dynamic>
+        ? arguments['message'] as String?
+        : null;
+
+    if (message != null && message.trim().isNotEmpty) {
+      _didShowRouteMessage = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) {
+          return;
+        }
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(message)));
+      });
+    }
+  }
 
   Future<void> _signIn() async {
     setState(() => _isLoading = true);

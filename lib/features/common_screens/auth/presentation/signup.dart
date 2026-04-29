@@ -40,12 +40,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
         userType: _isCustomer ? 'customer' : 'contractor',
       );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Account created! Check your email to verify.'),
-          ),
-        );
-        NavigationService.navigateTo(Routes.loginScreen);
+        if (_isCustomer) {
+          NavigationService.navigateToReplacementWithArgs(
+            Routes.loginScreen,
+            <String, dynamic>{
+              'message': 'Account created! Check your email to verify.',
+            },
+          );
+        } else {
+          NavigationService.navigateToReplacementWithArgs(
+            Routes.basicInfoScreen,
+            <String, dynamic>{
+              'name': _nameController.text.trim(),
+              'email': _emailController.text.trim(),
+            },
+          );
+        }
       }
     } catch (e) {
       ScaffoldMessenger.of(context)
