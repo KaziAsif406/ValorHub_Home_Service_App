@@ -36,7 +36,6 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
     _selectedRating = 'Any Rating';
   }
 
-  @override
   List<contractorData> _applyFilters(List<contractorData> contractors) {
     if (widget.filterCategory != null && widget.filterCategory!.isNotEmpty) {
       contractors = contractors
