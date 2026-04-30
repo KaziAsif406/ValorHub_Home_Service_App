@@ -162,7 +162,7 @@ class ContractorDashboardDrawer extends StatelessWidget {
                     color: AppColors.scaffoldColor,
                   ),
                   leading: const Icon(Icons.logout_rounded, color: AppColors.scaffoldColor),
-                  isOutlined: true,
+                  isOutlined: false,
                   borderColor: AppColors.scaffoldColor.withValues(alpha: 0.00),
                 )
                 // OutlinedButton.icon(
