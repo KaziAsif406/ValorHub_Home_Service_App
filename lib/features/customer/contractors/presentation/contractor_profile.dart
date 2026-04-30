@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/common_widgets/custom_button.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
-import 'package:template_flutter/features/customer/contractors/presentation/widgets/contractor_info.dart';
+import 'package:template_flutter/features/customer/contractors/data/contractor_model.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/widgets/service_offered_tiles.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/widgets/project_galary.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/widgets/customer_reviews.dart';
