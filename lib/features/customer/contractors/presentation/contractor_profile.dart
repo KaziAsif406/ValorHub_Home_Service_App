@@ -176,14 +176,14 @@ class _ContractorProfileState extends State<ContractorProfile> {
                   // Action Buttons
                   CustomButton(
                     height: 34.h,
-                    label: 'Call Now',
+                    label: 'Chat Now',
                     onPressed: () {
-                      // Handle call action
+                      // Handle chat action
                     },
-                    leading: Image.asset(
-                      'assets/icons/call_red.png',
-                      width: 20.w,
-                      height: 16.h,
+                    leading: Icon(
+                      Icons.chat_bubble_outline,
+                      size: 20.w,
+                      color: AppColors.allPrimaryColor,
                     ),
                     textStyle: TextFontStyle.textStyle12cBE1E2DInter600,
                     borderRadius: 12.r,
