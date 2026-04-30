@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/common_widgets/custom_button.dart';
 import 'package:template_flutter/common_widgets/custom_textform_field.dart';
+import 'package:template_flutter/constants/app_constants.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/widgets/contractor_filter_bottom_sheet.dart';
-import 'package:template_flutter/features/customer/contractors/presentation/widgets/contractor_info.dart';
+import 'package:template_flutter/features/customer/contractors/data/contractor_model.dart';
+import 'package:template_flutter/features/customer/contractors/data/contractor_mapper.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
@@ -152,8 +154,8 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
         child: SafeArea(
           child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
             stream: FirebaseFirestore.instance
-                .collection('users')
-                .where('user_type', isEqualTo: 'contractor')
+                .collection(kFirestoreUsersCollection)
+                .where(kKeyUserType, isEqualTo: kUserTypeContractor)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
@@ -173,29 +175,8 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
               final docs = snapshot.data?.docs ?? <QueryDocumentSnapshot<Map<String, dynamic>>>[];
               final contractors = _applyFilters(
                 docs
-                    .map((doc) => doc.data())
-                    .where((data) => data['profile_completed'] == true)
-                    .map((data) {
-                      final String name = (data['displayName'] as String?) ?? (data['email'] as String?) ?? 'Contractor';
-                      final String service = (data['service_category'] as String?) ?? 'General';
-                      final int experience = (data['experience_years'] is int)
-                          ? data['experience_years'] as int
-                          : int.tryParse(data['experience_years']?.toString() ?? '0') ?? 0;
-                      final String city = (data['city'] as String?) ?? '';
-                      final String state = (data['state'] as String?) ?? '';
-                      final String zip = (data['zip_code'] as String?) ?? '';
-                      final String location = [if (city.isNotEmpty) city, if (state.isNotEmpty) state].join(', ');
-
-                      return contractorData(
-                        name: name,
-                        service: service,
-                        rating: 0,
-                        reviews: 0,
-                        location: location.isNotEmpty ? location : zip,
-                        experience: experience,
-                        description: (data['mobile_number'] as String?) ?? '',
-                      );
-                    })
+                    .map((doc) => mapDocToContractor(doc))
+                    .whereType<contractorData>()
                     .toList(),
               );
 

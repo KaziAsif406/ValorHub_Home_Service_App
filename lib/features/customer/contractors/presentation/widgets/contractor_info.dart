@@ -8,7 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:template_flutter/constants/app_constants.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
-
+import 'package:template_flutter/features/customer/contractors/data/contractor_model.dart';
+import 'package:template_flutter/features/customer/contractors/data/contractor_mapper.dart';
 
 class ContractorProfileScreen extends StatelessWidget {
   const ContractorProfileScreen({super.key});
@@ -20,36 +21,12 @@ class ContractorProfileScreen extends StatelessWidget {
         .where(kKeyUserType, isEqualTo: kUserTypeContractor)
         .snapshots()
         .map((QuerySnapshot snap) {
-      return snap.docs.map((DocumentSnapshot doc) {
-        final Map<String, dynamic> data = doc.data() as Map<String, dynamic>? ?? {};
-        final String name = (data['displayName'] as String?) ?? (data[kEmail] as String?) ?? 'Contractor';
-        final String service = (data[kKeyServiceCategory] as String?) ?? 'General';
-        final int experience = (data[kKeyExperienceYears] is int)
-            ? data[kKeyExperienceYears] as int
-            : int.tryParse((data[kKeyExperienceYears]?.toString() ?? '0')) ?? 0;
-        final String city = (data[kKeyCity] as String?) ?? '';
-        final String state = (data[kKeyState] as String?) ?? '';
-        final String location = [if (city.isNotEmpty) city, if (state.isNotEmpty) state].join(', ');
-        final double rating = (data['rating'] is num) ? (data['rating'] as num).toDouble() : 0.0;
-        final int reviews = (data['reviews'] is int) ? data['reviews'] as int : 0;
-        final String description = (data['bio'] as String?) ?? (data['about'] as String?) ?? '';
-
-        return contractorData(
-          name: name,
-          service: service,
-          rating: rating,
-          reviews: reviews,
-          location: location.isNotEmpty ? location : (data[kKeyZipCode] as String?) ?? '',
-          experience: experience,
-          description: description,
-        );
-      }).toList();
+      return snap.docs.map((doc) => mapDocToContractor(doc)).whereType<contractorData>().toList();
     });
   }
 
   // Compatibility getter for existing synchronous consumers.
   static List<contractorData> get contractors => <contractorData>[];
-
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +61,6 @@ class ContractorProfileScreen extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildContractorCard(contractorData contractor) {
     return Container(
@@ -229,7 +205,7 @@ class ContractorProfileScreen extends StatelessWidget {
                     color: AppColors.scaffoldColor,
                     isOutlined: true,
                   ),
-          
+
                 ),
               ),
               UIHelper.horizontalSpace(8.w),
@@ -252,27 +228,5 @@ class ContractorProfileScreen extends StatelessWidget {
       ),
     );
   }
-  
-}
 
-
-// ignore: camel_case_types
-class contractorData {
-  const contractorData({
-    required this.name,
-    required this.service,
-    required this.rating,
-    required this.reviews,
-    required this.location,
-    required this.experience,
-    required this.description,
-  });
-
-  final String name;
-  final String service;
-  final double rating;
-  final int reviews;
-  final String location;
-  final int experience;
-  final String description;
 }
