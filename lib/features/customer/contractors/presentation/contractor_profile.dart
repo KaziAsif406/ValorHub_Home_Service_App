@@ -351,7 +351,7 @@ class _ContractorProfileState extends State<ContractorProfile> {
               ),
               UIHelper.horizontalSpace(6.w),
               Text(
-                '(555) 123-4567',
+                widget.contractor.phone,
                 style: TextFontStyle.textStyle13c64748BInter400,
               ),
               UIHelper.horizontalSpace(16.w),
@@ -362,7 +362,7 @@ class _ContractorProfileState extends State<ContractorProfile> {
               ),
               UIHelper.horizontalSpace(6.w),
               Text(
-                'john@email.com',
+                widget.contractor.mail,
                 style: TextFontStyle.textStyle13c64748BInter400,
               ),
             ],
