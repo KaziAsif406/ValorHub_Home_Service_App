@@ -57,6 +57,7 @@ const String kKeyCity = 'city';
 const String kKeyState = 'state';
 const String kKeyZipCode = 'zip_code';
 const String kKeyMobileNumber = 'mobile_number';
+const String kKeyDescription = 'description';
 const String kKeyProfileCompleted = 'profile_completed';
 const String kKeyProfileCompletedAt = 'profile_completed_at';
 

@@ -18,6 +18,7 @@ contractorData? mapDocToContractor(DocumentSnapshot doc) {
   final String zip = (data[kKeyZipCode] as String?) ?? '';
   final String location = [if (city.isNotEmpty) city, if (state.isNotEmpty) state].join(', ');
   final String phone = (data[kKeyMobileNumber] as String?) ?? '';
+  final String description = (data[kKeyDescription] as String?) ?? '';
 
   return contractorData(
     name: name,
@@ -26,7 +27,7 @@ contractorData? mapDocToContractor(DocumentSnapshot doc) {
     reviews: (data['reviews'] is int) ? data['reviews'] as int : 0,
     location: location.isNotEmpty ? location : zip,
     experience: experience,
-    description: (data[kKeyMobileNumber] as String?) ?? (data['bio'] as String?) ?? '',
+    description: description,
     phone: phone,
   );
 }

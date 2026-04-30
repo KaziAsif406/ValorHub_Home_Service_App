@@ -231,9 +231,43 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    contractor.name,
-                                    style: TextFontStyle.textStyle14c14181FInter600,
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          contractor.name,
+                                          style: TextFontStyle.textStyle14c14181FInter600,
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 10.w,
+                                          vertical: 6.h,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.scaffoldColor.withValues(alpha: 0),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Image.asset(
+                                              'assets/icons/gold_star.png',
+                                              width: 14.w,
+                                              height: 14.h,
+                                            ),
+                                            UIHelper.horizontalSpace(2.w),
+                                            Text(
+                                              contractor.rating.toStringAsFixed(1),
+                                              style: TextFontStyle.textStyle12c14181FInter600,
+                                            ),
+                                            Text(
+                                              ' (${contractor.reviews})',
+                                              style: TextFontStyle.textStyle12c6A7181Inter400,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   UIHelper.verticalSpace(6.h),
                                   Container(
@@ -250,20 +284,34 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
                                     ),
                                   ),
                                   UIHelper.verticalSpace(7.h),
-                                  Text(
-                                    contractor.location,
-                                    style: TextFontStyle.textStyle12c6A7181Inter400,
-                                  ),
-                                  UIHelper.verticalSpace(4.h),
-                                  Text(
-                                    '${contractor.experience} years',
-                                    style: TextFontStyle.textStyle12c6A7181Inter400,
+                                  Row(
+                                    children: [
+                                      Image.asset(
+                                        'assets/icons/location_pin.png',
+                                        width: 12.w,
+                                        height: 12.h,
+                                      ),
+                                      UIHelper.horizontalSpace(4.w),
+                                      Text(
+                                        contractor.location,
+                                        style: TextFontStyle.textStyle12c6A7181Inter400,
+                                      ),
+                                      UIHelper.horizontalSpace(12.w),
+                                      Image.asset(
+                                        'assets/icons/clock.png',
+                                        width: 12.w,
+                                        height: 12.h,
+                                      ),
+                                      UIHelper.horizontalSpace(4.w),
+                                      Text(
+                                        '${contractor.experience} years',
+                                        style: TextFontStyle.textStyle12c6A7181Inter400,
+                                      ),
+                                    ],
                                   ),
                                   UIHelper.verticalSpace(5.h),
                                   Text(
-                                    contractor.description.isNotEmpty
-                                        ? contractor.description
-                                        : contractor.service,
+                                    contractor.description,
                                     style: TextFontStyle.textStyle12c6A7181Inter400.copyWith(height: 1.6),
                                   ),
                                 ],
@@ -275,21 +323,19 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
                         Row(
                           children: [
                             Expanded(
-                              child: SizedBox(
-                                height: 34.h,
-                                child: CustomButton(
-                                  label: 'View Profile',
-                                  onPressed: () {
-                                    NavigationService.navigateToWithObject(
-                                      Routes.contractorProfileScreen,
-                                      contractor,
-                                    );
-                                  },
-                                  textStyle: TextFontStyle.textStyle12cBE1E2DInter600,
-                                  borderRadius: 12.r,
-                                  color: AppColors.scaffoldColor,
-                                  isOutlined: true,
-                                ),
+                              child: CustomButton(
+                                label: 'View Profile',
+                                onPressed: () {
+                                  NavigationService.navigateToWithObject(
+                                    Routes.contractorProfileScreen,
+                                    contractor,
+                                  );
+                                },
+                                textStyle: TextFontStyle.textStyle12cBE1E2DInter600,
+                                borderRadius: 12.r,
+                                color: AppColors.scaffoldColor,
+                                isOutlined: true,
+                                height: 35.h,
                               ),
                             ),
                             UIHelper.horizontalSpace(8.w),
@@ -304,7 +350,7 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
                                 },
                                 textStyle: TextFontStyle.textStyle12cFFFFFFInter600,
                                 borderRadius: 12.r,
-                                height: 32.h,
+                                height: 35.h,
                               ),
                             ),
                           ],
