@@ -4,6 +4,8 @@ import 'package:template_flutter/common_widgets/custom_button.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:template_flutter/constants/app_constants.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 
@@ -11,66 +13,76 @@ import 'package:template_flutter/helpers/ui_helpers.dart';
 class ContractorProfileScreen extends StatelessWidget {
   const ContractorProfileScreen({super.key});
 
-  static final List<contractorData> contractors = [
-    contractorData(
-      name: 'Mike Johnson',
-      service: 'Plumbing',
-      rating: 4.9,
-      reviews: 142,
-      location: 'Dallas, TX',
-      experience: 12,
-      description:
-          'Licensed master plumber specializing in residential repairs and installations.',
-    ),
+  // Real-time contractor stream from Firestore
+  Stream<List<contractorData>> get contractorsStream {
+    return FirebaseFirestore.instance
+        .collection(kFirestoreUsersCollection)
+        .where(kKeyUserType, isEqualTo: kUserTypeContractor)
+        .snapshots()
+        .map((QuerySnapshot snap) {
+      return snap.docs.map((DocumentSnapshot doc) {
+        final Map<String, dynamic> data = doc.data() as Map<String, dynamic>? ?? {};
+        final String name = (data['displayName'] as String?) ?? (data[kEmail] as String?) ?? 'Contractor';
+        final String service = (data[kKeyServiceCategory] as String?) ?? 'General';
+        final int experience = (data[kKeyExperienceYears] is int)
+            ? data[kKeyExperienceYears] as int
+            : int.tryParse((data[kKeyExperienceYears]?.toString() ?? '0')) ?? 0;
+        final String city = (data[kKeyCity] as String?) ?? '';
+        final String state = (data[kKeyState] as String?) ?? '';
+        final String location = [if (city.isNotEmpty) city, if (state.isNotEmpty) state].join(', ');
+        final double rating = (data['rating'] is num) ? (data['rating'] as num).toDouble() : 0.0;
+        final int reviews = (data['reviews'] is int) ? data['reviews'] as int : 0;
+        final String description = (data['bio'] as String?) ?? (data['about'] as String?) ?? '';
 
-    contractorData(
-      name: 'Sarah Lee',
-      service: 'Electrical',
-      rating: 4.8,
-      reviews: 98,
-      location: 'Austin, TX',
-      experience: 10,
-      description:
-          'Certified electrician with expertise in home wiring and lighting solutions.',
-    ),
+        return contractorData(
+          name: name,
+          service: service,
+          rating: rating,
+          reviews: reviews,
+          location: location.isNotEmpty ? location : (data[kKeyZipCode] as String?) ?? '',
+          experience: experience,
+          description: description,
+        );
+      }).toList();
+    });
+  }
 
-    contractorData(
-      name: 'David Kim',
-      service: 'Roofing',
-      rating: 4.7,
-      reviews: 76,
-      location: 'Houston, TX',
-      experience: 15,
-      description:
-          'Experienced roofer providing quality repairs and installations for all roof types.',
-    ),
-
-    contractorData(
-      name: 'Maria Garcia',
-      service: 'Roofing',
-      rating: 4.7,
-      reviews: 76,
-      location: 'Houston, TX',
-      experience: 15,
-      description:
-          'Experienced roofer providing quality repairs and installations for all roof types.',
-    )
-  ];
+  // Compatibility getter for existing synchronous consumers.
+  static List<contractorData> get contractors => <contractorData>[];
 
 
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 380.w),
-            child: Column(
-              children: contractors.map(_buildContractorCard).toList(),
-            ),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 380.w),
+          child: StreamBuilder<List<contractorData>>(
+            stream: contractorsStream,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final List<contractorData> list = snapshot.data ?? <contractorData>[];
+              if (list.isEmpty) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 40.h),
+                  child: Text(
+                    'No contractors available yet.',
+                    style: TextFontStyle.textStyle14c64748BInter400,
+                    textAlign: TextAlign.center,
+                  ),
+                );
+              }
+              return Column(
+                children: list.map(_buildContractorCard).toList(),
+              );
+            },
           ),
         ),
-      );
+      ),
+    );
   }
 
 

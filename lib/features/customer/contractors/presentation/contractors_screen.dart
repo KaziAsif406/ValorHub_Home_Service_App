@@ -3,8 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/common_widgets/custom_button.dart';
 import 'package:template_flutter/common_widgets/custom_textform_field.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
-import 'package:template_flutter/features/customer/contractors/presentation/widgets/contractor_info.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/widgets/contractor_filter_bottom_sheet.dart';
+import 'package:template_flutter/features/customer/contractors/presentation/widgets/contractor_info.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
@@ -35,15 +36,14 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
     _selectedRating = 'Any Rating';
   }
 
-  List<contractorData> get _filteredContractors {
-    List<contractorData> contractors = ContractorProfileScreen.contractors;
-    
+  @override
+  List<contractorData> _applyFilters(List<contractorData> contractors) {
     if (widget.filterCategory != null && widget.filterCategory!.isNotEmpty) {
       contractors = contractors
           .where((c) => c.service.toLowerCase() == widget.filterCategory!.toLowerCase())
           .toList();
     }
-    
+
     return contractors;
   }
 
@@ -148,186 +148,193 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
         ),
       ),
       body: GestureDetector(
-        behavior: HitTestBehavior.opaque, // 👈 important
+        behavior: HitTestBehavior.opaque,
         onTap: () => FocusScope.of(context).unfocus(),
         child: SafeArea(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
-            child: Center(
-              child: SingleChildScrollView(
+          child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .where('user_type', isEqualTo: 'contractor')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                    'Unable to load contractors.',
+                    style: TextFontStyle.textStyle14c64748BInter400,
+                    textAlign: TextAlign.center,
+                  ),
+                );
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              final docs = snapshot.data?.docs ?? <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+              final contractors = _applyFilters(
+                docs
+                    .map((doc) => doc.data())
+                    .where((data) => data['profile_completed'] == true)
+                    .map((data) {
+                      final String name = (data['displayName'] as String?) ?? (data['email'] as String?) ?? 'Contractor';
+                      final String service = (data['service_category'] as String?) ?? 'General';
+                      final int experience = (data['experience_years'] is int)
+                          ? data['experience_years'] as int
+                          : int.tryParse(data['experience_years']?.toString() ?? '0') ?? 0;
+                      final String city = (data['city'] as String?) ?? '';
+                      final String state = (data['state'] as String?) ?? '';
+                      final String zip = (data['zip_code'] as String?) ?? '';
+                      final String location = [if (city.isNotEmpty) city, if (state.isNotEmpty) state].join(', ');
+
+                      return contractorData(
+                        name: name,
+                        service: service,
+                        rating: 0,
+                        reviews: 0,
+                        location: location.isNotEmpty ? location : zip,
+                        experience: experience,
+                        description: (data['mobile_number'] as String?) ?? '',
+                      );
+                    })
+                    .toList(),
+              );
+
+              if (contractors.isEmpty) {
+                return Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child: Text(
+                      'No contractors available yet.',
+                      style: TextFontStyle.textStyle14c64748BInter400,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }
+
+              return ListView.separated(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 380.w),
-                  child: Column(
-                    children: _filteredContractors.map((contractor) => 
-                      Container(
-                        margin: EdgeInsets.only(bottom: 12.h),
-                        padding: EdgeInsets.all(16.w),
-                        decoration: BoxDecoration(
-                          color: AppColors.scaffoldColor,
-                          borderRadius: BorderRadius.circular(12.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 20.r,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
+                itemCount: contractors.length,
+                separatorBuilder: (_, __) => SizedBox(height: 12.h),
+                itemBuilder: (context, index) {
+                  final contractor = contractors[index];
+                  return Container(
+                    padding: EdgeInsets.all(16.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.scaffoldColor,
+                      borderRadius: BorderRadius.circular(12.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 20.r,
+                          offset: const Offset(0, 10),
                         ),
-                        child: Column(
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 3.0),
-                                  child: Image.asset(
-                                    'assets/images/placeholder_image.jpeg',
-                                    width: 64.w,
-                                    height: 64.w,
-                                  ),
-                                ),
-                                UIHelper.horizontalSpace(16.w),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              contractor.name,
-                                              style: TextFontStyle.textStyle14c14181FInter600,
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: 10.w,
-                                              vertical: 6.h,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.scaffoldColor.withValues(alpha: 0),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Image.asset(
-                                                  'assets/icons/gold_star.png',
-                                                  width: 14.w,
-                                                  height: 14.h,
-                                                ),
-                                                UIHelper.horizontalSpace(2.w),
-                                                Text(
-                                                  contractor.rating.toStringAsFixed(1),
-                                                  style: TextFontStyle.textStyle12c14181FInter600,
-                                                ),
-                                                Text(
-                                                  ' (${contractor.reviews})',
-                                                  style: TextFontStyle.textStyle12c6A7181Inter400,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      UIHelper.verticalSpace(2.h),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 8.w,
-                                          vertical: 1.5.h,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.allPrimaryColor.withValues(alpha: 0.10),
-                                          borderRadius: BorderRadius.circular(12.r),
-                                        ),
-                                        child: Text(
-                                          contractor.service,
-                                          style: TextFontStyle.textStyle10cBE1E2DInter500.copyWith(
-                                            color: AppColors.allPrimaryColor,
-                                          ),
-                                        ),
-                                      ),
-                                      UIHelper.verticalSpace(7.h),
-                                      Row(
-                                        children: [
-                                          Image.asset(
-                                            'assets/icons/location_pin.png',
-                                            width: 12.w,
-                                            height: 12.h,
-                                          ),
-                                          UIHelper.horizontalSpace(4.w),
-                                          Text(
-                                            contractor.location,
-                                            style: TextFontStyle.textStyle12c6A7181Inter400,
-                                          ),
-                                          UIHelper.horizontalSpace(12.w),
-                                          Image.asset(
-                                            'assets/icons/clock.png',
-                                            width: 12.w,
-                                            height: 12.h,
-                                          ),
-                                          UIHelper.horizontalSpace(4.w),
-                                          Text(
-                                            '${contractor.experience} years',
-                                            style: TextFontStyle.textStyle12c6A7181Inter400,
-                                          ),
-                                        ],
-                                      ),
-                                      UIHelper.verticalSpace(5.h),
-                                      Text(
-                                        contractor.description,
-                                        style: TextFontStyle.textStyle12c6A7181Inter400.copyWith(height: 1.6),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                            Padding(
+                              padding: const EdgeInsets.only(top: 3.0),
+                              child: Image.asset(
+                                'assets/images/placeholder_image.jpeg',
+                                width: 64.w,
+                                height: 64.w,
+                              ),
                             ),
-                            UIHelper.verticalSpace(12.h),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: SizedBox(
-                                    height: 34.h,
-                                    child: CustomButton(
-                                      label: 'View Profile',
-                                      onPressed: () {
-                                        NavigationService.navigateToWithObject(
-                                          Routes.contractorProfileScreen,
-                                          contractor,);
-                                      },
-                                      textStyle: TextFontStyle.textStyle12cBE1E2DInter600,
-                                      borderRadius: 12.r,
-                                      color: AppColors.scaffoldColor,
-                                      isOutlined: true,
+                            UIHelper.horizontalSpace(16.w),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    contractor.name,
+                                    style: TextFontStyle.textStyle14c14181FInter600,
+                                  ),
+                                  UIHelper.verticalSpace(6.h),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.allPrimaryColor.withValues(alpha: 0.10),
+                                      borderRadius: BorderRadius.circular(12.r),
+                                    ),
+                                    child: Text(
+                                      contractor.service,
+                                      style: TextFontStyle.textStyle10cBE1E2DInter500.copyWith(
+                                        color: AppColors.allPrimaryColor,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                UIHelper.horizontalSpace(8.w),
-                                Expanded(
-                                  child: CustomButton(
-                                    label: 'Request Quote',
-                                    onPressed: () {
-                                      NavigationService.navigateToWithObject(
-                                        Routes.requestQuoteScreen,
-                                        contractor,);
-                                    },
-                                    textStyle: TextFontStyle.textStyle12cFFFFFFInter600,
-                                    borderRadius: 12.r,
-                                    height: 32.h,
-                                  )
-                                ),
-                              ],
+                                  UIHelper.verticalSpace(7.h),
+                                  Text(
+                                    contractor.location,
+                                    style: TextFontStyle.textStyle12c6A7181Inter400,
+                                  ),
+                                  UIHelper.verticalSpace(4.h),
+                                  Text(
+                                    '${contractor.experience} years',
+                                    style: TextFontStyle.textStyle12c6A7181Inter400,
+                                  ),
+                                  UIHelper.verticalSpace(5.h),
+                                  Text(
+                                    contractor.description.isNotEmpty
+                                        ? contractor.description
+                                        : contractor.service,
+                                    style: TextFontStyle.textStyle12c6A7181Inter400.copyWith(height: 1.6),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
-                      )
-                    ).toList(),
-                  ),
-                ),
-              ),
-            ),
+                        UIHelper.verticalSpace(12.h),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 34.h,
+                                child: CustomButton(
+                                  label: 'View Profile',
+                                  onPressed: () {
+                                    NavigationService.navigateToWithObject(
+                                      Routes.contractorProfileScreen,
+                                      contractor,
+                                    );
+                                  },
+                                  textStyle: TextFontStyle.textStyle12cBE1E2DInter600,
+                                  borderRadius: 12.r,
+                                  color: AppColors.scaffoldColor,
+                                  isOutlined: true,
+                                ),
+                              ),
+                            ),
+                            UIHelper.horizontalSpace(8.w),
+                            Expanded(
+                              child: CustomButton(
+                                label: 'Request Quote',
+                                onPressed: () {
+                                  NavigationService.navigateToWithObject(
+                                    Routes.requestQuoteScreen,
+                                    contractor,
+                                  );
+                                },
+                                textStyle: TextFontStyle.textStyle12cFFFFFFInter600,
+                                borderRadius: 12.r,
+                                height: 32.h,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
           ),
         ),
       ),

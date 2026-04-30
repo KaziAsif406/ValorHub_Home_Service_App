@@ -66,7 +66,7 @@ class AuthService {
         email: email.trim(),
         password: password,
       );
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException {
       throw 'No account found with this email.';
     }
   }
