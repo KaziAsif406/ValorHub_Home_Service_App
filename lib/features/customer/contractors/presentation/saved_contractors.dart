@@ -34,6 +34,7 @@ class SavedContractorsScreen extends StatelessWidget {
 			description:
 					'Licensed master plumber specializing in residential repairs and installations.',
 			phone: '+1 (555) 123-4567',
+			mail: 'mike.johnson@email.com',
 		),
 		contractorData(
 			name: 'Sarah Williams',
@@ -45,6 +46,7 @@ class SavedContractorsScreen extends StatelessWidget {
 			description:
 					'Certified HVAC specialist with expertise in diagnostics and efficient climate solutions.',
 			phone: '+1 (555) 987-6543',
+      mail: 'sarah.williams@email.com',
 		),
 		contractorData(
 			name: 'David Chen',
@@ -56,6 +58,7 @@ class SavedContractorsScreen extends StatelessWidget {
 			description:
 					'Licensed electrician focused on safe installations, repairs, and smart home upgrades.',
 			phone: '+1 (555) 456-7890',
+			mail: 'david.chen@email.com',
 		),
 	];
 
