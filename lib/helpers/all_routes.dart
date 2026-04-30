@@ -13,7 +13,7 @@ import 'package:template_flutter/features/contractor/contractor_info/presentatio
 import 'package:template_flutter/features/customer/contractors/presentation/contractor_profile.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/contractors_screen.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/saved_contractors.dart';
-import 'package:template_flutter/features/customer/contractors/presentation/widgets/contractor_info.dart';
+import 'package:template_flutter/features/customer/contractors/data/contractor_model.dart';
 import 'package:template_flutter/features/customer/location/presentation/find_location.dart';
 import 'package:template_flutter/features/customer/location/presentation/survey.dart';
 import 'package:template_flutter/features/customer/home/presentation/home.dart';
