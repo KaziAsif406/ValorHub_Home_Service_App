@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/features/customer/contractors/data/contractor_model.dart';
 // import 'package:template_flutter/gen/colors.gen.dart';
 // import 'package:template_flutter/helpers/ui_helpers.dart';
-import 'contractor_info.dart';
 
 class ProjectGallery extends StatelessWidget {
   final contractorData contractor;

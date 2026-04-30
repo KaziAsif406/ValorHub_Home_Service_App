@@ -4,8 +4,6 @@ import 'package:template_flutter/constants/text_font_style.dart';
 import 'package:template_flutter/features/customer/contractors/data/contractor_model.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 // import 'package:template_flutter/helpers/ui_helpers.dart';
-import 'contractor_info.dart';
-
 class ServiceOfferedTiles extends StatelessWidget {
   final contractorData contractor;
 
