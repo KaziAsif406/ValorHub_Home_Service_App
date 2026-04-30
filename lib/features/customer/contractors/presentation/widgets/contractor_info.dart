@@ -194,7 +194,7 @@ class ContractorProfileScreen extends StatelessWidget {
                 child: SizedBox(
                   height: 34.h,
                   child: CustomButton(
-                    label: 'View Profile',
+                    label: ' Profile',
                     onPressed: () {
                       NavigationService.navigateToWithObject(
                         Routes.contractorProfileScreen,
@@ -219,7 +219,7 @@ class ContractorProfileScreen extends StatelessWidget {
                   },
                   textStyle: TextFontStyle.textStyle12cFFFFFFInter600,
                   borderRadius: 12.r,
-                  height: 32.h,
+                  height: 35.h,
                 )
               ),
             ],
