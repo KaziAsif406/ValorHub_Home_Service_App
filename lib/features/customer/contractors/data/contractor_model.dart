@@ -8,6 +8,7 @@ class contractorData {
     required this.experience,
     required this.description,
     required this.phone,
+    required this.mail,
   });
 
   final String name;
@@ -18,4 +19,5 @@ class contractorData {
   final int experience;
   final String description;
   final String phone;
+  final String mail;
 }

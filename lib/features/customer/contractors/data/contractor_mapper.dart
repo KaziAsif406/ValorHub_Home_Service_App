@@ -9,6 +9,7 @@ contractorData? mapDocToContractor(DocumentSnapshot doc) {
   if (!isProfileCompleted) return null;
 
   final String name = (data['displayName'] as String?) ?? (data[kEmail] as String?) ?? 'Contractor';
+  final String mail = (data[kEmail] as String?) ?? '';
   final String service = (data[kKeyServiceCategory] as String?) ?? 'General';
   final int experience = (data[kKeyExperienceYears] is int)
       ? data[kKeyExperienceYears] as int
@@ -29,5 +30,6 @@ contractorData? mapDocToContractor(DocumentSnapshot doc) {
     experience: experience,
     description: description,
     phone: phone,
+    mail: mail,
   );
 }
