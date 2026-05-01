@@ -79,6 +79,9 @@ class _MetricsGrid extends StatelessWidget {
         value: '12',
         title: 'New Requests',
         subtitle: '+3 this week',
+        onTap: () {
+          // Handle tap if needed
+        },
       ),
       MetricData(
         icon: Icons.access_time_outlined,
@@ -86,6 +89,9 @@ class _MetricsGrid extends StatelessWidget {
         value: '28',
         title: 'Pending',
         subtitle: 'Awaiting reply',
+        onTap: () {
+          // Handle tap if needed
+        },
       ),
       MetricData(
         icon: Icons.check_circle_outline,
@@ -93,6 +99,9 @@ class _MetricsGrid extends StatelessWidget {
         value: '28',
         title: 'Completed Jobs',
         subtitle: '+5 this month',
+        onTap: () {
+          // Handle tap if needed
+        },
       ),
       MetricData(
         icon: Icons.star_outline,
@@ -100,6 +109,9 @@ class _MetricsGrid extends StatelessWidget {
         value: '4.9',
         title: 'Overall Review',
         subtitle: 'From 127 reviews',
+        onTap: () {
+          // Handle tap if needed
+        },
       ),
     ];
 

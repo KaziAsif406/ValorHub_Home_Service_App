@@ -21,6 +21,7 @@ class DashboardReviewsSection extends StatelessWidget {
     return SingleChildScrollView(
       padding: EdgeInsets.all(16.w),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
