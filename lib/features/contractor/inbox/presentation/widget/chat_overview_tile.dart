@@ -40,7 +40,7 @@ class ContractorChatOverviewTile extends StatelessWidget {
 					padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
 					decoration: BoxDecoration(
 						color: isSelected
-								? AppColors.contractor_secondary.withValues(alpha: 0.10)
+								? AppColors.contractor_primary.withValues(alpha: 0.12)
 								: Colors.transparent,
 					),
 					child: Row(
@@ -54,15 +54,17 @@ class ContractorChatOverviewTile extends StatelessWidget {
 										height: 44.h,
 										alignment: Alignment.center,
 										decoration: BoxDecoration(
-											color: const Color(0xFFE6E7ED),
+											color: isSelected
+                          ? AppColors.contractor_primary.withValues(alpha: 0.1)
+                          : AppColors.contractor_primary.withValues(alpha: 0.2),
 											shape: BoxShape.circle,
 										),
 										child: Text(
 											initials,
 											style: TextFontStyle.textStyle12cBE1E2DInter500.copyWith(
-                        fontSize: 14.sp,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.contractor_primary,
+                        color: AppColors.c262262
                       ),
 										),
 									),
@@ -144,7 +146,9 @@ class ContractorChatOverviewTile extends StatelessWidget {
 											lastMessage,
 											maxLines: 2,
 											overflow: TextOverflow.ellipsis,
-											style: TextFontStyle.textStyle12c6A7181Inter400,
+											style: TextFontStyle.textStyle12c6A7181Inter400.copyWith(
+                        color: AppColors.c6A7181
+                      ),
 										),
 									],
 								),

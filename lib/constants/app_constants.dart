@@ -47,19 +47,6 @@ const String kKeyFirstName = 'first_name';
 const String kKeyLastName = 'lst_name';
 const String kKeyDeviceID = 'device_id';
 const String kKeyUserID = 'user_id';
-const String kKeyUserType = 'user_type';
-const String kFirestoreUsersCollection = 'users';
-const String kUserTypeCustomer = 'customer';
-const String kUserTypeContractor = 'contractor';
-const String kKeyServiceCategory = 'service_category';
-const String kKeyExperienceYears = 'experience_years';
-const String kKeyCity = 'city';
-const String kKeyState = 'state';
-const String kKeyZipCode = 'zip_code';
-const String kKeyMobileNumber = 'mobile_number';
-const String kKeyDescription = 'description';
-const String kKeyProfileCompleted = 'profile_completed';
-const String kKeyProfileCompletedAt = 'profile_completed_at';
 
 const String kKeyIsExploring = 'exploring';
 //kKeyFCMToken

@@ -14,15 +14,6 @@ final class NavigationService {
   static Future<dynamic> navigateToReplacement(String routeName) =>
       navigatorKey.currentState!.pushReplacementNamed(routeName);
 
-  static Future<dynamic> navigateToReplacementWithArgs(
-    String routeName,
-    Map<String, dynamic>? map,
-  ) =>
-      navigatorKey.currentState!.pushReplacementNamed(
-        routeName,
-        arguments: map,
-      );
-
   static Future<dynamic> popAndReplace(String routeName) async {
     return await navigatorKey.currentState!.popAndPushNamed(routeName);
   }

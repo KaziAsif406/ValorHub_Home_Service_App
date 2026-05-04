@@ -13,6 +13,7 @@ final class QuoteRequestModel {
     required this.projectDetails,
     required this.submittedAt,
     required this.status,
+    required this.budget,
     this.contractorName,
     this.imagePaths = const <String>[],
   });
@@ -28,6 +29,7 @@ final class QuoteRequestModel {
   final QuoteRequestStatus status;
   final String? contractorName;
   final List<String> imagePaths;
+  final String budget;
 
   QuoteRequestModel copyWith({
     QuoteRequestStatus? status,
@@ -44,6 +46,7 @@ final class QuoteRequestModel {
       status: status ?? this.status,
       contractorName: contractorName,
       imagePaths: imagePaths,
+      budget: budget,
     );
   }
 }
@@ -70,6 +73,7 @@ final class QuoteRequestStore {
     required String projectDetails,
     String? contractorName,
     List<String> imagePaths = const <String>[],
+    required String budget,
   }) {
     final QuoteRequestModel newRequest = QuoteRequestModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -85,6 +89,7 @@ final class QuoteRequestStore {
       imagePaths: List<String>.from(imagePaths),
       submittedAt: DateTime.now(),
       status: QuoteRequestStatus.pending,
+      budget: budget,
     );
 
     final List<QuoteRequestModel> updated = <QuoteRequestModel>[
@@ -123,6 +128,7 @@ final class QuoteRequestStore {
         projectDetails: 'Full master bathroom renovation incl. tile + vanity.',
         submittedAt: now.subtract(const Duration(minutes: 45)),
         status: QuoteRequestStatus.pending,
+        budget: '\$15,000 - \$20,000',
       ),
       QuoteRequestModel(
         id: 'rq-3041',
@@ -134,6 +140,7 @@ final class QuoteRequestStore {
         projectDetails: 'Replace kitchen sink + dishwasher hookup.',
         submittedAt: now.subtract(const Duration(hours: 2)),
         status: QuoteRequestStatus.pending,
+        budget: '\$1,000 - \$2,000',
       ),
       QuoteRequestModel(
         id: 'rq-3038',
@@ -145,6 +152,7 @@ final class QuoteRequestStore {
         projectDetails: 'Build a 12\'x16\' cedar deck in backyard.',
         submittedAt: now.subtract(const Duration(days: 1)),
         status: QuoteRequestStatus.accepted,
+        budget: '\$5,000 - \$10,000',
       ),
       QuoteRequestModel(
         id: 'rq-3037',
@@ -156,6 +164,7 @@ final class QuoteRequestStore {
         projectDetails: 'Circuit breaker trips when the oven is used.',
         submittedAt: now.subtract(const Duration(days: 1, hours: 1)),
         status: QuoteRequestStatus.rejected,
+        budget: '\$1,000 - \$2,000',
       ),
       QuoteRequestModel(
         id: 'rq-3036',
@@ -167,6 +176,7 @@ final class QuoteRequestStore {
         projectDetails: 'Need a roof inspection after recent storm damage.',
         submittedAt: now.subtract(const Duration(days: 1, hours: 4)),
         status: QuoteRequestStatus.rejected,
+        budget: '\$2,000 - \$5,000',
       ),
     ];
   }

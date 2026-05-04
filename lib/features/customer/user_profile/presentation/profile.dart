@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:io';
 import 'package:template_flutter/helpers/all_routes.dart';
-import 'package:template_flutter/helpers/app_preferences.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/features/customer/user_profile/presentation/widgets/analytics_card.dart';
-import 'package:template_flutter/services/auth_service.dart';
 import '../../../../constants/text_font_style.dart';
 import '../../../../gen/colors.gen.dart';
 import '../../../../helpers/ui_helpers.dart';
-import 'widgets/profile_action_row.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({
@@ -28,57 +25,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final AuthService _authService = AuthService();
-  final TextEditingController _deletePasswordController =
-      TextEditingController();
-  late String _displayName;
-  late String _displayEmail;
-  String? _storedImagePath;
-
-  @override
-  void initState() {
-    super.initState();
-    _displayName = widget.name;
-    _displayEmail = widget.email;
-    _loadStoredImagePath();
-  }
-
-  @override
-  void didUpdateWidget(covariant ProfileScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.name != widget.name) {
-      _displayName = widget.name;
-    }
-    if (oldWidget.email != widget.email) {
-      _displayEmail = widget.email;
-    }
-    if (oldWidget.imagePath != widget.imagePath) {
-      _storedImagePath = widget.imagePath;
-    }
-  }
-
-  Future<void> _loadStoredImagePath() async {
-    final String? storedImagePath = await AppPrefs.getProfileImagePath();
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      _storedImagePath = storedImagePath;
-    });
-  }
-
-  @override
-  void dispose() {
-    _deletePasswordController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final String? resolvedImagePath = widget.imagePath ?? _storedImagePath;
-    final ImageProvider<Object>? profileImage =
-        _buildProfileImage(resolvedImagePath);
+    final Widget profileImage = _buildProfileImage();
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
@@ -99,10 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 child: Padding(
                   padding: EdgeInsets.all(1.w),
-                  child: CircleAvatar(
-                    radius: 50.r,
-                    backgroundImage: profileImage,
-                  ),
+                  child: ClipOval(child: profileImage),
                 ),
               ),
               UIHelper.verticalSpace(16.h),
@@ -110,34 +56,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    _displayName,
+                    widget.name,
                     style: TextFontStyle.textStyle24c0A0A0AInter700,
                   ),
                   UIHelper.horizontalSpace(8.w),
                   GestureDetector(
-                    onTap: () async {
-                      final dynamic result =
-                          await NavigationService.navigateToWithArgs(
+                    onTap: () {
+                      NavigationService.navigateToWithArgs(
                         Routes.editProfileScreen,
                         {
-                          'name': _displayName,
-                          'email': _displayEmail,
-                          'imagePath': resolvedImagePath,
+                          'name': widget.name,
+                          'email': widget.email,
+                          'imagePath': widget.imagePath,
                         },
                       );
-
-                      if (!mounted || result is! Map) {
-                        return;
-                      }
-
-                      setState(() {
-                        _displayName =
-                            (result['name'] as String?) ?? _displayName;
-                        _displayEmail =
-                            (result['email'] as String?) ?? _displayEmail;
-                        _storedImagePath =
-                            result['imagePath'] as String? ?? _storedImagePath;
-                      });
                     },
                     child: Image.asset(
                       'assets/icons/edit.png',
@@ -149,7 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               UIHelper.verticalSpace(10.h),
               Text(
-                _displayEmail,
+                widget.email,
                 style: TextFontStyle.textStyle14c6A7181Inter400,
               ),
               UIHelper.verticalSpace(24.h),
@@ -180,7 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               UIHelper.verticalSpace(18.h),
               _ProfileActionCard(
                 children: [
-                  ProfileActionRow(
+                  _ProfileActionRow(
                     title: 'Change Password',
                     textColor: AppColors.c6B7280,
                     iconColor: AppColors.c6B7280,
@@ -190,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                   ),
                   UIHelper.verticalSpace(10.h),
-                  ProfileActionRow(
+                  _ProfileActionRow(
                     title: 'Contact Us',
                     textColor: AppColors.c6B7280,
                     iconColor: AppColors.c6B7280,
@@ -200,28 +132,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                   ),
                   UIHelper.verticalSpace(10.h),
-                  ProfileActionRow(
+                  _ProfileActionRow(
                     title: 'My Requests',
                     textColor: AppColors.c6B7280,
                     iconColor: AppColors.c6B7280,
                     imagePath: 'assets/icons/quote.png',
                     onTap: () {
-                      NavigationService.navigateTo(Routes.myRequestsScreen);
+                      NavigationService.navigateTo(Routes.contactUsScreen);
                     },
                   ),
                   UIHelper.verticalSpace(10.h),
-                  ProfileActionRow(
+                  _ProfileActionRow(
                     title: 'Saved Contractors',
                     textColor: AppColors.c6B7280,
                     iconColor: AppColors.c6B7280,
                     imagePath: 'assets/icons/heart.png',
                     onTap: () {
-                      NavigationService.navigateTo(
-                          Routes.savedContractorsScreen);
+                      NavigationService.navigateTo(Routes.savedContractorsScreen);
                     },
                   ),
                   UIHelper.verticalSpace(10.h),
-                  ProfileActionRow(
+                  _ProfileActionRow(
                     title: 'FAQ',
                     textColor: AppColors.c6B7280,
                     iconColor: AppColors.c6B7280,
@@ -235,20 +166,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
               UIHelper.verticalSpace(14.h),
               _ProfileActionCard(
                 children: [
-                  ProfileActionRow(
+                  _ProfileActionRow(
                     title: 'Delete Account',
                     imagePath: 'assets/icons/delete.png',
                     iconColor: AppColors.allPrimaryColor,
                     textColor: AppColors.allPrimaryColor,
-                    onTap: _showDeleteAccountDialog,
+                    onTap: () {
+                      NavigationService.navigateToReplacement(Routes.signUpScreen);
+                    },
                   ),
                   UIHelper.verticalSpace(10.h),
-                  ProfileActionRow(
+                  _ProfileActionRow(
                     title: 'Log Out',
                     imagePath: 'assets/icons/logout.png',
                     iconColor: AppColors.allPrimaryColor,
                     textColor: AppColors.allPrimaryColor,
-                    onTap: _showLogoutDialog,
+                    onTap: () {
+                      NavigationService.navigateToReplacement(Routes.loginScreen);
+                    },
                   ),
                 ],
               ),
@@ -259,182 +194,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Future<void> _showDeleteAccountDialog() async {
-    final BuildContext screenContext = context;
+  Widget _buildProfileImage() {
+    final String? imagePath = widget.imagePath;
 
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) {
-        bool isLoading = false;
-
-        return StatefulBuilder(
-          builder: (context, setState) {
-            Future<void> deleteAccount() async {
-              if (_deletePasswordController.text.trim().isEmpty) {
-                ScaffoldMessenger.of(screenContext).showSnackBar(
-                  const SnackBar(
-                    content: Text('Enter your password to delete the account.'),
-                  ),
-                );
-                return;
-              }
-
-              setState(() => isLoading = true);
-              try {
-                await _authService.deleteAccount(
-                  password: _deletePasswordController.text.trim(),
-                );
-                await AppPrefs.setLoggedIn(false);
-                if (mounted) {
-                  Navigator.of(dialogContext).pop();
-                  NavigationService.navigateToReplacement(Routes.signUpScreen);
-                }
-              } catch (error) {
-                if (mounted) {
-                  ScaffoldMessenger.of(screenContext).showSnackBar(
-                    SnackBar(content: Text(error.toString())),
-                  );
-                }
-              } finally {
-                if (mounted) {
-                  setState(() => isLoading = false);
-                }
-              }
-            }
-
-            return AlertDialog(
-              title: const Text('Delete Account'),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.r),
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'This will permanently delete your account. Enter your password to confirm.',
-                  ),
-                  SizedBox(height: 16.h),
-                  TextField(
-                    controller: _deletePasswordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                    ),
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed:
-                      isLoading ? null : () => Navigator.pop(dialogContext),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: isLoading ? null : deleteAccount,
-                  child: isLoading
-                      ? SizedBox(
-                          width: 16.w,
-                          height: 16.w,
-                          child:
-                              const CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Delete'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Future<void> _showLogoutDialog() async {
-    final BuildContext screenContext = context;
-
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) {
-        bool isLoading = false;
-
-        return StatefulBuilder(
-          builder: (context, setState) {
-            Future<void> logout() async {
-              ScaffoldMessenger.of(screenContext).showSnackBar(
-                const SnackBar(
-                  content: Text('Logged out successfully.'),
-                ),
-              );
-
-              setState(() => isLoading = true);
-              try {
-                await AppPrefs.setLoggedIn(false);
-                if (mounted) {
-                  Navigator.of(dialogContext).pop();
-                  NavigationService.navigateToReplacement(Routes.loginScreen);
-                }
-              } catch (error) {
-                if (mounted) {
-                  ScaffoldMessenger.of(screenContext).showSnackBar(
-                    SnackBar(content: Text(error.toString())),
-                  );
-                }
-              } finally {
-                if (mounted) {
-                  setState(() => isLoading = false);
-                }
-              }
-            }
-
-            return AlertDialog(
-              title: const Text('Logout'),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.r),
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Are you sure you want to logout?',
-                  ),
-                  SizedBox(height: 16.h),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed:
-                      isLoading ? null : () => Navigator.pop(dialogContext),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: isLoading ? null : logout,
-                  child: isLoading
-                      ? SizedBox(
-                          width: 16.w,
-                          height: 16.w,
-                          child:
-                              const CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Logout'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  ImageProvider<Object>? _buildProfileImage(String? imagePath) {
     if (imagePath != null && imagePath.isNotEmpty) {
       final File file = File(imagePath);
       if (file.existsSync()) {
-        return FileImage(file);
+        return Image.file(
+          file,
+          fit: BoxFit.cover,
+        );
       }
     }
 
-    return const AssetImage('assets/icons/profile.png');
+    return Image.asset(
+      'assets/icons/profile.png',
+      height: 40.h,
+      width: 40.w,
+      // fit: BoxFit.contain,
+    );
   }
 }
 
@@ -460,6 +238,56 @@ class _ProfileActionCard extends StatelessWidget {
         ],
       ),
       child: Column(children: children),
+    );
+  }
+}
+
+class _ProfileActionRow extends StatelessWidget {
+  const _ProfileActionRow({
+    required this.title,
+    required this.imagePath,
+    required this.onTap,
+    required this.iconColor,
+    required this.textColor,
+  });
+
+  final String title;
+  final String imagePath;
+  final VoidCallback onTap;
+  final Color iconColor;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(14.r),
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
+        child: Row(
+          children: [
+            Image.asset(
+              imagePath,
+              width: 24.sp,
+              height: 24.sp,
+            ),
+            UIHelper.horizontalSpace(16.w),
+            Expanded(
+              child: Text(
+                title,
+                style: TextFontStyle.textStyle14c14181FInter400.copyWith(
+                  color: textColor,
+                ),
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              size: 24.sp,
+              color: textColor,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

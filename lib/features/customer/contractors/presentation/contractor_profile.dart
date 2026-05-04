@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/common_widgets/custom_button.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
-import 'package:template_flutter/features/customer/contractors/data/contractor_model.dart';
+import 'package:template_flutter/features/customer/contractors/presentation/widgets/contractor_info.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/widgets/service_offered_tiles.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/widgets/project_galary.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/widgets/customer_reviews.dart';
@@ -176,14 +176,14 @@ class _ContractorProfileState extends State<ContractorProfile> {
                   // Action Buttons
                   CustomButton(
                     height: 34.h,
-                    label: 'Chat Now',
+                    label: 'Call Now',
                     onPressed: () {
-                      // Handle chat action
+                      // Handle call action
                     },
-                    leading: Icon(
-                      Icons.chat_bubble_outline,
-                      size: 20.w,
-                      color: AppColors.allPrimaryColor,
+                    leading: Image.asset(
+                      'assets/icons/call_red.png',
+                      width: 20.w,
+                      height: 16.h,
                     ),
                     textStyle: TextFontStyle.textStyle12cBE1E2DInter600,
                     borderRadius: 12.r,
@@ -351,7 +351,7 @@ class _ContractorProfileState extends State<ContractorProfile> {
               ),
               UIHelper.horizontalSpace(6.w),
               Text(
-                widget.contractor.phone,
+                '(555) 123-4567',
                 style: TextFontStyle.textStyle13c64748BInter400,
               ),
               UIHelper.horizontalSpace(16.w),
@@ -362,7 +362,7 @@ class _ContractorProfileState extends State<ContractorProfile> {
               ),
               UIHelper.horizontalSpace(6.w),
               Text(
-                widget.contractor.mail,
+                'john@email.com',
                 style: TextFontStyle.textStyle13c64748BInter400,
               ),
             ],
