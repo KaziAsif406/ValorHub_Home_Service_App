@@ -58,6 +58,14 @@ class DashboardProfileSection extends StatefulWidget {
 }
 
 class _DashboardProfileSectionState extends State<DashboardProfileSection> {
+  late Future<Map<String, dynamic>?> _profileFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _profileFuture = _fetchCurrentUserProfile();
+  }
+
   Future<Map<String, dynamic>?> _fetchCurrentUserProfile() async {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -73,10 +81,239 @@ class _DashboardProfileSectionState extends State<DashboardProfileSection> {
     }
   }
 
+  Future<void> _updateCurrentUserProfile(Map<String, dynamic> payload) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) {
+      throw Exception('No signed-in user found.');
+    }
+
+    await FirebaseFirestore.instance
+        .collection(kFirestoreUsersCollection)
+        .doc(uid)
+        .set(
+      {
+        ...payload,
+        'updatedAt': FieldValue.serverTimestamp(),
+      },
+      SetOptions(merge: true),
+    );
+  }
+
+  List<String> _extractCertifications(Map<String, dynamic>? data) {
+    final dynamic raw = data?['certifications'];
+    if (raw is List) {
+      return raw
+          .whereType<String>()
+          .map((item) => item.trim())
+          .where((item) => item.isNotEmpty)
+          .toList();
+    }
+    return widget.certifications;
+  }
+
+  Future<void> _openEditProfileBottomSheet({
+    required String phone,
+    required String serviceArea,
+    required int yearsOfExperience,
+    required String aboutText,
+    required List<String> certifications,
+  }) async {
+    final phoneController = TextEditingController(text: phone);
+    final serviceAreaController = TextEditingController(text: serviceArea);
+    final yearsController = TextEditingController(
+      text: yearsOfExperience.toString(),
+    );
+    final aboutController = TextEditingController(text: aboutText);
+    final certificationController = TextEditingController();
+    final List<String> draftCertifications = List<String>.from(certifications);
+
+    final bool? shouldSave = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (BuildContext modalContext) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 16.w,
+                right: 16.w,
+                top: 16.h,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 16.h,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 38.w,
+                        height: 4.h,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade400,
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                      ),
+                    ),
+                    UIHelper.verticalSpace(14.h),
+                    Text(
+                      'Edit Profile Details',
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.c0A0A0A,
+                      ),
+                    ),
+                    UIHelper.verticalSpace(14.h),
+                    TextField(
+                      controller: phoneController,
+                      keyboardType: TextInputType.phone,
+                      decoration: const InputDecoration(
+                        labelText: 'Phone',
+                        border: OutlineInputBorder(),
+                        
+                      ),
+                    ),
+                    UIHelper.verticalSpace(12.h),
+                    TextField(
+                      controller: serviceAreaController,
+                      decoration: const InputDecoration(
+                        labelText: 'Service Area',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    UIHelper.verticalSpace(12.h),
+                    TextField(
+                      controller: yearsController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Years of Experience',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    UIHelper.verticalSpace(12.h),
+                    TextField(
+                      controller: aboutController,
+                      maxLines: 4,
+                      decoration: const InputDecoration(
+                        labelText: 'About Me',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    UIHelper.verticalSpace(12.h),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Add Certification',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.c0A0A0A,
+                          ),
+                        ),
+                        UIHelper.horizontalSpace(8.w),
+                        IconButton(
+                          onPressed: () {
+                            final String value = certificationController.text.trim();
+                            if (value.isEmpty) return;
+                            setModalState(() {
+                              draftCertifications.add(value);
+                              certificationController.clear();
+                            });
+                          },
+                          icon: const Icon(Icons.add_circle),
+                          color: AppColors.contractor_primary,
+                        ),
+                      ],
+                    ),
+                    UIHelper.verticalSpace(10.h),
+                    Wrap(
+                      spacing: 2.w,
+                      runSpacing: 1.h,
+                      children: draftCertifications
+                          .map(
+                            (cert) => Chip(
+                              label: Text(cert),
+                              deleteIcon: const Icon(Icons.close),
+                              onDeleted: () {
+                                setModalState(() {
+                                  draftCertifications.remove(cert);
+                                });
+                              },
+                            ),
+                          )
+                          .toList(),
+                    ),
+                    UIHelper.verticalSpace(18.h),
+                    CustomButton(
+                      label: 'Save Changes',
+                      onPressed: () => Navigator.of(modalContext).pop(true),
+                      borderRadius: 12.r,
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                      color: AppColors.contractor_primary,
+                    ),
+                    UIHelper.verticalSpace(8.h),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    if (shouldSave != true) {
+      return;
+    }
+
+    try {
+      final int parsedYears = int.tryParse(yearsController.text.trim()) ?? yearsOfExperience;
+      final String normalizedServiceArea = serviceAreaController.text.trim();
+      final Map<String, dynamic> payload = {
+        kKeyMobileNumber: phoneController.text.trim(),
+        kKeyExperienceYears: parsedYears,
+        kKeyDescription: aboutController.text.trim(),
+        'service_area': normalizedServiceArea,
+        'certifications': draftCertifications,
+      };
+
+      final List<String> areaParts = normalizedServiceArea
+          .split(',')
+          .map((part) => part.trim())
+          .where((part) => part.isNotEmpty)
+          .toList();
+      if (areaParts.length >= 2) {
+        payload[kKeyCity] = areaParts.first;
+        payload[kKeyState] = areaParts[1];
+      }
+
+      await _updateCurrentUserProfile(payload);
+
+      if (!mounted) return;
+      setState(() {
+        _profileFuture = _fetchCurrentUserProfile();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile updated successfully.')),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update profile: $error')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Map<String, dynamic>?>(
-      future: _fetchCurrentUserProfile(),
+      future: _profileFuture,
       builder: (context, snapshot) {
         final data = snapshot.data;
 
@@ -118,7 +355,7 @@ class _DashboardProfileSectionState extends State<DashboardProfileSection> {
             ? data['description'] as String
             : widget.aboutText;
 
-        final certifications = widget.certifications;
+        final certifications = _extractCertifications(data);
 
         return SingleChildScrollView(
           padding: EdgeInsets.all(16.w),
@@ -131,7 +368,15 @@ class _DashboardProfileSectionState extends State<DashboardProfileSection> {
                 rating: rating,
                 reviewCount: reviewCount,
                 isVerified: isVerified,
-                onEditPressed: () {},
+                onEditPressed: () {
+                  _openEditProfileBottomSheet(
+                    phone: phone,
+                    serviceArea: serviceArea,
+                    yearsOfExperience: yearsOfExperience,
+                    aboutText: aboutText,
+                    certifications: certifications,
+                  );
+                },
               ),
               UIHelper.verticalSpace(16.h),
               ContactInformationSection(
