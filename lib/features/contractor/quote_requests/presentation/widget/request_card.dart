@@ -126,7 +126,16 @@ class _QuoteRequestCardState extends State<QuoteRequestCard> {
                       style: TextStyle(
                         fontSize: 13.sp,
                         fontWeight: FontWeight.w400,
-                        color: AppColors.c14181F,
+                        color: AppColors.c14181F.withValues(alpha: 0.80),
+                      ),
+                    ),
+                    UIHelper.verticalSpace(2.h),
+                    Text(
+                      widget.request.id.substring(0, 8).toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.c14181F.withValues(alpha: 0.40),
                       ),
                     ),
                   ],
@@ -135,14 +144,44 @@ class _QuoteRequestCardState extends State<QuoteRequestCard> {
             ],
           ),
           UIHelper.verticalSpace(15.h),
-          Text(
-            '${widget.request.zipCode} • ${_formatDate(widget.request.submittedAt)}',
-            style: TextStyle(
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w400,
-              color: AppColors.c14181F.withValues(alpha: 0.70),
-            ),
+          Row(
+            children: [
+              Icon(
+                Icons.location_on_outlined,
+                size: 12.sp,
+                color: AppColors.c14181F.withValues(alpha: 0.70),
+              ),
+              UIHelper.horizontalSpace(4.w),
+              Text(
+                '${widget.request.location} - ${widget.request.zipCode}',
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.c14181F.withValues(alpha: 0.70),
+                ),
+              ),
+            ],
           ),
+          UIHelper.verticalSpace(4.h),
+          Row(
+            children: [
+              Icon(
+                Icons.calendar_month_outlined,
+                size: 12.sp,
+                color: AppColors.c14181F.withValues(alpha: 0.70),
+              ),
+              UIHelper.horizontalSpace(4.w),
+              Text(
+                _formatDate(widget.request.submittedAt),
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.c14181F.withValues(alpha: 0.70),
+                ),
+              ),
+            ],
+          ),
+          UIHelper.verticalSpace(4.h),
           Text(
             widget.request.projectDetails,
             maxLines: 3,
