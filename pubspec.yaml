@@ -32,6 +32,7 @@ dependencies:
   get: ^4.7.3
   dotted_border: ^3.1.0
   image_picker: ^1.2.1
+  firebase_core: ^4.7.0
 
 
 dev_dependencies:
