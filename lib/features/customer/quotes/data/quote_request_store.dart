@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rxdart/rxdart.dart';
 
 enum QuoteRequestStatus { pending, accepted, rejected, completed }
 
@@ -58,22 +57,33 @@ final class QuoteRequestStore {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  /// Stream of quote requests stored in Firestore. Maps documents into model list.
-  ValueStream<List<QuoteRequestModel>> get requestsStream {
-    final controller = BehaviorSubject<List<QuoteRequestModel>>();
+  /// Backward-compatible stream for the signed-in customer's own requests.
+  Stream<List<QuoteRequestModel>> get requestsStream {
+    final String? customerId = FirebaseAuth.instance.currentUser?.uid;
+    if (customerId == null || customerId.isEmpty) {
+      return Stream<List<QuoteRequestModel>>.value(const <QuoteRequestModel>[]);
+    }
 
-    _firestore.collection('quote_requests').orderBy('submittedAt', descending: true).snapshots().listen(
-      (QuerySnapshot snap) {
-        final List<QuoteRequestModel> items = snap.docs.map((d) => _fromDoc(d)).toList();
-        controller.add(items);
-      },
-      onError: (e) => controller.addError(e),
-    );
-
-    return controller.stream;
+    return customerRequestsStream(customerId);
   }
 
-  List<QuoteRequestModel> get requests => <QuoteRequestModel>[]; // kept for compatibility
+  List<QuoteRequestModel> get requests => <QuoteRequestModel>[];
+
+  Stream<List<QuoteRequestModel>> customerRequestsStream(String customerId) {
+    return _firestore
+        .collection('quote_requests')
+        .where('customerId', isEqualTo: customerId)
+        .snapshots()
+        .map((QuerySnapshot snap) => _sortedFromDocs(snap.docs));
+  }
+
+  Stream<List<QuoteRequestModel>> contractorRequestsStream(String contractorId) {
+    return _firestore
+        .collection('quote_requests')
+        .where('contractorId', isEqualTo: contractorId)
+        .snapshots()
+        .map((QuerySnapshot snap) => _sortedFromDocs(snap.docs));
+  }
 
   Future<String> addRequest({
     required String fullName,
@@ -108,9 +118,15 @@ final class QuoteRequestStore {
       'submittedAt': FieldValue.serverTimestamp(),
     };
 
-    await _firestore.collection('quote_requests').doc(docId).set(payload);
-
-    return requestId;
+    try {
+      await _firestore.collection('quote_requests').doc(docId).set(payload);
+      return requestId;
+    } on FirebaseException catch (fe) {
+      // rethrow with clearer message
+      throw Exception('Firestore error (${fe.code}): ${fe.message}');
+    } catch (e) {
+      throw Exception('Failed to save quote request: ${e.toString()}');
+    }
   }
 
   Future<void> updateStatus(String requestId, QuoteRequestStatus status) async {
@@ -140,6 +156,14 @@ final class QuoteRequestStore {
       status: _StatusFromString(data['status'] as String?),
       contractorName: data['contractorName'] as String?,
     );
+  }
+
+  static List<QuoteRequestModel> _sortedFromDocs(List<QueryDocumentSnapshot> docs) {
+    final List<QuoteRequestModel> items = docs.map(_fromDoc).toList();
+    items.sort((QuoteRequestModel a, QuoteRequestModel b) {
+      return b.submittedAt.compareTo(a.submittedAt);
+    });
+    return items;
   }
 
   static QuoteRequestStatus _StatusFromString(String? s) {

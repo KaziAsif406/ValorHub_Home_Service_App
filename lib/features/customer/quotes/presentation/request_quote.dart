@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/common_widgets/custom_button.dart';
 import 'package:template_flutter/common_widgets/custom_textform_field.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:template_flutter/features/customer/quotes/data/quote_request_store.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
@@ -35,6 +36,7 @@ class _RequestQuoteState extends State<RequestQuote> {
   final TextEditingController _zipController = TextEditingController();
   final TextEditingController _budgetController = TextEditingController();
   final TextEditingController _projectController = TextEditingController();
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -51,6 +53,58 @@ class _RequestQuoteState extends State<RequestQuote> {
     _budgetController.dispose();
     _projectController.dispose();
     super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (widget.initialContractorId == null ||
+        widget.initialContractorId!.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Missing contractor information. Please open the quote request from a contractor profile.'),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      // Log current user id for debugging
+      // ignore: avoid_print
+      print('Current Firebase user: ${FirebaseAuth.instance.currentUser?.uid}');
+
+      await QuoteRequestStore.instance.addRequest(
+        fullName: _fullNameController.text,
+        location: _locationController.text,
+        zipCode: _zipController.text,
+        budget: _budgetController.text,
+        serviceCategory: _serviceController.text,
+        projectDetails: _projectController.text,
+        contractorId: widget.initialContractorId,
+        contractorName: widget.initialContractorName,
+        imagePaths: const <String>[],
+      );
+
+      NavigationService.navigateToReplacement(Routes.quoteSentScreen);
+    } catch (e, st) {
+      // Log error for diagnosis
+      // ignore: avoid_print
+      print('Quote submit failed: $e');
+      // ignore: avoid_print
+      print(st);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to submit request: ${e.toString()}')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
   }
 
   @override
@@ -181,8 +235,8 @@ class _RequestQuoteState extends State<RequestQuote> {
                       CustomButton(
                         width: 152.w,
                         height: 34.h,
-                        label: 'Submit Request',
-                        onPressed: _onSubmit,
+                        label: _isSubmitting ? 'Submitting...' : 'Submit Request',
+                        onPressed: _isSubmitting ? null : _onSubmit,
                       ),
                     ],
                   ),
@@ -207,27 +261,6 @@ class _RequestQuoteState extends State<RequestQuote> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-
-    // Save to Firestore
-    QuoteRequestStore.instance
-        .addRequest(
-      fullName: _fullNameController.text,
-      location: _locationController.text,
-      zipCode: _zipController.text,
-      budget: _budgetController.text,
-      serviceCategory: _serviceController.text,
-      projectDetails: _projectController.text,
-      contractorId: widget.initialContractorId,
-      contractorName: widget.initialContractorName,
-      imagePaths: const <String>[],
-    )
-        .then((_) {
-      NavigationService.navigateToReplacement(Routes.quoteSentScreen);
-    }).catchError((e) {
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to submit request.')),
-      );
-    });
+    _submit();
   }
 }
