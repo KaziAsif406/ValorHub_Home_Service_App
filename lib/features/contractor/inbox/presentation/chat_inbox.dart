@@ -113,6 +113,7 @@ class _ContractorChatInboxScreenState extends State<ContractorChatInboxScreen> {
     );
   }
 
+  // ignore: unused_element
   List<ContractorChatMessage> _buildConversation() {
     return [
       const ContractorChatMessage(

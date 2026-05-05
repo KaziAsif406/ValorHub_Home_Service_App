@@ -113,6 +113,7 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
     );
   }
 
+  // ignore: unused_element
   List<ChatMessage> _buildConversation() {
     return [
       const ChatMessage(
