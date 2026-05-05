@@ -110,7 +110,7 @@ class _RequestQuoteState extends State<RequestQuote> {
                   UIHelper.verticalSpace(16.h),
                   CustomTextFormField(
                     label: 'Budget',
-                    hintText: 'Write your budget',
+                    hintText: 'e.g. \$500 - \$1000',
                     controller: _budgetController,
                     validator: _requiredValidator,
                   ),
