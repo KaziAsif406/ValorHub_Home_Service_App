@@ -1,5 +1,6 @@
 class contractorData {
   const contractorData({
+    required this.id,
     required this.name,
     required this.service,
     required this.rating,
@@ -11,6 +12,7 @@ class contractorData {
     required this.mail,
   });
 
+  final String id;
   final String name;
   final String service;
   final double rating;

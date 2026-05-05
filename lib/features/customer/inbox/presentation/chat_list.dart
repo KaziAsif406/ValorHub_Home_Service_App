@@ -3,6 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/common_widgets/custom_textform_field.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
 import 'package:template_flutter/features/customer/contractors/data/contractor_model.dart';
+import 'package:template_flutter/constants/app_constants.dart';
+import 'package:template_flutter/services/chat_service.dart';
+import 'package:template_flutter/services/auth_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+import 'package:template_flutter/features/customer/contractors/data/contractor_mapper.dart';
 import 'package:template_flutter/features/customer/contractors/presentation/widgets/contractor_info.dart';
 import 'package:template_flutter/features/customer/inbox/presentation/chat_inbox.dart';
 import 'package:template_flutter/features/customer/inbox/presentation/widget/chat_overview_tile.dart';
@@ -22,14 +28,7 @@ class ChatListScreen extends StatefulWidget {
 
 class _ChatListScreenState extends State<ChatListScreen> {
 	final TextEditingController _searchController = TextEditingController();
-
-	late final List<_ChatPreview> _allChats;
-
-	@override
-	void initState() {
-		super.initState();
-		_allChats = _buildPreviewData(ContractorProfileScreen.contractors);
-	}
+	final String _currentUserId = AuthService().currentUser?.uid ?? '';
 
 
   void _handleBack() {
@@ -45,18 +44,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
 	void dispose() {
 		_searchController.dispose();
 		super.dispose();
-	}
-
-	List<_ChatPreview> get _filteredChats {
-		final query = _searchController.text.trim().toLowerCase();
-		if (query.isEmpty) {
-			return _allChats;
-		}
-
-		return _allChats.where((chat) {
-			return chat.contractor.name.toLowerCase().contains(query) ||
-					chat.contractor.service.toLowerCase().contains(query);
-		}).toList();
 	}
 
 	@override
@@ -82,104 +69,144 @@ class _ChatListScreenState extends State<ChatListScreen> {
 				),
 			),
 			body: SafeArea(
-				child: Padding(
-					padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-					child: Column(
-						children: [
-							CustomTextFormField(
-								height: 44.h,
-								controller: _searchController,
-								hintText: 'Search...',
-								onChanged: (_) => setState(() {}),
-								contentPadding:
-										EdgeInsets.symmetric(horizontal: 14.w, vertical: 11.h),
-								prefixIcon: Icon(
-									Icons.search_rounded,
-									size: 20.sp,
-									color: AppColors.c64748B,
-								),
-							),
-							UIHelper.verticalSpace(10.h),
-							Expanded(
-								child: _filteredChats.isEmpty
-										? Center(
-												child: Text(
-													'No chats found',
-													style: TextFontStyle.textStyle14c6A7181Inter400,
-												),
-											)
-										: ListView.separated(
-												itemCount: _filteredChats.length,
-												padding: EdgeInsets.symmetric(vertical: 6.h),
-												separatorBuilder: (_, __) {
-													return Divider(
-														height: 1.h,
-														thickness: 1.h,
-														color: AppColors.c000000.withValues(alpha: 0.08),
+						child: Padding(
+							padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+							child: Column(
+								children: [
+									CustomTextFormField(
+										height: 44.h,
+										controller: _searchController,
+										hintText: 'Search...',
+										onChanged: (_) => setState(() {}),
+										contentPadding:
+												EdgeInsets.symmetric(horizontal: 14.w, vertical: 11.h),
+										prefixIcon: Icon(
+											Icons.search_rounded,
+											size: 20.sp,
+											color: AppColors.c64748B,
+										),
+									),
+									UIHelper.verticalSpace(10.h),
+									Expanded(
+										child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+											stream: ChatService().chatsForUser(_currentUserId),
+											builder: (context, snapshot) {
+												if (snapshot.hasError) {
+													return Center(
+														child: Text(
+															'Unable to load chats',
+															style: TextFontStyle.textStyle14c6A7181Inter400,
+														),
 													);
-												},
-												itemBuilder: (context, index) {
-													final chat = _filteredChats[index];
-													return ChatOverviewTile(
-														name: chat.contractor.name,
-														serviceCategory: chat.contractor.service,
-														lastMessage: chat.previewMessage,
-														timeLabel: chat.timeLabel,
-														initials: _initialsFromName(chat.contractor.name),
-														unreadCount: chat.unreadCount,
-														isOnline: chat.isOnline,
-														isSelected: chat.isSelected,
-														onTap: () {
-															NavigationService.navigatorKey.currentState
-																?.push(
-																	MaterialPageRoute(
-																		builder: (_) => ChatInboxScreen(
-																			contractor: chat.contractor,
-																			isOnline: chat.isOnline,
-																		),
-																	),
+												}
+
+												if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+													return Center(
+														child: Text(
+															'No chats found',
+															style: TextFontStyle.textStyle14c6A7181Inter400,
+														),
+													);
+												}
+
+												final chats = snapshot.data!.docs;
+
+												return ListView.separated(
+													itemCount: chats.length,
+													padding: EdgeInsets.symmetric(vertical: 6.h),
+													separatorBuilder: (_, __) {
+														return Divider(
+															height: 1.h,
+															thickness: 1.h,
+															color: AppColors.c000000.withValues(alpha: 0.08),
+														);
+													},
+													itemBuilder: (context, index) {
+														final chatDoc = chats[index];
+														final data = chatDoc.data();
+														final participants = (data['participants'] as List<dynamic>?)
+																		?.cast<String>() ??
+																[];
+														final otherId = participants.firstWhere(
+																(p) => p != _currentUserId,
+																orElse: () => '');
+														final lastMessage = data['lastMessage'] as String? ?? '';
+														final lastUpdated = data['lastUpdated'] as Timestamp?;
+														final timeLabel = lastUpdated != null
+																? DateFormat('h:mm a').format(lastUpdated.toDate())
+																: '';
+
+														return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+															future: FirebaseFirestore.instance
+																	.collection(kFirestoreUsersCollection)
+																	.doc(otherId)
+																	.get(),
+															builder: (context, userSnap) {
+																String name = 'Unknown';
+																String service = '';
+																String initials = '';
+
+																if (userSnap.hasData && userSnap.data!.exists) {
+																	final otherDoc = userSnap.data!;
+																	final mapped = mapDocToContractor(otherDoc);
+																	if (mapped != null) {
+																		name = mapped.name;
+																		service = mapped.service;
+																		initials = _initialsFromName(mapped.name);
+																	} else {
+																		final displayName = otherDoc.data()?['displayName'] as String?;
+																		final email = otherDoc.data()?['email'] as String? ?? '';
+																		name = displayName ?? email.split('@').first;
+																		initials = _initialsFromName(name);
+																	}
+																}
+
+																return ChatOverviewTile(
+																	name: name,
+																	serviceCategory: service,
+																	lastMessage: lastMessage,
+																	timeLabel: timeLabel,
+																	initials: initials,
+																	unreadCount: 0,
+																	isOnline: false,
+																	isSelected: false,
+																	onTap: () {
+																		final contractor = mapDocToContractor(userSnap.data!) ??
+																				contractorData(
+																					id: otherId,
+																					name: name,
+																					service: service,
+																					rating: 0.0,
+																					reviews: 0,
+																					location: '',
+																					experience: 0,
+																					description: '',
+																					phone: '',
+																					mail: otherId,
+																				);
+
+																		NavigationService.navigatorKey.currentState?.push(
+																			MaterialPageRoute(
+																				builder: (_) => ChatInboxScreen(
+																					contractor: contractor,
+																					isOnline: false,
+																				),
+																			),
+																		);
+																	},
 																);
-														},
-													);
-												},
-											),
+															},
+														);
+													},
+												);
+											},
+										),
+									),
+								],
 							),
-						],
-					),
-				),
+						),
 			),
 		);
-	}
-
-	List<_ChatPreview> _buildPreviewData(List<contractorData> contractors) {
-		const List<String> timeLabels = [
-			'10:32 AM',
-			'9:14 AM',
-			'Yesterday',
-			'Mon',
-			'Sun',
-			'Sat',
-		];
-
-		const List<String> previewMessages = [
-			'Sounds good, can we schedule a site visit Friday?',
-			'I sent over the color samples I liked.',
-			'Thanks for the quote, reviewing now.',
-			'Perfect, see you Monday at 8am.',
-			'Can you share a quick estimate first?',
-			'Please send material options before noon.',
-		];
-
-		return List<_ChatPreview>.generate(contractors.length, (index) {
-			return _ChatPreview(
-				contractor: contractors[index],
-				timeLabel: timeLabels[index % timeLabels.length],
-				previewMessage: previewMessages[index % previewMessages.length],
-				unreadCount: index == 0 ? 2 : 0,
-				isOnline: index == 0 || index == 3,
-				isSelected: index == 0,
-			);
-		});
 	}
 
 	String _initialsFromName(String fullName) {
@@ -199,22 +226,4 @@ class _ChatListScreenState extends State<ChatListScreen> {
 		return '${parts.first.substring(0, 1)}${parts.last.substring(0, 1)}'
 				.toUpperCase();
 	}
-}
-
-class _ChatPreview {
-	const _ChatPreview({
-		required this.contractor,
-		required this.timeLabel,
-		required this.previewMessage,
-		required this.unreadCount,
-		required this.isOnline,
-		required this.isSelected,
-	});
-
-	final contractorData contractor;
-	final String timeLabel;
-	final String previewMessage;
-	final int unreadCount;
-	final bool isOnline;
-	final bool isSelected;
 }

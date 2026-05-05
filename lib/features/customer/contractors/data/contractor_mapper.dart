@@ -22,6 +22,7 @@ contractorData? mapDocToContractor(DocumentSnapshot doc) {
   final String description = (data[kKeyDescription] as String?) ?? '';
 
   return contractorData(
+    id: doc.id,
     name: name,
     service: service,
     rating: (data['rating'] is num) ? (data['rating'] as num).toDouble() : 0.0,
