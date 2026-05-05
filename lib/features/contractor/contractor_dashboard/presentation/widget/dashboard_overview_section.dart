@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:template_flutter/features/customer/quotes/data/quote_request_store.dart';
 import 'package:template_flutter/features/contractor/contractor_dashboard/presentation/widget/metric_card.dart';
 import 'package:template_flutter/features/contractor/contractor_dashboard/presentation/widget/quote_request_card.dart';
@@ -20,6 +21,8 @@ class DashboardOverviewSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String? contractorId = FirebaseAuth.instance.currentUser?.uid;
+
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 24.h),
       child: Column(
@@ -39,7 +42,12 @@ class DashboardOverviewSection extends StatelessWidget {
           ),
           UIHelper.verticalSpace(12.h),
           StreamBuilder<List<QuoteRequestModel>>(
-            stream: QuoteRequestStore.instance.requestsStream,
+            stream: contractorId == null
+                ? Stream<List<QuoteRequestModel>>.value(
+                    const <QuoteRequestModel>[],
+                  )
+                : QuoteRequestStore.instance
+                    .contractorRequestsStream(contractorId),
             builder: (BuildContext context,
                 AsyncSnapshot<List<QuoteRequestModel>> snapshot) {
               final List<QuoteRequestModel> requests =

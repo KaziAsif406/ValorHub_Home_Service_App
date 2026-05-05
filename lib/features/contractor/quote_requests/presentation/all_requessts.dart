@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:template_flutter/features/contractor/quote_requests/presentation/widget/request_card.dart';
 import 'package:template_flutter/features/contractor/quote_requests/presentation/widget/selector_pill.dart';
 import 'package:template_flutter/features/customer/quotes/data/quote_request_store.dart';
@@ -21,88 +22,92 @@ class _AllRequestsScreenState extends State<AllRequestsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final String? contractorId = FirebaseAuth.instance.currentUser?.uid;
+
     return Padding(
       padding: EdgeInsets.only(top: 10.h),
       child: SafeArea(
-        child: StreamBuilder<List<QuoteRequestModel>>(
-          stream: QuoteRequestStore.instance.requestsStream,
-          initialData: QuoteRequestStore.instance.requests,
-          builder: (
-            BuildContext context,
-            AsyncSnapshot<List<QuoteRequestModel>> snapshot,
-          ) {
-            final List<QuoteRequestModel> requests =
-                snapshot.data ?? QuoteRequestStore.instance.requests;
-            final List<QuoteRequestModel> filteredRequests =
-                _filterRequests(requests);
+        child: contractorId == null
+            ? _buildEmptyState()
+            : StreamBuilder<List<QuoteRequestModel>>(
+                stream: QuoteRequestStore.instance
+                    .contractorRequestsStream(contractorId),
+                initialData: QuoteRequestStore.instance.requests,
+                builder: (
+                  BuildContext context,
+                  AsyncSnapshot<List<QuoteRequestModel>> snapshot,
+                ) {
+                  final List<QuoteRequestModel> requests =
+                      snapshot.data ?? QuoteRequestStore.instance.requests;
+                  final List<QuoteRequestModel> filteredRequests =
+                      _filterRequests(requests);
 
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(14.w, 18.h, 14.w, 0),
-                    child: Text(
-                      'Quote Requests',
-                      style: TextStyle(
-                        fontSize: 22.sp,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.c14181F,
-                      ),
-                    ),
-                  ),
-                  UIHelper.verticalSpace(18.h),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
+                  return SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        UIHelper.horizontalSpace(12.w),
-                        Row(
-                          children: 
-                          _buildFilterPills(requests),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(14.w, 18.h, 14.w, 0),
+                          child: Text(
+                            'Quote Requests',
+                            style: TextStyle(
+                              fontSize: 22.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.c14181F,
+                            ),
+                          ),
                         ),
-                        UIHelper.horizontalSpace(12.w),
+                        UIHelper.verticalSpace(18.h),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              UIHelper.horizontalSpace(12.w),
+                              Row(
+                                children: _buildFilterPills(requests),
+                              ),
+                              UIHelper.horizontalSpace(12.w),
+                            ],
+                          ),
+                        ),
+                        UIHelper.verticalSpace(18.h),
+                        if (filteredRequests.isEmpty)
+                          _buildEmptyState()
+                        else
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(14.w, 0.h, 14.w, 0),
+                            child: Column(
+                              children: filteredRequests.map((request) {
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 12.h),
+                                  child: QuoteRequestCard(
+                                    request: request,
+                                    onView: () => showRequestDetailsBottomSheet(
+                                      context,
+                                      request,
+                                    ),
+                                    onAccept: () =>
+                                        QuoteRequestStore.instance.updateStatus(
+                                      request.id,
+                                      QuoteRequestStatus.accepted,
+                                    ),
+                                    onReject: () =>
+                                        QuoteRequestStore.instance.updateStatus(
+                                      request.id,
+                                      QuoteRequestStatus.rejected,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
                       ],
                     ),
-                  ),
-                  UIHelper.verticalSpace(18.h),
-                  if (filteredRequests.isEmpty)
-                    _buildEmptyState()
-                  else
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(14.w, 0.h, 14.w, 0),
-                      child: Column(
-                        children: filteredRequests.map((request) {
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: 12.h),
-                            child: QuoteRequestCard(
-                              request: request,
-                              onView: () => showRequestDetailsBottomSheet(
-                                context,
-                                request,
-                              ),
-                              onAccept: () =>
-                                  QuoteRequestStore.instance.updateStatus(
-                                request.id,
-                                QuoteRequestStatus.accepted,
-                              ),
-                              onReject: () =>
-                                  QuoteRequestStore.instance.updateStatus(
-                                request.id,
-                                QuoteRequestStatus.rejected,
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                ],
+                  );
+                },
               ),
-            );
-          },
         ),
-      ),
-    );
+      );
   }
 
   List<Widget> _buildFilterPills(List<QuoteRequestModel> requests) {
