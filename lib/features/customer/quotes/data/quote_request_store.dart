@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
 
 enum QuoteRequestStatus { pending, accepted, rejected, completed }
@@ -52,122 +56,103 @@ final class QuoteRequestStore {
   QuoteRequestStore._internal();
   static final QuoteRequestStore instance = QuoteRequestStore._internal();
 
-  final BehaviorSubject<List<QuoteRequestModel>> _requestsController =
-      BehaviorSubject<List<QuoteRequestModel>>.seeded(_seedRequests());
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  ValueStream<List<QuoteRequestModel>> get requestsStream =>
-      _requestsController.stream;
+  /// Stream of quote requests stored in Firestore. Maps documents into model list.
+  ValueStream<List<QuoteRequestModel>> get requestsStream {
+    final controller = BehaviorSubject<List<QuoteRequestModel>>();
 
-  List<QuoteRequestModel> get requests =>
-      List<QuoteRequestModel>.unmodifiable(_requestsController.value);
+    _firestore.collection('quote_requests').orderBy('submittedAt', descending: true).snapshots().listen(
+      (QuerySnapshot snap) {
+        final List<QuoteRequestModel> items = snap.docs.map((d) => _fromDoc(d)).toList();
+        controller.add(items);
+      },
+      onError: (e) => controller.addError(e),
+    );
 
-  void addRequest({
+    return controller.stream;
+  }
+
+  List<QuoteRequestModel> get requests => <QuoteRequestModel>[]; // kept for compatibility
+
+  Future<String> addRequest({
     required String fullName,
     required String zipCode,
     required String serviceCategory,
     required String projectDetails,
+    String? contractorId,
     String? contractorName,
     List<String> imagePaths = const <String>[],
     required String location,
     required String budget,
-  }) {
-    final QuoteRequestModel newRequest = QuoteRequestModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      fullName: fullName.trim(),
-      zipCode: zipCode.trim(),
-      serviceCategory: serviceCategory.trim(),
-      projectDetails: projectDetails.trim(),
-      location: location.trim(),
-      budget: budget.trim(),
-      contractorName: contractorName?.trim().isEmpty ?? true
-          ? null
-          : contractorName?.trim(),
-      imagePaths: List<String>.from(imagePaths),
-      submittedAt: DateTime.now(),
-      status: QuoteRequestStatus.pending,
+  }) async {
+    final int rand = Random().nextInt(9000) + 1000;
+    final String requestId = '#REQ-$rand';
+    final String docId = 'REQ-$rand';
+
+    final String? customerId = FirebaseAuth.instance.currentUser?.uid;
+
+    final Map<String, dynamic> payload = <String, dynamic>{
+      'requestId': requestId,
+      'customerId': customerId,
+      'contractorId': contractorId,
+      'contractorName': contractorName,
+      'fullName': fullName.trim(),
+      'zipCode': zipCode.trim(),
+      'serviceCategory': serviceCategory.trim(),
+      'projectDetails': projectDetails.trim(),
+      'location': location.trim(),
+      'budget': budget.trim(),
+      'imagePaths': imagePaths,
+      'status': 'pending',
+      'submittedAt': FieldValue.serverTimestamp(),
+    };
+
+    await _firestore.collection('quote_requests').doc(docId).set(payload);
+
+    return requestId;
+  }
+
+  Future<void> updateStatus(String requestId, QuoteRequestStatus status) async {
+    final String docId = requestId.replaceFirst('#', '');
+    await _firestore.collection('quote_requests').doc(docId).update({
+      'status': status.name,
+    });
+  }
+
+  static QuoteRequestModel _fromDoc(QueryDocumentSnapshot d) {
+    final Map<String, dynamic> data = d.data() as Map<String, dynamic>;
+
+    final Timestamp? ts = data['submittedAt'] as Timestamp?;
+    return QuoteRequestModel(
+      id: data['requestId'] as String? ?? d.id,
+      fullName: data['fullName'] as String? ?? '',
+      zipCode: data['zipCode'] as String? ?? '',
+      serviceCategory: data['serviceCategory'] as String? ?? '',
+      projectDetails: data['projectDetails'] as String? ?? '',
+      location: data['location'] as String? ?? '',
+      budget: data['budget'] as String? ?? '',
+      imagePaths: (data['imagePaths'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          <String>[],
+      submittedAt: ts?.toDate() ?? DateTime.now(),
+      status: _StatusFromString(data['status'] as String?),
+      contractorName: data['contractorName'] as String?,
     );
-
-    final List<QuoteRequestModel> updated = <QuoteRequestModel>[
-      newRequest,
-      ..._requestsController.value,
-    ];
-    _requestsController.sink.add(updated);
   }
 
-  void updateStatus(String requestId, QuoteRequestStatus status) {
-    final List<QuoteRequestModel> updated = _requestsController.value
-        .map((QuoteRequestModel item) =>
-            item.id == requestId ? item.copyWith(status: status) : item)
-        .toList();
-    _requestsController.sink.add(updated);
-  }
-
-  void clear() {
-    _requestsController.sink.add(const <QuoteRequestModel>[]);
-  }
-
-  void dispose() {
-    _requestsController.close();
-  }
-
-  static List<QuoteRequestModel> _seedRequests() {
-    final DateTime now = DateTime.now();
-    return <QuoteRequestModel>[
-      QuoteRequestModel(
-        id: 'rq-3042',
-        fullName: 'Sarah Mitchell',
-        zipCode: '11215',
-        serviceCategory: 'Bathroom Remodel',
-        projectDetails: 'Full master bathroom renovation incl. tile + vanity.',
-        location: '123 Main St, New York, NY 10001',
-        budget: '\$5,000 - \$7,000',
-        submittedAt: now.subtract(const Duration(minutes: 45)),
-        status: QuoteRequestStatus.pending,
-      ),
-      QuoteRequestModel(
-        id: 'rq-3041',
-        fullName: 'David Chen',
-        zipCode: '07302',
-        serviceCategory: 'Kitchen Plumbing',
-        projectDetails: 'Replace kitchen sink + dishwasher hookup.',
-        location: '456 Oak Ave, Brooklyn, NY 11201',
-        budget: '\$2,000 - \$3,000',
-        submittedAt: now.subtract(const Duration(hours: 2)),
-        status: QuoteRequestStatus.pending,
-      ),
-      QuoteRequestModel(
-        id: 'rq-3038',
-        fullName: 'Amelia Brooks',
-        zipCode: '07030',
-        serviceCategory: 'Deck Construction',
-        projectDetails: 'Build a 12\'x16\' cedar deck in backyard.',
-        location: '789 Pine Rd, Jersey City, NJ 07302',
-        budget: '\$3,000 - \$5,000',
-        submittedAt: now.subtract(const Duration(days: 1)),
-        status: QuoteRequestStatus.accepted,
-      ),
-      QuoteRequestModel(
-        id: 'rq-3037',
-        fullName: 'Olivia Brown',
-        zipCode: '10023',
-        serviceCategory: 'Electrical Repair',
-        projectDetails: 'Circuit breaker trips when the oven is used.',
-        location: '101 Broadway, New York, NY 10001',
-        budget: '\$1,000 - \$2,000',
-        submittedAt: now.subtract(const Duration(days: 1, hours: 1)),
-        status: QuoteRequestStatus.rejected,
-      ),
-      QuoteRequestModel(
-        id: 'rq-3036',
-        fullName: 'Daniel Brooks',
-        zipCode: '10458',
-        serviceCategory: 'Roof Inspection',
-        projectDetails: 'Need a roof inspection after recent storm damage.',
-        location: '202 Park Ave, New York, NY 10001',
-        budget: '\$1,500 - \$2,500',
-        submittedAt: now.subtract(const Duration(days: 1, hours: 4)),
-        status: QuoteRequestStatus.rejected,
-      ),
-    ];
+  static QuoteRequestStatus _StatusFromString(String? s) {
+    switch (s) {
+      case 'accepted':
+        return QuoteRequestStatus.accepted;
+      case 'rejected':
+        return QuoteRequestStatus.rejected;
+      case 'completed':
+        return QuoteRequestStatus.completed;
+      case 'pending':
+      default:
+        return QuoteRequestStatus.pending;
+    }
   }
 }

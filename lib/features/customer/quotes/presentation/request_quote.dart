@@ -15,10 +15,12 @@ class RequestQuote extends StatefulWidget {
     super.key,
     this.initialServiceCategory,
     this.initialContractorName,
+    this.initialContractorId,
   });
 
   final String? initialServiceCategory;
   final String? initialContractorName;
+  final String? initialContractorId;
 
   @override
   State<RequestQuote> createState() => _RequestQuoteState();
@@ -202,22 +204,30 @@ class _RequestQuoteState extends State<RequestQuote> {
 
   void _onSubmit() {
     FocusScope.of(context).unfocus();
-
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    QuoteRequestStore.instance.addRequest(
+    // Save to Firestore
+    QuoteRequestStore.instance
+        .addRequest(
       fullName: _fullNameController.text,
       location: _locationController.text,
       zipCode: _zipController.text,
       budget: _budgetController.text,
       serviceCategory: _serviceController.text,
       projectDetails: _projectController.text,
+      contractorId: widget.initialContractorId,
       contractorName: widget.initialContractorName,
       imagePaths: const <String>[],
-    );
-
-    NavigationService.navigateToReplacement(Routes.quoteSentScreen);
+    )
+        .then((_) {
+      NavigationService.navigateToReplacement(Routes.quoteSentScreen);
+    }).catchError((e) {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to submit request.')),
+      );
+    });
   }
 }

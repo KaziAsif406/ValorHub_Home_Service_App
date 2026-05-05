@@ -411,12 +411,14 @@ final class RouteGenerator {
                 builder: (context) => RequestQuote(
                   initialServiceCategory: contractor?.service,
                   initialContractorName: contractor?.name,
+                  initialContractorId: contractor?.id,
                 ),
               )
             : _FadedTransitionRoute(
                 widget: RequestQuote(
                   initialServiceCategory: contractor?.service,
                   initialContractorName: contractor?.name,
+                  initialContractorId: contractor?.id,
                 ),
                 settings: settings,
               );
