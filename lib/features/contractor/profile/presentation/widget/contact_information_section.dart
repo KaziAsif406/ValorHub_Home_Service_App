@@ -87,8 +87,8 @@ class _ContactItem extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                AppColors.contractor_primary.withValues(alpha: 0.41),
-                AppColors.contractor_secondary.withValues(alpha: 0.41),
+                AppColors.contractor_primary.withValues(alpha: 0.11),
+                AppColors.contractor_secondary.withValues(alpha: 0.21),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
