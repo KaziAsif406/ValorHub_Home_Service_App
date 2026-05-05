@@ -6,21 +6,19 @@ final class QuoteRequestModel {
   QuoteRequestModel({
     required this.id,
     required this.fullName,
-    required this.email,
-    required this.phone,
     required this.zipCode,
     required this.serviceCategory,
     required this.projectDetails,
     required this.submittedAt,
     required this.status,
+    required this.location,
+    required this.budget,
     this.contractorName,
     this.imagePaths = const <String>[],
   });
 
   final String id;
   final String fullName;
-  final String email;
-  final String phone;
   final String zipCode;
   final String serviceCategory;
   final String projectDetails;
@@ -28,6 +26,8 @@ final class QuoteRequestModel {
   final QuoteRequestStatus status;
   final String? contractorName;
   final List<String> imagePaths;
+  final String location;
+  final String budget;
 
   QuoteRequestModel copyWith({
     QuoteRequestStatus? status,
@@ -35,8 +35,6 @@ final class QuoteRequestModel {
     return QuoteRequestModel(
       id: id,
       fullName: fullName,
-      email: email,
-      phone: phone,
       zipCode: zipCode,
       serviceCategory: serviceCategory,
       projectDetails: projectDetails,
@@ -44,6 +42,8 @@ final class QuoteRequestModel {
       status: status ?? this.status,
       contractorName: contractorName,
       imagePaths: imagePaths,
+      location: location,
+      budget: budget,
     );
   }
 }
@@ -63,22 +63,22 @@ final class QuoteRequestStore {
 
   void addRequest({
     required String fullName,
-    required String email,
-    required String phone,
     required String zipCode,
     required String serviceCategory,
     required String projectDetails,
     String? contractorName,
     List<String> imagePaths = const <String>[],
+    required String location,
+    required String budget,
   }) {
     final QuoteRequestModel newRequest = QuoteRequestModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       fullName: fullName.trim(),
-      email: email.trim(),
-      phone: phone.trim(),
       zipCode: zipCode.trim(),
       serviceCategory: serviceCategory.trim(),
       projectDetails: projectDetails.trim(),
+      location: location.trim(),
+      budget: budget.trim(),
       contractorName: contractorName?.trim().isEmpty ?? true
           ? null
           : contractorName?.trim(),
@@ -116,55 +116,55 @@ final class QuoteRequestStore {
       QuoteRequestModel(
         id: 'rq-3042',
         fullName: 'Sarah Mitchell',
-        email: 'sarah.mitchell@example.com',
-        phone: '(347) 555-0124',
         zipCode: '11215',
         serviceCategory: 'Bathroom Remodel',
         projectDetails: 'Full master bathroom renovation incl. tile + vanity.',
+        location: '123 Main St, New York, NY 10001',
+        budget: '\$5,000 - \$7,000',
         submittedAt: now.subtract(const Duration(minutes: 45)),
         status: QuoteRequestStatus.pending,
       ),
       QuoteRequestModel(
         id: 'rq-3041',
         fullName: 'David Chen',
-        email: 'david.chen@example.com',
-        phone: '(646) 555-0148',
         zipCode: '07302',
         serviceCategory: 'Kitchen Plumbing',
         projectDetails: 'Replace kitchen sink + dishwasher hookup.',
+        location: '456 Oak Ave, Brooklyn, NY 11201',
+        budget: '\$2,000 - \$3,000',
         submittedAt: now.subtract(const Duration(hours: 2)),
         status: QuoteRequestStatus.pending,
       ),
       QuoteRequestModel(
         id: 'rq-3038',
         fullName: 'Amelia Brooks',
-        email: 'amelia.brooks@example.com',
-        phone: '(718) 555-0186',
         zipCode: '07030',
         serviceCategory: 'Deck Construction',
         projectDetails: 'Build a 12\'x16\' cedar deck in backyard.',
+        location: '789 Pine Rd, Jersey City, NJ 07302',
+        budget: '\$3,000 - \$5,000',
         submittedAt: now.subtract(const Duration(days: 1)),
         status: QuoteRequestStatus.accepted,
       ),
       QuoteRequestModel(
         id: 'rq-3037',
         fullName: 'Olivia Brown',
-        email: 'olivia.brown@example.com',
-        phone: '(212) 555-0102',
         zipCode: '10023',
         serviceCategory: 'Electrical Repair',
         projectDetails: 'Circuit breaker trips when the oven is used.',
+        location: '101 Broadway, New York, NY 10001',
+        budget: '\$1,000 - \$2,000',
         submittedAt: now.subtract(const Duration(days: 1, hours: 1)),
         status: QuoteRequestStatus.rejected,
       ),
       QuoteRequestModel(
         id: 'rq-3036',
         fullName: 'Daniel Brooks',
-        email: 'daniel.brooks@example.com',
-        phone: '(212) 555-0102',
         zipCode: '10458',
         serviceCategory: 'Roof Inspection',
         projectDetails: 'Need a roof inspection after recent storm damage.',
+        location: '202 Park Ave, New York, NY 10001',
+        budget: '\$1,500 - \$2,500',
         submittedAt: now.subtract(const Duration(days: 1, hours: 4)),
         status: QuoteRequestStatus.rejected,
       ),

@@ -44,8 +44,6 @@ class RequestDetailsSheet extends StatelessWidget {
           ),
           UIHelper.verticalSpace(14.h),
           RequestDetailRow(label: 'Full Name', value: request.fullName),
-          RequestDetailRow(label: 'Email', value: request.email),
-          RequestDetailRow(label: 'Phone', value: request.phone),
           RequestDetailRow(label: 'Zip Code', value: request.zipCode),
           RequestDetailRow(label: 'Service', value: request.serviceCategory),
           RequestDetailRow(

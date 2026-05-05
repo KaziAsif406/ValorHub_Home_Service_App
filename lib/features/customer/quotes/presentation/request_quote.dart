@@ -28,10 +28,10 @@ class _RequestQuoteState extends State<RequestQuote> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _fullNameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _zipController = TextEditingController();
   final TextEditingController _serviceController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _zipController = TextEditingController();
+  final TextEditingController _budgetController = TextEditingController();
   final TextEditingController _projectController = TextEditingController();
 
   @override
@@ -43,10 +43,10 @@ class _RequestQuoteState extends State<RequestQuote> {
   @override
   void dispose() {
     _fullNameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
+    _locationController.dispose();
     _zipController.dispose();
     _serviceController.dispose();
+    _budgetController.dispose();
     _projectController.dispose();
     super.dispose();
   }
@@ -86,18 +86,17 @@ class _RequestQuoteState extends State<RequestQuote> {
                   ),
                   UIHelper.verticalSpace(16.h),
                   CustomTextFormField(
-                    label: 'Email',
-                    hintText: 'Enter your email address',
-                    keyboardType: TextInputType.emailAddress,
-                    controller: _emailController,
-                    validator: _emailValidator,
+                    label: 'Service Category',
+                    hintText: 'Write the type of service needed',
+                    controller: _serviceController,
+                    validator: _requiredValidator,
                   ),
                   UIHelper.verticalSpace(16.h),
                   CustomTextFormField(
-                    label: 'Phone',
-                    hintText: '(555) 123-4567',
-                    keyboardType: TextInputType.phone,
-                    controller: _phoneController,
+                    label: 'Location',
+                    hintText: 'Area, City ...',
+                    keyboardType: TextInputType.text,
+                    controller: _locationController,
                     validator: _requiredValidator,
                   ),
                   UIHelper.verticalSpace(16.h),
@@ -110,9 +109,9 @@ class _RequestQuoteState extends State<RequestQuote> {
                   ),
                   UIHelper.verticalSpace(16.h),
                   CustomTextFormField(
-                    label: 'Service Category',
-                    hintText: 'Select a Service',
-                    controller: _serviceController,
+                    label: 'Budget',
+                    hintText: 'Write your budget',
+                    controller: _budgetController,
                     validator: _requiredValidator,
                   ),
                   UIHelper.verticalSpace(24.h),
@@ -201,20 +200,6 @@ class _RequestQuoteState extends State<RequestQuote> {
     return null;
   }
 
-  String? _emailValidator(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Email is required';
-    }
-
-    final RegExp emailRegex = RegExp(r'^[\w\-.]+@([\w\-]+\.)+[a-zA-Z]{2,}');
-
-    if (!emailRegex.hasMatch(value.trim())) {
-      return 'Enter a valid email';
-    }
-
-    return null;
-  }
-
   void _onSubmit() {
     FocusScope.of(context).unfocus();
 
@@ -224,9 +209,9 @@ class _RequestQuoteState extends State<RequestQuote> {
 
     QuoteRequestStore.instance.addRequest(
       fullName: _fullNameController.text,
-      email: _emailController.text,
-      phone: _phoneController.text,
+      location: _locationController.text,
       zipCode: _zipController.text,
+      budget: _budgetController.text,
       serviceCategory: _serviceController.text,
       projectDetails: _projectController.text,
       contractorName: widget.initialContractorName,
