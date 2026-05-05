@@ -6,6 +6,7 @@ class contractorData {
     required this.rating,
     required this.reviews,
     required this.location,
+    this.zipCode = '',
     required this.experience,
     required this.description,
     required this.phone,
@@ -18,6 +19,7 @@ class contractorData {
   final double rating;
   final int reviews;
   final String location;
+  final String zipCode;
   final int experience;
   final String description;
   final String phone;

@@ -28,6 +28,7 @@ contractorData? mapDocToContractor(DocumentSnapshot doc) {
     rating: (data['rating'] is num) ? (data['rating'] as num).toDouble() : 0.0,
     reviews: (data['reviews'] is int) ? data['reviews'] as int : 0,
     location: location.isNotEmpty ? location : zip,
+    zipCode: zip,
     experience: experience,
     description: description,
     phone: phone,
