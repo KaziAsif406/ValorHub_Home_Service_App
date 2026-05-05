@@ -328,14 +328,21 @@ final class RouteGenerator {
         final String? filterCategory = contractorArgs is Map<String, dynamic>
             ? contractorArgs['filterCategory'] as String?
             : null;
+        final String? zipCode = contractorArgs is Map<String, dynamic>
+            ? contractorArgs['zipCode'] as String?
+            : null;
         return defaultTargetPlatform == TargetPlatform.iOS
             ? CupertinoPageRoute(
                 builder: (context) => ContractorsScreen(
                   filterCategory: filterCategory,
+                  zipCode: zipCode,
                 ),
               )
             : _FadedTransitionRoute(
-                widget: ContractorsScreen(filterCategory: filterCategory),
+                widget: ContractorsScreen(
+                  filterCategory: filterCategory,
+                  zipCode: zipCode,
+                ),
                 settings: settings);
 
       case Routes.findLocationScreen:
@@ -360,14 +367,22 @@ final class RouteGenerator {
                 surveyArgs['category'] is String
             ? surveyArgs['category'] as String
             : '';
+        final String zipCode = surveyArgs is Map<String, dynamic> &&
+                surveyArgs['zipCode'] is String
+            ? surveyArgs['zipCode'] as String
+            : '';
         return defaultTargetPlatform == TargetPlatform.iOS
             ? CupertinoPageRoute(
                 builder: (context) => SurveyScreen(
                   categoryName: categoryName,
+                  zipCode: zipCode,
                 ),
               )
             : _FadedTransitionRoute(
-                widget: SurveyScreen(categoryName: categoryName),
+                widget: SurveyScreen(
+                  categoryName: categoryName,
+                  zipCode: zipCode,
+                ),
                 settings: settings);
 
       case Routes.notificationScreen:
