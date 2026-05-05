@@ -168,7 +168,10 @@ class _ContractorProfileState extends State<ContractorProfile> {
                     height: 34.h,
                     label: 'Request Quote',
                     onPressed: () {
-                      NavigationService.navigateTo(Routes.requestQuoteScreen);
+                      NavigationService.navigateToWithObject(
+                        Routes.requestQuoteScreen,
+                        widget.contractor,
+                      );
                     },
                     textStyle: TextFontStyle.textStyle12cFFFFFFInter600,
                     borderRadius: 12.r,

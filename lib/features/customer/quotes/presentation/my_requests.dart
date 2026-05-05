@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
 import 'package:template_flutter/features/customer/quotes/data/quote_request_store.dart';
 import 'package:template_flutter/features/customer/quotes/presentation/widget/request_list_tile.dart';
@@ -26,6 +27,8 @@ class MyRequestsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String? customerId = FirebaseAuth.instance.currentUser?.uid;
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
       appBar: AppBar(
@@ -41,40 +44,44 @@ class MyRequestsScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: StreamBuilder<List<QuoteRequestModel>>(
-        stream: QuoteRequestStore.instance.requestsStream,
-        builder: (BuildContext context,
-            AsyncSnapshot<List<QuoteRequestModel>> snapshot) {
-          final List<QuoteRequestModel> requests =
-              snapshot.data ?? QuoteRequestStore.instance.requests;
+      body: customerId == null
+          ? _EmptyState()
+          : StreamBuilder<List<QuoteRequestModel>>(
+              stream:
+                  QuoteRequestStore.instance.customerRequestsStream(customerId),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<QuoteRequestModel>> snapshot) {
+                final List<QuoteRequestModel> requests =
+                    snapshot.data ?? QuoteRequestStore.instance.requests;
 
-          if (requests.isEmpty) {
-            return _EmptyState();
-          }
+                if (requests.isEmpty) {
+                  return _EmptyState();
+                }
 
-          return Padding(
-            padding: EdgeInsets.all(12.w),
-            child: Column(
-              children: [
-                UIHelper.verticalSpace(10.h),
-                Expanded(
-                  child: ListView.separated(
-                    itemCount: requests.length,
-                    separatorBuilder: (_, __) => UIHelper.verticalSpace(10.h),
-                    itemBuilder: (BuildContext context, int index) {
-                      final QuoteRequestModel request = requests[index];
-                      return RequestListTile(
-                        request: request,
-                        dateLabel: _formatDate(request.submittedAt),
-                      );
-                    },
+                return Padding(
+                  padding: EdgeInsets.all(12.w),
+                  child: Column(
+                    children: [
+                      UIHelper.verticalSpace(10.h),
+                      Expanded(
+                        child: ListView.separated(
+                          itemCount: requests.length,
+                          separatorBuilder: (_, __) =>
+                              UIHelper.verticalSpace(10.h),
+                          itemBuilder: (BuildContext context, int index) {
+                            final QuoteRequestModel request = requests[index];
+                            return RequestListTile(
+                              request: request,
+                              dateLabel: _formatDate(request.submittedAt),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 
