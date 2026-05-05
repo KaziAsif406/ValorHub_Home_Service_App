@@ -25,6 +25,7 @@ class SavedContractorsScreen extends StatelessWidget {
 
 	static const List<contractorData> _contractors = [
 		contractorData(
+			id: '',
 			name: 'Mike Johnson',
 			service: 'Plumbing',
 			rating: 4.9,
@@ -35,6 +36,7 @@ class SavedContractorsScreen extends StatelessWidget {
 					'Licensed master plumber specializing in residential repairs and installations.',
 		),
 		contractorData(
+			id: '',
 			name: 'Sarah Williams',
 			service: 'HVAC',
 			rating: 4.8,
@@ -45,6 +47,7 @@ class SavedContractorsScreen extends StatelessWidget {
 					'Certified HVAC specialist with expertise in diagnostics and efficient climate solutions.',
 		),
 		contractorData(
+			id: '',
 			name: 'David Chen',
 			service: 'Electrical',
 			rating: 4.7,

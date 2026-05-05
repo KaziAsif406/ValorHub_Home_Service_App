@@ -10,6 +10,9 @@ import 'package:template_flutter/features/customer/contractors/presentation/widg
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
+import 'package:template_flutter/services/chat_service.dart';
+import 'package:template_flutter/services/auth_service.dart';
+import 'package:template_flutter/features/customer/inbox/presentation/chat_inbox.dart';
 // import 'package:template_flutter/helpers/helper_methods.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 
@@ -176,9 +179,57 @@ class _ContractorProfileState extends State<ContractorProfile> {
                   // Action Buttons
                   CustomButton(
                     height: 34.h,
-                    label: 'Call Now',
-                    onPressed: () {
-                      // Handle call action
+                    label: 'Chat Now',
+                    onPressed: () async {
+                      final auth = AuthService();
+                      final user = auth.currentUser;
+                      if (user == null) {
+                        showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: const Text('Sign in required'),
+                            content: const Text('Please sign in to start a chat.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ),
+                        );
+                        return;
+                      }
+
+                      final currentUserId = user.uid;
+                      final contractorId = widget.contractor.id;
+                      final chatId = ChatService.chatIdFor(currentUserId, contractorId);
+
+                      try {
+                        await ChatService().createChatIfNotExists(chatId, [currentUserId, contractorId]);
+                        NavigationService.navigatorKey.currentState?.push(
+                          MaterialPageRoute(
+                            builder: (_) => ChatInboxScreen(
+                              contractor: widget.contractor,
+                              isOnline: true,
+                            ),
+                          ),
+                        );
+                      } catch (e) {
+                        // Show error to user
+                        showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: const Text('Unable to start chat'),
+                            content: Text(e.toString()),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
                     },
                     leading: Image.asset(
                       'assets/icons/call_red.png',

@@ -3,7 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/features/contractor/inbox/presentation/widget/chat_bubble.dart';
 import 'package:template_flutter/features/contractor/inbox/presentation/widget/composer.dart';
 import 'package:template_flutter/features/contractor/inbox/presentation/widget/inbox_header.dart';
-import 'package:template_flutter/features/customer/contractors/presentation/widgets/contractor_info.dart';
+import 'package:template_flutter/services/chat_service.dart';
+import 'package:template_flutter/services/auth_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class ContractorChatInboxScreen extends StatefulWidget {
   const ContractorChatInboxScreen({
@@ -21,12 +24,16 @@ class ContractorChatInboxScreen extends StatefulWidget {
 
 class _ContractorChatInboxScreenState extends State<ContractorChatInboxScreen> {
   final TextEditingController _messageController = TextEditingController();
-  late final List<ContractorChatMessage> _messages;
+  late final String _chatId;
+  late final String _myId;
 
   @override
   void initState() {
     super.initState();
-    _messages = _buildConversation();
+    final auth = AuthService();
+    _myId = auth.currentUser?.uid ?? '';
+    _chatId = ChatService.chatIdFor(_myId, widget.contractor.id);
+    ChatService().createChatIfNotExists(_chatId, [_myId, widget.contractor.id]);
   }
 
   @override
@@ -52,22 +59,60 @@ class _ContractorChatInboxScreenState extends State<ContractorChatInboxScreen> {
               onMore: () {},
             ),
             Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
-                itemCount: _messages.length,
-                itemBuilder: (context, index) {
-                  final message = _messages[index];
-                  return ContractorChatBubble(message: message);
+              child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: ChatService().messagesStream(_chatId),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) return const SizedBox();
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  final docs = snapshot.data?.docs ?? [];
+                  final messages = docs.map((d) {
+                    final data = d.data();
+                    final text = data['text'] as String? ?? '';
+                    final created = data['createdAt'] as Timestamp?;
+                    final time = created != null
+                        ? DateFormat('h:mm a').format(created.toDate())
+                        : '';
+                    final isMe = (data['senderId'] as String? ?? '') == _myId;
+                    return ContractorChatMessage(text: text, time: time, isMe: isMe);
+                  }).toList();
+
+                  return ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final message = messages[index];
+                      return ContractorChatBubble(message: message);
+                    },
+                  );
                 },
               ),
             ),
-            ContractorChatComposer(controller: _messageController),
+            ContractorChatComposer(
+              controller: _messageController,
+              onSend: () async {
+                final text = _messageController.text.trim();
+                if (text.isEmpty) return;
+                final auth = AuthService();
+                final senderName = auth.currentUser?.displayName ?? '';
+                await ChatService().sendTextMessage(
+                  chatId: _chatId,
+                  text: text,
+                  senderId: _myId,
+                  senderName: senderName,
+                );
+                _messageController.clear();
+              },
+            ),
           ],
         ),
       ),
     );
   }
 
+  // ignore: unused_element
   List<ContractorChatMessage> _buildConversation() {
     return [
       const ContractorChatMessage(
