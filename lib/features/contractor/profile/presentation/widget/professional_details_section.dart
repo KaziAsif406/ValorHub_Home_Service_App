@@ -23,9 +23,13 @@ class ProfessionalDetailsSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(
-          color: Colors.grey.withValues(alpha: 0.2),
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.c636363.withValues(alpha: 0.21),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,13 +85,13 @@ class _DetailItem extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(10.w),
           decoration: BoxDecoration(
-            color: const Color(0xFF10B981).withValues(alpha: 0.1),
+            color: AppColors.c21C45D.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(8.r),
           ),
           child: Icon(
             icon,
             size: 18.sp,
-            color: const Color(0xFF10B981),
+            color: AppColors.c21C45D,
           ),
         ),
         UIHelper.horizontalSpace(12.w),
