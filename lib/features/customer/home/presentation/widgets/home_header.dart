@@ -9,8 +9,40 @@ import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 // import 'package:template_flutter/helpers/helper_methods.dart';
 
-class HomeHeader extends StatelessWidget {
+class HomeHeader extends StatefulWidget {
   const HomeHeader({super.key});
+
+  @override
+  State<HomeHeader> createState() => _HomeHeaderState();
+}
+
+class _HomeHeaderState extends State<HomeHeader> {
+  final TextEditingController _zipCodeController = TextEditingController();
+
+  @override
+  void dispose() {
+    _zipCodeController.dispose();
+    super.dispose();
+  }
+
+  void _handleSearch() {
+    final zipCode = _zipCodeController.text.trim();
+
+    if (zipCode.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a zip code.')),
+      );
+      return;
+    }
+
+    NavigationService.navigateToWithArgs(
+      Routes.locationSurveyScreen,
+      {
+        'category': '',
+        'zipCode': zipCode,
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,16 +133,16 @@ class HomeHeader extends StatelessWidget {
                   children: [
                     Flexible(
                       child: CustomTextFormField(
+                        controller: _zipCodeController,
                         hintText: 'Zip code',
+                        keyboardType: TextInputType.number,
                       ),
                     ),
                     UIHelper.horizontalSpace(12.7.w),
                     CustomButton(
                       width: 88.w,
                       label: 'Search',
-                      onPressed: () {
-                        NavigationService.navigateTo(Routes.findLocationScreen);
-                      },
+                      onPressed: _handleSearch,
                     ),
                   ],
                 ),

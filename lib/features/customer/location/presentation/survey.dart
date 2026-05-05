@@ -9,9 +9,10 @@ import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 
 class SurveyScreen extends StatefulWidget {
-	const SurveyScreen({super.key, this.categoryName});
+	const SurveyScreen({super.key, this.categoryName, this.zipCode});
 
 	final String? categoryName;
+	final String? zipCode;
 
 	@override
 	State<SurveyScreen> createState() => _SurveyScreenState();
@@ -68,7 +69,10 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
 		NavigationService.navigateToWithArgs(
 			Routes.contractorsScreen,
-			{'filterCategory': widget.categoryName ?? ''},
+			{
+				'filterCategory': widget.categoryName ?? '',
+				'zipCode': widget.zipCode ?? '',
+			},
 		);
 	}
 

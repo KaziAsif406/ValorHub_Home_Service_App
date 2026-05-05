@@ -16,10 +16,11 @@ import 'package:template_flutter/helpers/ui_helpers.dart';
 
 
 class ContractorsScreen extends StatefulWidget {
-  ContractorsScreen({super.key, this.onBackToHome, this.filterCategory});
+  ContractorsScreen({super.key, this.onBackToHome, this.filterCategory, this.zipCode});
 
   final VoidCallback? onBackToHome;
   final String? filterCategory;
+  final String? zipCode;
   final FocusNode _searchFocusNode = FocusNode();
 
   @override
@@ -43,6 +44,11 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
       contractors = contractors
           .where((c) => c.service.toLowerCase() == widget.filterCategory!.toLowerCase())
           .toList();
+    }
+
+    if (widget.zipCode != null && widget.zipCode!.trim().isNotEmpty) {
+      final zipCode = widget.zipCode!.trim();
+      contractors = contractors.where((c) => c.zipCode.trim() == zipCode).toList();
     }
 
     return contractors;

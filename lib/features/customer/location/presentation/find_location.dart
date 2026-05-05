@@ -48,6 +48,24 @@ class FindLocationScreen extends StatefulWidget {
 
 
 class _FindLocationScreenState extends State<FindLocationScreen> {
+  final TextEditingController _zipCodeController = TextEditingController();
+
+  @override
+  void dispose() {
+    _zipCodeController.dispose();
+    super.dispose();
+  }
+
+  void _handleFindContractor() {
+    NavigationService.navigateToWithArgs(
+      Routes.locationSurveyScreen,
+      {
+        'category': widget.categoryName ?? '',
+        'zipCode': _zipCodeController.text.trim(),
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,6 +118,8 @@ class _FindLocationScreenState extends State<FindLocationScreen> {
                               child: CustomTextFormField(
                                 height: 42.h,
                                 hintText: 'Zip code',
+                                controller: _zipCodeController,
+                                keyboardType: TextInputType.number,
                               ),
                             ),
                             UIHelper.horizontalSpace(12.w),
@@ -129,12 +149,7 @@ class _FindLocationScreenState extends State<FindLocationScreen> {
                         CustomButton(
                           width: double.infinity,
                           label: 'Find Contractor',
-                          onPressed: () {
-                            NavigationService.navigateToWithArgs(
-                              Routes.locationSurveyScreen,
-                              {'category': widget.categoryName ?? ''},
-                            );
-                          },
+                          onPressed: _handleFindContractor,
                         )
                       ],
                     ),
