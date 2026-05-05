@@ -27,13 +27,20 @@ class ProfileHeaderCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(18.w),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        gradient: LinearGradient(
+          colors: [
+            AppColors.contractor_primary,
+            AppColors.contractor_secondary,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(14.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 5,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -48,7 +55,7 @@ class ProfileHeaderCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.c0A0A0A,
+                  color: AppColors.scaffoldColor,
                 ),
               ),
               GestureDetector(
@@ -56,13 +63,13 @@ class ProfileHeaderCard extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.all(8.w),
                   decoration: BoxDecoration(
-                    color: AppColors.contractor_primary.withValues(alpha: 0.1),
+                    color: AppColors.scaffoldColor.withValues(alpha: 0.35),
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Icon(
-                    Icons.edit_outlined,
-                    size: 20.sp,
-                    color: AppColors.contractor_primary,
+                    Icons.edit_square,
+                    size: 17.sp,
+                    color: AppColors.scaffoldColor,
                   ),
                 ),
               ),
@@ -73,11 +80,8 @@ class ProfileHeaderCard extends StatelessWidget {
             width: double.infinity,
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.scaffoldColor.withValues(alpha: 0.40),
               borderRadius: BorderRadius.circular(14.r),
-              border: Border.all(
-                color: Colors.grey.withValues(alpha: 0.2),
-              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,12 +92,12 @@ class ProfileHeaderCard extends StatelessWidget {
                     CircleAvatar(
                       radius: 32.r,
                       backgroundColor:
-                          AppColors.contractor_primary.withValues(alpha: 0.15),
+                          AppColors.contractor_primary.withValues(alpha: 0.95),
                       child: Text(
                         _initials(profileName),
                         style: TextStyle(
-                          color: AppColors.contractor_primary,
-                          fontSize: 16.sp,
+                          color: AppColors.scaffoldColor.withValues(alpha: 0.75),
+                          fontSize: 20.sp,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
@@ -108,7 +112,7 @@ class ProfileHeaderCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w700,
-                              color: AppColors.c0A0A0A,
+                              color: AppColors.scaffoldColor.withValues(alpha: 0.85),
                             ),
                           ),
                           UIHelper.verticalSpace(4.h),
@@ -117,7 +121,7 @@ class ProfileHeaderCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w500,
-                              color: AppColors.c6A7181,
+                              color: AppColors.scaffoldColor.withValues(alpha: 0.75),
                             ),
                           ),
                           UIHelper.verticalSpace(8.h),
@@ -134,7 +138,7 @@ class ProfileHeaderCard extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 13.sp,
                                   fontWeight: FontWeight.w700,
-                                  color: AppColors.c0A0A0A,
+                                  color: AppColors.scaffoldColor.withValues(alpha: 0.85),
                                 ),
                               ),
                               UIHelper.horizontalSpace(4.w),
@@ -143,7 +147,7 @@ class ProfileHeaderCard extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w500,
-                                  color: AppColors.c6A7181,
+                                  color: AppColors.scaffoldColor.withValues(alpha: 0.85),
                                 ),
                               ),
                               UIHelper.horizontalSpace(8.w),
@@ -154,16 +158,16 @@ class ProfileHeaderCard extends StatelessWidget {
                                     vertical: 4.h,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF10B981)
-                                        .withValues(alpha: 0.15),
-                                    borderRadius: BorderRadius.circular(6.r),
+                                    color: AppColors.c008236,
+                                    borderRadius: BorderRadius.circular(36.r),
                                   ),
                                   child: Text(
                                     'Verified',
                                     style: TextStyle(
                                       fontSize: 11.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: const Color(0xFF10B981),
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.scaffoldColor,
+                                      letterSpacing: 0.9,
                                     ),
                                   ),
                                 ),
