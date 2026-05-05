@@ -21,11 +21,15 @@ class ContactInformationSection extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.scaffoldColor,
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(
-          color: Colors.grey.withValues(alpha: 0.2),
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.c636363.withValues(alpha: 0.21),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,7 +85,14 @@ class _ContactItem extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(10.w),
           decoration: BoxDecoration(
-            color: AppColors.contractor_primary.withValues(alpha: 0.1),
+            gradient: LinearGradient(
+              colors: [
+                AppColors.contractor_primary.withValues(alpha: 0.41),
+                AppColors.contractor_secondary.withValues(alpha: 0.41),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
             borderRadius: BorderRadius.circular(8.r),
           ),
           child: Icon(
