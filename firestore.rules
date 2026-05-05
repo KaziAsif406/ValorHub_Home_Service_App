@@ -9,10 +9,30 @@ service cloud.firestore {
       return signedIn() && request.auth.uid == userId;
     }
 
+    function isQuoteParticipant(data) {
+      return signedIn() && (
+        request.auth.uid == data.customerId ||
+        request.auth.uid == data.contractorId
+      );
+    }
+
     match /users/{userId} {
       allow create: if isOwner(userId);
       allow read: if isOwner(userId) || signedIn();
       allow update, delete: if isOwner(userId);
+    }
+
+    match /quote_requests/{requestId} {
+      allow create: if signedIn()
+        && request.resource.data.customerId == request.auth.uid;
+
+      allow read: if isQuoteParticipant(resource.data);
+
+      allow update: if isQuoteParticipant(resource.data)
+        || (signedIn() && request.auth.uid == resource.data.contractorId)
+        || (signedIn() && request.auth.uid == resource.data.customerId);
+
+      allow delete: if isOwner(resource.data.customerId);
     }
 
     // Chats: only participants can read/create/update chat documents
