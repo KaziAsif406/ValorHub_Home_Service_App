@@ -1,3 +1,5 @@
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/common_widgets/custom_button.dart';
@@ -49,6 +51,86 @@ class FindLocationScreen extends StatefulWidget {
 
 class _FindLocationScreenState extends State<FindLocationScreen> {
   final TextEditingController _zipCodeController = TextEditingController();
+
+  Future<bool> _ensureLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.denied) {
+      _showZipMessage('Location permission was denied.');
+      return false;
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      _showZipMessage('Location permission is permanently denied.');
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<void> _handleLocatorTap() async {
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        _showZipMessage('Location services are disabled.');
+        return;
+      }
+
+      final hasPermission = await _ensureLocationPermission();
+      if (!hasPermission) {
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isEmpty) {
+        _showZipMessage('Unable to find an address for your location.');
+        return;
+      }
+
+      final placemark = placemarks.first;
+      final zipCode = placemark.postalCode?.trim() ?? '';
+
+      if (zipCode.isEmpty) {
+        _showZipMessage('Zip code is unavailable for this location.');
+        return;
+      }
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _zipCodeController.text = zipCode;
+        _zipCodeController.selection = TextSelection.collapsed(
+          offset: zipCode.length,
+        );
+      });
+    } catch (_) {
+      _showZipMessage('Unable to detect your current zip code.');
+    }
+  }
+
+  void _showZipMessage(String message) {
+    if (!mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 
   @override
   void dispose() {
@@ -124,9 +206,7 @@ class _FindLocationScreenState extends State<FindLocationScreen> {
                             ),
                             UIHelper.horizontalSpace(12.w),
                             GestureDetector(
-                              onTap: () {
-                                // Handle locator tap
-                              },
+                              onTap: _handleLocatorTap,
                               child: Container(
                                 width: 43.w,
                                 height: 42.h,
