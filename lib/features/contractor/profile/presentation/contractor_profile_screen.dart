@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:template_flutter/common_widgets/custom_button.dart';
+import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -152,30 +154,12 @@ class _DashboardProfileSectionState extends State<DashboardProfileSection> {
                 certifications: certifications,
               ),
               UIHelper.verticalSpace(24.h),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: widget.onSignOut,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red.withValues(alpha: 0.1),
-                    padding: EdgeInsets.symmetric(vertical: 12.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                      side: const BorderSide(
-                        color: Colors.red,
-                        width: 1.5,
-                      ),
-                    ),
-                  ),
-                  child: Text(
-                    'Sign Out',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
+              CustomButton(
+                label: 'Sign Out',
+                onPressed: widget.onSignOut,
+                borderRadius: 12.r,
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+                color: AppColors.contractor_primary,
               ),
               UIHelper.verticalSpace(16.h),
             ],

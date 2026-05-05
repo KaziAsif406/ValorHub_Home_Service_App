@@ -19,9 +19,13 @@ class CertificationsSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(
-          color: Colors.grey.withValues(alpha: 0.2),
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.c636363.withValues(alpha: 0.21),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
