@@ -9,7 +9,7 @@ import 'package:template_flutter/services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:template_flutter/features/customer/contractors/data/contractor_mapper.dart';
-import 'package:template_flutter/features/customer/contractors/presentation/widgets/contractor_info.dart';
+// import 'package:template_flutter/features/customer/contractors/presentation/widgets/contractor_info.dart';
 import 'package:template_flutter/features/customer/inbox/presentation/chat_inbox.dart';
 import 'package:template_flutter/features/customer/inbox/presentation/widget/chat_overview_tile.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
