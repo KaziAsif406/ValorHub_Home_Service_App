@@ -10,23 +10,33 @@ import 'package:template_flutter/services/chat_service.dart';
 import 'package:template_flutter/services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-// import 'package:template_flutter/features/customer/contractors/presentation/widgets/contractor_info.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
-// import 'package:template_flutter/helpers/all_routes.dart';
+import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 
-class DashboardInboxSection extends StatefulWidget {
-	const DashboardInboxSection({super.key});
+class ContractorChatListScreen extends StatefulWidget {
+	const ContractorChatListScreen({super.key, this.onBackToHome});
 
+	final VoidCallback? onBackToHome;
 
 	@override
-	State<DashboardInboxSection> createState() => _DashboardInboxSectionState();
+	State<ContractorChatListScreen> createState() => _ContractorChatListScreenState();
 }
 
-class _DashboardInboxSectionState extends State<DashboardInboxSection> {
+class _ContractorChatListScreenState extends State<ContractorChatListScreen> {
 	final TextEditingController _searchController = TextEditingController();
 	final String _currentUserId = AuthService().currentUser?.uid ?? '';
+
+
+  void _handleBack() {
+    if (widget.onBackToHome != null) {
+      widget.onBackToHome!();
+      return;
+    }
+
+    NavigationService.navigateTo(Routes.navigationScreen);
+  }
 
 	@override
 	void dispose() {
@@ -37,23 +47,32 @@ class _DashboardInboxSectionState extends State<DashboardInboxSection> {
 
 	@override
 	Widget build(BuildContext context) {
-		return Padding(
-      padding: EdgeInsets.only(top: 10.h),
-      child: SafeArea(
+		return Scaffold(
+			backgroundColor: AppColors.scaffoldColor,
+			appBar: AppBar(
+				elevation: 2,
+				shadowColor: AppColors.c000000.withValues(alpha: 0.2),
+				backgroundColor: AppColors.scaffoldColor,
+				title: Text(
+					'Inbox',
+					style: TextFontStyle.textStyle16c14181FInter600,
+				),
+				leading: IconButton(
+					icon: const Icon(
+						Icons.arrow_back_ios_new_outlined,
+						color: AppColors.c14181F,
+					),
+					onPressed: () {
+						_handleBack();
+					},
+				),
+			),
+			body: SafeArea(
 				child: Padding(
-					padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 14.w),
+					padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
 					child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
 						children: [
-              Text(
-                'Inbox',
-                style: TextStyle(
-                  fontSize: 22.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.c14181F,
-                ),
-              ),
-							UIHelper.verticalSpace(12.h),
+
 							CustomTextFormField(
 								height: 44.h,
 								controller: _searchController,

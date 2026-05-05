@@ -57,7 +57,7 @@ class TextFontStyle {
   static final textStyle10c1A6EF4Inter500 = TextStyle(
     fontFamily: "Inter",
     fontFamilyFallback: const ['Inter','DMSans', 'Open Sans', 'Roboto', 'Noto Sans'],
-    color: AppColors.contractor_secondary,
+    color: AppColors.contractor_primary,
     fontSize: 10.sp,
     fontWeight: FontWeight.w500,
   );

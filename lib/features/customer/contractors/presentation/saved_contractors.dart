@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/common_widgets/custom_button.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
-import 'package:template_flutter/features/customer/contractors/data/contractor_model.dart';
+import 'package:template_flutter/features/customer/contractors/presentation/widgets/contractor_info.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
@@ -34,8 +34,6 @@ class SavedContractorsScreen extends StatelessWidget {
 			experience: 12,
 			description:
 					'Licensed master plumber specializing in residential repairs and installations.',
-			phone: '+1 (555) 123-4567',
-			mail: 'mike.johnson@email.com',
 		),
 		contractorData(
 			id: '',
@@ -47,8 +45,6 @@ class SavedContractorsScreen extends StatelessWidget {
 			experience: 10,
 			description:
 					'Certified HVAC specialist with expertise in diagnostics and efficient climate solutions.',
-			phone: '+1 (555) 987-6543',
-      mail: 'sarah.williams@email.com',
 		),
 		contractorData(
 			id: '',
@@ -60,8 +56,6 @@ class SavedContractorsScreen extends StatelessWidget {
 			experience: 15,
 			description:
 					'Licensed electrician focused on safe installations, repairs, and smart home upgrades.',
-			phone: '+1 (555) 456-7890',
-			mail: 'david.chen@email.com',
 		),
 	];
 

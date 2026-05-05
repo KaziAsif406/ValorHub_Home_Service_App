@@ -46,178 +46,220 @@ class _QuoteRequestCardState extends State<QuoteRequestCard> {
         ? AppColors.allPrimaryColor
         : AppColors.contractor_primary;
 
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: AppColors.scaffoldColor,
-        borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(
-          color: AppColors.contractor_primary.withValues(alpha: 0.15),
+    return GestureDetector(
+      onTap: widget.onView,
+      child: Container(
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: AppColors.scaffoldColor,
+          borderRadius: BorderRadius.circular(14.r),
+          border: Border.all(
+            color: AppColors.contractor_primary.withValues(alpha: 0.15),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.c0A0A0A.withValues(alpha: 0.06),
+              blurRadius: 5.r,
+              offset: Offset(0, 4.h),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.c0A0A0A.withValues(alpha: 0.06),
-            blurRadius: 5.r,
-            offset: Offset(0, 4.h),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: 24.r,
-                backgroundColor:
-                    AppColors.contractor_primary.withValues(alpha: 0.12),
-                child: Text(
-                  initials,
-                  style: TextStyle(
-                    color: AppColors.contractor_primary,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-              UIHelper.horizontalSpace(12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            widget.request.fullName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.c14181F,
-                            ),
-                          ),
-                        ),
-                        UIHelper.horizontalSpace(8.w),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10.w,
-                            vertical: 4.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: statusBackground,
-                            borderRadius: BorderRadius.circular(999.r),
-                          ),
-                          child: Text(
-                            statusLabel,
-                            style: TextStyle(
-                              fontSize: 11.sp,
-                              fontWeight: FontWeight.w500,
-                              color: statusForeground,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      widget.request.serviceCategory,
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.c14181F,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          UIHelper.verticalSpace(15.h),
-          Text(
-            '${widget.request.zipCode} • ${_formatDate(widget.request.submittedAt)}',
-            style: TextStyle(
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w400,
-              color: AppColors.c14181F.withValues(alpha: 0.70),
-            ),
-          ),
-          Text(
-            widget.request.projectDetails,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 12.sp,
-              height: 1.5,
-              color: AppColors.c14181F.withValues(alpha: 0.70),
-            ),
-          ),
-          UIHelper.verticalSpace(14.h),
-          if (isNew) ...[
-            UIHelper.verticalSpace(14.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Expanded(
-                  child: CustomButton(
-                    label: 'View',
-                    onPressed: widget.onView,
-                    color: AppColors.cCCCCCC.withValues(alpha: 0.22),
-                    textStyle: TextStyle(
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w600,
+                CircleAvatar(
+                  radius: 24.r,
+                  backgroundColor:
+                      AppColors.contractor_primary.withValues(alpha: 0.12),
+                  child: Text(
+                    initials,
+                    style: TextStyle(
                       color: AppColors.contractor_primary,
-                    ),
-                    borderRadius: 14.r,
-                    padding: EdgeInsets.zero,
-                    leading: Icon(
-                      Icons.visibility_outlined,
-                      color: AppColors.contractor_primary,
-                      size: 18.sp,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
                 ),
-                UIHelper.horizontalSpace(10.w),
+                UIHelper.horizontalSpace(12.w),
                 Expanded(
-                  child: CustomButton(
-                    label: 'Accept',
-                    onPressed: widget.onAccept,
-                    isOutlined: false,
-                    color: AppColors.c3FAD46,
-                    borderColor: AppColors.contractor_primary,
-                    textStyle: TextStyle(
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.scaffoldColor,
-                    ),
-                    borderRadius: 14.r,
-                    padding: EdgeInsets.zero,
-                    leading: Icon(
-                      Icons.check_rounded,
-                      color: AppColors.scaffoldColor,
-                      size: 18.sp,
-                    ),
-                  ),
-                ),
-                UIHelper.horizontalSpace(10.w),
-                CustomButton(
-                  width: 40.w,
-                  label: '',
-                  gap: false,
-                  onPressed: widget.onReject,
-                  color: AppColors.allPrimaryColor.withValues(alpha: 0.12),
-                  borderRadius: 14.r,
-                  padding: EdgeInsets.zero,
-                  leading: Icon(
-                    Icons.close_rounded,
-                    color: AppColors.allPrimaryColor,
-                    size: 25.sp,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              widget.request.fullName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.c14181F,
+                              ),
+                            ),
+                          ),
+                          UIHelper.horizontalSpace(8.w),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10.w,
+                              vertical: 4.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: statusBackground,
+                              borderRadius: BorderRadius.circular(999.r),
+                            ),
+                            child: Text(
+                              statusLabel,
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w500,
+                                color: statusForeground,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        widget.request.id,
+                        // maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.c14181F.withValues(alpha: 0.70),
+                        ),
+                      ),
+                      UIHelper.verticalSpace(4.h),
+                      Text(
+                        widget.request.serviceCategory,
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.c14181F,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
+            UIHelper.verticalSpace(10.h),
+            Text(
+              widget.request.projectDetails,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12.sp,
+                height: 1.5,
+                color: AppColors.c14181F.withValues(alpha: 0.70),
+              ),
+            ),
+            UIHelper.verticalSpace(5.h),
+            Row(
+              children: [
+                Icon(
+                  Icons.location_on_outlined,
+                  color: AppColors.c14181F.withValues(alpha: 0.70),
+                  size: 14.sp,
+                ),
+                UIHelper.horizontalSpace(4.w),
+                Text(
+                  widget.request.zipCode,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.c6A7181,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(
+                  Icons.calendar_month_outlined,
+                  color: AppColors.c14181F.withValues(alpha: 0.70),
+                  size: 14.sp,
+                ),
+                UIHelper.horizontalSpace(4.w),
+                Text(
+                  _formatDate(widget.request.submittedAt),
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.c6A7181,
+                  ),
+                ),
+              ],
+            ),
+            if (isNew) ...[
+              UIHelper.verticalSpace(14.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomButton(
+                      label: 'View',
+                      onPressed: widget.onView,
+                      color: AppColors.cCCCCCC.withValues(alpha: 0.22),
+                      textStyle: TextStyle(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.contractor_primary,
+                      ),
+                      borderRadius: 14.r,
+                      padding: EdgeInsets.zero,
+                      leading: Icon(
+                        Icons.visibility_outlined,
+                        color: AppColors.contractor_primary,
+                        size: 18.sp,
+                      ),
+                    ),
+                  ),
+                  UIHelper.horizontalSpace(10.w),
+                  Expanded(
+                    child: CustomButton(
+                      label: 'Accept',
+                      onPressed: widget.onAccept,
+                      isOutlined: false,
+                      color: AppColors.c3FAD46,
+                      borderColor: AppColors.contractor_primary,
+                      textStyle: TextStyle(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.scaffoldColor,
+                      ),
+                      borderRadius: 14.r,
+                      padding: EdgeInsets.zero,
+                      leading: Icon(
+                        Icons.check_rounded,
+                        color: AppColors.scaffoldColor,
+                        size: 18.sp,
+                      ),
+                    ),
+                  ),
+                  UIHelper.horizontalSpace(10.w),
+                  CustomButton(
+                    width: 40.w,
+                    label: '',
+                    gap: false,
+                    onPressed: widget.onReject,
+                    color: AppColors.allPrimaryColor.withValues(alpha: 0.12),
+                    borderRadius: 14.r,
+                    padding: EdgeInsets.zero,
+                    leading: Icon(
+                      Icons.close_rounded,
+                      color: AppColors.allPrimaryColor,
+                      size: 25.sp,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

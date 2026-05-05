@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:auto_animated/auto_animated.dart';
-import 'package:template_flutter/loading_screen.dart';
+import 'package:template_flutter/contractor_navigation_screen.dart';
+import 'package:template_flutter/features/common/auth/presentation/login.dart';
+// import 'package:template_flutter/loading_screen.dart';
 // import 'package:template_flutter/navigation_screen.dart';
+// import '../../../loading_screen.dart';
 import 'constants/custome_theme.dart';
 import 'gen/colors.gen.dart';
 import 'helpers/all_routes.dart';
@@ -11,14 +14,9 @@ import 'helpers/di.dart';
 import 'helpers/helper_methods.dart';
 import 'helpers/navigation_service.dart';
 import 'networks/dio/dio.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   //await _requestPermissions();
   await GetStorage.init();
   diSetup();
@@ -83,7 +81,7 @@ class UtillScreenMobile extends StatelessWidget {
               },
               navigatorKey: NavigationService.navigatorKey,
               onGenerateRoute: RouteGenerator.generateRoute,
-              home: const LoadingScreen()),
+              home: const LoginScreen()),
         );
       },
     );

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:template_flutter/features/contractor/home/presentation/widget/home_app_bar.dart';
 import 'package:template_flutter/features/contractor/quote_requests/presentation/widget/request_card.dart';
 import 'package:template_flutter/features/contractor/quote_requests/presentation/widget/selector_pill.dart';
+import 'package:template_flutter/features/contractor/quote_requests/presentation/request_details.dart';
 import 'package:template_flutter/features/customer/quotes/data/quote_request_store.dart';
-import 'package:template_flutter/features/customer/quotes/presentation/widget/request_details.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 
@@ -11,6 +12,7 @@ enum _QuoteRequestFilter { all, pending, accepted, rejected }
 
 class AllRequestsScreen extends StatefulWidget {
   const AllRequestsScreen({super.key});
+
 
   @override
   State<AllRequestsScreen> createState() => _AllRequestsScreenState();
@@ -21,85 +23,95 @@ class _AllRequestsScreenState extends State<AllRequestsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: 10.h),
-      child: SafeArea(
-        child: StreamBuilder<List<QuoteRequestModel>>(
-          stream: QuoteRequestStore.instance.requestsStream,
-          initialData: QuoteRequestStore.instance.requests,
-          builder: (
-            BuildContext context,
-            AsyncSnapshot<List<QuoteRequestModel>> snapshot,
-          ) {
-            final List<QuoteRequestModel> requests =
-                snapshot.data ?? QuoteRequestStore.instance.requests;
-            final List<QuoteRequestModel> filteredRequests =
-                _filterRequests(requests);
-
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(14.w, 18.h, 14.w, 0),
-                    child: Text(
-                      'Quote Requests',
-                      style: TextStyle(
-                        fontSize: 22.sp,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.c14181F,
-                      ),
-                    ),
-                  ),
-                  UIHelper.verticalSpace(18.h),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        UIHelper.horizontalSpace(12.w),
-                        Row(
-                          children: 
-                          _buildFilterPills(requests),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.scaffoldColor,
+        elevation: 1,
+        titleSpacing: 15.w,
+        // leadingWidth: 10.w,
+        automaticallyImplyLeading: false,
+        // automaticallyImplyLeading: false,
+        title: ContractorHomeAppBar(
+          profileName: 'Contractor',
+          onInboxPressed: _handleInboxPressed,
+        ),
+      ),
+      body: Padding(
+        padding: EdgeInsets.only(top: 10.h),
+        child: SafeArea(
+          child: StreamBuilder<List<QuoteRequestModel>>(
+            stream: QuoteRequestStore.instance.requestsStream,
+            initialData: QuoteRequestStore.instance.requests,
+            builder: (
+              BuildContext context,
+              AsyncSnapshot<List<QuoteRequestModel>> snapshot,
+            ) {
+              final List<QuoteRequestModel> requests =
+                  snapshot.data ?? QuoteRequestStore.instance.requests;
+              final List<QuoteRequestModel> filteredRequests =
+                  _filterRequests(requests);
+      
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(14.w, 0.h, 14.w, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      UIHelper.verticalSpace(18.h),
+                      Container(
+                        padding: EdgeInsets.all(8.w),
+                        decoration: BoxDecoration(
+                          color: AppColors.scaffoldColor.withValues(alpha: 0.0),
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(
+                            color: AppColors.contractor_primary.withValues(alpha: 0.12),
+                          ),
                         ),
-                        UIHelper.horizontalSpace(12.w),
-                      ],
-                    ),
-                  ),
-                  UIHelper.verticalSpace(18.h),
-                  if (filteredRequests.isEmpty)
-                    _buildEmptyState()
-                  else
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(14.w, 0.h, 14.w, 0),
-                      child: Column(
-                        children: filteredRequests.map((request) {
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: 12.h),
-                            child: QuoteRequestCard(
-                              request: request,
-                              onView: () => showRequestDetailsBottomSheet(
-                                context,
-                                request,
-                              ),
-                              onAccept: () =>
-                                  QuoteRequestStore.instance.updateStatus(
-                                request.id,
-                                QuoteRequestStatus.accepted,
-                              ),
-                              onReject: () =>
-                                  QuoteRequestStore.instance.updateStatus(
-                                request.id,
-                                QuoteRequestStatus.rejected,
-                              ),
+                        child: Row(
+                          children: [
+                            Row(
+                              children: 
+                              _buildFilterPills(requests),
                             ),
-                          );
-                        }).toList(),
+                          ],
+                        ),
                       ),
-                    ),
-                ],
-              ),
-            );
-          },
+                      UIHelper.verticalSpace(18.h),
+                      if (filteredRequests.isEmpty)
+                        _buildEmptyState()
+                      else
+                        Column(
+                          children: filteredRequests.map((request) {
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: QuoteRequestCard(
+                                request: request,
+                                onView: () => Navigator.of(context).push(
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) =>
+                                        RequestDetailsScreen(request: request),
+                                  ),
+                                ),
+                                onAccept: () =>
+                                    QuoteRequestStore.instance.updateStatus(
+                                  request.id,
+                                  QuoteRequestStatus.accepted,
+                                ),
+                                onReject: () =>
+                                    QuoteRequestStore.instance.updateStatus(
+                                  request.id,
+                                  QuoteRequestStatus.rejected,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -113,7 +125,7 @@ class _AllRequestsScreenState extends State<AllRequestsScreen> {
         selected: _selectedFilter == _QuoteRequestFilter.all,
         onTap: () => setState(() => _selectedFilter = _QuoteRequestFilter.all),
       ),
-      UIHelper.horizontalSpace(10.w),
+      UIHelper.horizontalSpace(4.w),
       QuoteSelectorPill(
         label: 'New',
         count: requests
@@ -124,7 +136,7 @@ class _AllRequestsScreenState extends State<AllRequestsScreen> {
         onTap: () =>
             setState(() => _selectedFilter = _QuoteRequestFilter.pending),
       ),
-      UIHelper.horizontalSpace(10.w),
+      UIHelper.horizontalSpace(4.w),
       QuoteSelectorPill(
         label: 'Accepted',
         count: requests
@@ -135,7 +147,7 @@ class _AllRequestsScreenState extends State<AllRequestsScreen> {
         onTap: () =>
             setState(() => _selectedFilter = _QuoteRequestFilter.accepted),
       ),
-      UIHelper.horizontalSpace(10.w),
+      UIHelper.horizontalSpace(4.w),
       QuoteSelectorPill(
         label: 'Rejected',
         count: requests
@@ -221,6 +233,13 @@ class _AllRequestsScreenState extends State<AllRequestsScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void _handleInboxPressed() {
+    // Handle inbox button press
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Inbox pressed')),
     );
   }
 }

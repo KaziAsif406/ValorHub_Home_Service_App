@@ -63,84 +63,80 @@ class _FindLocationScreenState extends State<FindLocationScreen> {
         ),
       ),
       body: SafeArea(
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Center(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.only(left: 20.h, right: 20.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                // mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    widget.headingText,
-                    style: TextFontStyle.textStyle18c14181FInter600,
-                    textAlign: TextAlign.center,
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(left: 20.h, right: 20.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  widget.headingText,
+                  style: TextFontStyle.textStyle18c14181FInter600,
+                  textAlign: TextAlign.center,
+                ),
+                UIHelper.verticalSpace(16.h),
+                Text(
+                  'Enter the location of your project',
+                  style: TextFontStyle.textStyle12c6A7181Inter400,
+                ),
+                UIHelper.verticalSpace(24.h),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(16.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.c6A7181.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(16.r),
                   ),
-                  UIHelper.verticalSpace(16.h),
-                  Text(
-                    'Enter the location of your project',
-                    style: TextFontStyle.textStyle12c6A7181Inter400,
-                  ),
-                  UIHelper.verticalSpace(24.h),
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(16.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.c6A7181.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(16.r),
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Flexible(
-                              child: CustomTextFormField(
-                                height: 42.h,
-                                hintText: 'Zip code',
-                              ),
+                  child: Column(
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Flexible(
+                            child: CustomTextFormField(
+                              height: 42.h,
+                              hintText: 'Zip code',
                             ),
-                            UIHelper.horizontalSpace(12.w),
-                            Column(
-                              children: [
-                                UIHelper.verticalSpace(2.h),
-                                Container(
-                                  width: 43.w,
-                                  height: 42.h,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.scaffoldColor,
-                                    borderRadius: BorderRadius.circular(12.r),
-                                  ),
-                                  child: Center(
-                                    child: Image.asset(
-                                      'assets/icons/locator.png',
-                                      width: 20.w,
-                                      height: 20.h,
-                                    ),
+                          ),
+                          UIHelper.horizontalSpace(12.w),
+                          Column(
+                            children: [
+                              UIHelper.verticalSpace(2.h),
+                              Container(
+                                width: 43.w,
+                                height: 42.h,
+                                decoration: BoxDecoration(
+                                  color: AppColors.scaffoldColor,
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                child: Center(
+                                  child: Image.asset(
+                                    'assets/icons/locator.png',
+                                    width: 20.w,
+                                    height: 20.h,
                                   ),
                                 ),
-                              ],
-                            )
-                          ],
-                        ),
-                        UIHelper.verticalSpace(8.h),
-                        CustomButton(
-                          width: double.infinity,
-                          label: 'Find Contractor',
-                          onPressed: () {
-                            NavigationService.navigateToWithArgs(
-                              Routes.locationSurveyScreen,
-                              {'category': widget.categoryName ?? ''},
-                            );
-                          },
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      UIHelper.verticalSpace(8.h),
+                      CustomButton(
+                        width: double.infinity,
+                        label: 'Find Contractor',
+                        onPressed: () {
+                          NavigationService.navigateToWithArgs(
+                            Routes.locationSurveyScreen,
+                            {'category': widget.categoryName ?? ''},
+                          );
+                        },
+                      )
+                    ],
+                  ),
+                )
+              ],
             ),
           ),
         ),

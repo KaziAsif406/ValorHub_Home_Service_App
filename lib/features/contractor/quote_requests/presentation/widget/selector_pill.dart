@@ -22,20 +22,20 @@ class QuoteSelectorPill extends StatelessWidget {
       color: AppColors.allPrimaryColor.withValues(alpha: 0.00),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(999.r),
+        borderRadius: BorderRadius.circular(13.r),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOut,
-          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 7.5.h),
           decoration: BoxDecoration(
             color: selected
                 ? AppColors.contractor_primary
                 : AppColors.scaffoldColor,
-            borderRadius: BorderRadius.circular(999.r),
+            borderRadius: BorderRadius.circular(13.r),
             border: Border.all(
               color: selected
                   ? AppColors.contractor_primary.withValues(alpha: 0.00)
-                  : AppColors.c0A0A0A.withValues(alpha: 0.12),
+                  : AppColors.c0A0A0A.withValues(alpha: 0.00),
             ),
             // boxShadow: [
             //   BoxShadow(
@@ -54,28 +54,19 @@ class QuoteSelectorPill extends StatelessWidget {
                 label,
                 style: TextStyle(
                   fontSize: 12.sp,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   color: selected ? AppColors.scaffoldColor : AppColors.contractor_primary,
                 ),
               ),
               SizedBox(width: 8.w),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 3.h),
-                decoration: BoxDecoration(
+              Text(
+                count.toString(),
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w500,
                   color: selected
-                      ? AppColors.scaffoldColor.withValues(alpha: 0.28)
-                      : AppColors.contractor_primary.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(999.r),
-                ),
-                child: Text(
-                  count.toString(),
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w800,
-                    color: selected
-                        ? AppColors.scaffoldColor
-                        : AppColors.contractor_primary,
-                  ),
+                      ? AppColors.scaffoldColor
+                      : AppColors.contractor_primary,
                 ),
               ),
             ],
