@@ -1,0 +1,74 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:template_flutter/gen/colors.gen.dart';
+import 'package:template_flutter/helpers/ui_helpers.dart';
+
+class ContractorDashboardAppBar extends StatelessWidget {
+  const ContractorDashboardAppBar({
+    super.key,
+    required this.profileName,
+    required this.onMenuPressed,
+    required this.onInboxPressed,
+  });
+
+  final String profileName;
+  final VoidCallback onMenuPressed;
+  final VoidCallback onInboxPressed;
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 5.h),
+      decoration: BoxDecoration(
+        color: AppColors.scaffoldColor,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.c0A0A0A.withValues(alpha: 0.06),
+            blurRadius: 2.r,
+            offset: Offset(0, 4.h),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          IconButton(
+            onPressed: onMenuPressed,
+            icon: const Icon(Icons.menu_rounded, color: AppColors.c0A0A0A),
+            iconSize: 26.sp,
+          ),
+          UIHelper.horizontalSpace(10.w),
+          Image.asset(
+            'assets/icons/logo_home.png',
+            height: 28.h,
+          ),
+          Spacer(),
+          IconButton(
+            onPressed: onInboxPressed,
+            icon: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                const Icon(Icons.notifications_none_rounded,
+                    color: AppColors.c0A0A0A,
+                    size: 28),
+                Positioned(
+                  right: 2,
+                  top: 0,
+                  child: Container(
+                    width: 8.w,
+                    height: 8.h,
+                    decoration: const BoxDecoration(
+                      color: AppColors.allPrimaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
