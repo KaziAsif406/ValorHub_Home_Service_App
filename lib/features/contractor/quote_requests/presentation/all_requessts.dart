@@ -27,7 +27,9 @@ class _AllRequestsScreenState extends State<AllRequestsScreen> {
     return Padding(
       padding: EdgeInsets.only(top: 10.h),
       child: SafeArea(
-        child: contractorId == null
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: contractorId == null
             ? _buildEmptyState()
             : StreamBuilder<List<QuoteRequestModel>>(
                 stream: QuoteRequestStore.instance
@@ -45,6 +47,7 @@ class _AllRequestsScreenState extends State<AllRequestsScreen> {
                   return SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Padding(
                           padding: EdgeInsets.fromLTRB(14.w, 18.h, 14.w, 0),
@@ -107,7 +110,8 @@ class _AllRequestsScreenState extends State<AllRequestsScreen> {
                 },
               ),
         ),
-      );
+      ),
+    );
   }
 
   List<Widget> _buildFilterPills(List<QuoteRequestModel> requests) {
@@ -170,60 +174,64 @@ class _AllRequestsScreenState extends State<AllRequestsScreen> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(22.w),
-        decoration: BoxDecoration(
-          color: AppColors.scaffoldColor,
-          borderRadius: BorderRadius.circular(22.r),
-          border: Border.all(
-            color: AppColors.contractor_primary.withValues(alpha: 0.12),
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 0),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(22.w),
+          decoration: BoxDecoration(
+            color: AppColors.scaffoldColor,
+            borderRadius: BorderRadius.circular(22.r),
+            border: Border.all(
+              color: AppColors.contractor_primary.withValues(alpha: 0.12),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.c0A0A0A.withValues(alpha: 0.06),
+                blurRadius: 16.r,
+                offset: Offset(0, 8.h),
+              ),
+            ],
           ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.c0A0A0A.withValues(alpha: 0.06),
-              blurRadius: 16.r,
-              offset: Offset(0, 8.h),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 62.w,
-              height: 62.h,
-              decoration: BoxDecoration(
-                color: AppColors.contractor_primary.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 62.w,
+                height: 62.h,
+                decoration: BoxDecoration(
+                  color: AppColors.contractor_primary.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.inbox_rounded,
+                  color: AppColors.contractor_primary,
+                  size: 30.sp,
+                ),
               ),
-              child: Icon(
-                Icons.inbox_rounded,
-                color: AppColors.contractor_primary,
-                size: 30.sp,
+              UIHelper.verticalSpace(14.h),
+              Text(
+                'No requests in this filter',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.c14181F,
+                ),
               ),
-            ),
-            UIHelper.verticalSpace(14.h),
-            Text(
-              'No requests in this filter',
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w800,
-                color: AppColors.c14181F,
+              UIHelper.verticalSpace(6.h),
+              Text(
+                'Try a different selector or wait for the next quote request to arrive.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  height: 1.45,
+                  color: AppColors.c6A7181,
+                ),
               ),
-            ),
-            UIHelper.verticalSpace(6.h),
-            Text(
-              'Try a different selector or wait for the next quote request to arrive.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12.sp,
-                height: 1.45,
-                color: AppColors.c6A7181,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
