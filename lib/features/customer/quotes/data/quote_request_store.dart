@@ -16,6 +16,7 @@ final class QuoteRequestModel {
     required this.status,
     required this.location,
     required this.budget,
+    this.customerId,
     this.contractorName,
     this.imagePaths = const <String>[],
   });
@@ -27,6 +28,7 @@ final class QuoteRequestModel {
   final String projectDetails;
   final DateTime submittedAt;
   final QuoteRequestStatus status;
+  final String? customerId;
   final String? contractorName;
   final List<String> imagePaths;
   final String location;
@@ -43,6 +45,7 @@ final class QuoteRequestModel {
       projectDetails: projectDetails,
       submittedAt: submittedAt,
       status: status ?? this.status,
+      customerId: customerId,
       contractorName: contractorName,
       imagePaths: imagePaths,
       location: location,
@@ -154,6 +157,7 @@ final class QuoteRequestStore {
           <String>[],
       submittedAt: ts?.toDate() ?? DateTime.now(),
       status: _StatusFromString(data['status'] as String?),
+      customerId: data['customerId'] as String?,
       contractorName: data['contractorName'] as String?,
     );
   }
