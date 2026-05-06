@@ -94,14 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future<void> _signUpWithGoogle() async {
-    // Check terms checkbox first
-    if (!_agreeToTerms) {
-      setState(() {
-        _termsError = AuthValidationHelper.validateTermsCheckbox(false);
-      });
-      return;
-    }
-
+    setState(() => _termsError = null);
     setState(() => _isLoading = true);
     try {
       final cred = await _auth.signInWithGoogle();
@@ -434,7 +427,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ),
                         )
-                      : CustomButton(
+                        : CustomButton(
                           label: 'Create Account',
                           onPressed: _isLoading ? null : _signUp,
                           height: 40.h,
@@ -476,7 +469,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   // Google Sign-Up Button
                   CustomButton(
                     label: 'Sign up with Google',
-                    onPressed: (_isLoading || !_agreeToTerms) ? null : _signUpWithGoogle,
+                    onPressed: _isLoading ? null : _signUpWithGoogle,
                     height: 40.h,
                     borderRadius: 12.r,
                     width: double.infinity,
