@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/common_widgets/custom_button.dart';
 import 'package:template_flutter/common_widgets/custom_textform_field.dart';
+import 'package:template_flutter/constants/app_constants.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
@@ -9,6 +10,7 @@ import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 import 'package:template_flutter/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:template_flutter/helpers/app_preferences.dart';
 
 class BasicInfoScreen extends StatefulWidget {
   const BasicInfoScreen({
@@ -111,6 +113,24 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
         zipCode: zipCode,
         mobileNumber: mobileNumber,
       );
+      final bool isGoogleAccount = currentUser?.providerData
+              .any((info) => info.providerId.toLowerCase().contains('google')) ==
+          true;
+
+      if (isGoogleAccount) {
+        await AppPrefs.setLoggedIn(true);
+        if (!mounted) return;
+        NavigationService.navigateToReplacementWithArgs(
+          Routes.contractorDashboardScreen,
+          <String, dynamic>{
+            'name': name,
+            'email': email,
+            kKeyUserType: kUserTypeContractor,
+          },
+        );
+        return;
+      }
+
       await _auth.signOut();
       if (!mounted) return;
 
