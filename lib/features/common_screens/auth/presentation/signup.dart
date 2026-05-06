@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/common_widgets/custom_button.dart';
-// import 'package:template_flutter/common_widgets/custom_textform_field.dart';
+import 'package:template_flutter/common_widgets/custom_textform_field.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
@@ -273,224 +273,140 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   UIHelper.verticalSpace(48.h),
                   // Full Name Field
-                  TextFormField(
+                  CustomTextFormField(
                     controller: _nameController,
+                    label: 'Full Name',
+                    labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
+                    hintText: 'John Smith',
                     keyboardType: TextInputType.name,
-                    decoration: InputDecoration(
-                      label: Text('Full Name'),
-                      labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
-                      hintText: 'John Smith',
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 14.h,
-                      ),
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 14.w),
-                        child: Image.asset(
-                          'assets/icons/profile.png',
-                          width: 20.w,
-                          height: 20.h,
-                        ),
-                      ),
-                      errorMaxLines: 2,
-                      isDense: true,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: const BorderSide(
-                          color: AppColors.cE8E8E8,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(
-                          color: _isCustomer
-                              ? AppColors.allPrimaryColor
-                              : AppColors.contractor_primary,
-                        ),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: const BorderSide(
-                          color: AppColors.c14181F,
-                        ),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: const BorderSide(
-                          color: AppColors.c14181F,
-                        ),
+                    textInputAction: TextInputAction.next,
+                    errorMaxLines: 2,
+                    isDense: true,
+                    borderRadius: 12,
+                    enabledBorderColor: AppColors.cE8E8E8,
+                    focusedBorderColor: _isCustomer
+                        ? AppColors.allPrimaryColor
+                        : AppColors.contractor_primary,
+                    errorBorderColor: AppColors.c14181F,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 14.h,
+                    ),
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 14.w),
+                      child: Image.asset(
+                        'assets/icons/profile.png',
+                        width: 20.w,
+                        height: 20.h,
                       ),
                     ),
                     validator: AuthValidationHelper.validateName,
-                    textInputAction: TextInputAction.next,
+                    showLabelAboveField: false,
                   ),
                   UIHelper.verticalSpace(24.h),
                   // Email Field
-                  TextFormField(
+                  CustomTextFormField(
                     controller: _emailController,
+                    label: 'Email Address',
+                    labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
+                    hintText: 'your.email@example.com',
                     keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      label: Text('Email Address'),
-                      labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
-                      hintText: 'your.email@example.com',
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 14.h,
-                      ),
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 14.w),
-                        child: Image.asset(
-                          'assets/icons/mail.png',
-                          width: 20.w,
-                          height: 20.h,
-                        ),
-                      ),
-                      errorMaxLines: 2,
-                      isDense: true,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: const BorderSide(
-                          color: AppColors.cE8E8E8,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(
-                          color: _isCustomer
-                              ? AppColors.allPrimaryColor
-                              : AppColors.contractor_primary,
-                        ),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: const BorderSide(
-                          color: AppColors.c14181F,
-                        ),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: const BorderSide(
-                          color: AppColors.c14181F,
-                        ),
+                    textInputAction: TextInputAction.next,
+                    errorMaxLines: 2,
+                    isDense: true,
+                    borderRadius: 12,
+                    enabledBorderColor: AppColors.cE8E8E8,
+                    focusedBorderColor: _isCustomer
+                        ? AppColors.allPrimaryColor
+                        : AppColors.contractor_primary,
+                    errorBorderColor: AppColors.c14181F,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 14.h,
+                    ),
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 14.w),
+                      child: Image.asset(
+                        'assets/icons/mail.png',
+                        width: 20.w,
+                        height: 20.h,
                       ),
                     ),
                     validator: AuthValidationHelper.validateEmail,
-                    textInputAction: TextInputAction.next,
+                    showLabelAboveField: false,
                   ),
                   UIHelper.verticalSpace(24.h),
                   // Password Field
-                  TextFormField(
+                  CustomTextFormField(
                     controller: _passwordController,
+                    label: 'Password',
+                    labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
+                    hintText: 'Create a password',
                     obscureText: true,
                     keyboardType: TextInputType.visiblePassword,
                     onChanged: (_) {
                       // Trigger re-validation of confirm password when password changes
                       _formKey.currentState?.validate();
                     },
-                    decoration: InputDecoration(
-                      label: Text('Password'),
-                      labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
-                      hintText: 'Create a password',
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 14.h,
-                      ),
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 14.w),
-                        child: Image.asset(
-                          'assets/icons/lock.png',
-                          width: 20.w,
-                          height: 20.h,
-                        ),
-                      ),
-                      errorMaxLines: 2,
-                      isDense: true,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: const BorderSide(
-                          color: AppColors.cE8E8E8,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(
-                          color: _isCustomer
-                              ? AppColors.allPrimaryColor
-                              : AppColors.contractor_primary,
-                        ),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: const BorderSide(
-                          color: AppColors.c14181F,
-                        ),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: const BorderSide(
-                          color: AppColors.c14181F,
-                        ),
+                    textInputAction: TextInputAction.next,
+                    errorMaxLines: 2,
+                    isDense: true,
+                    borderRadius: 12,
+                    enabledBorderColor: AppColors.cE8E8E8,
+                    focusedBorderColor: _isCustomer
+                        ? AppColors.allPrimaryColor
+                        : AppColors.contractor_primary,
+                    errorBorderColor: AppColors.c14181F,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 14.h,
+                    ),
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 14.w),
+                      child: Image.asset(
+                        'assets/icons/lock.png',
+                        width: 20.w,
+                        height: 20.h,
                       ),
                     ),
                     validator: AuthValidationHelper.validatePassword,
-                    textInputAction: TextInputAction.next,
+                    showLabelAboveField: false,
                   ),
                   UIHelper.verticalSpace(24.h),
                   // Confirm Password Field
-                  TextFormField(
+                  CustomTextFormField(
                     controller: _confirmPasswordController,
+                    label: 'Confirm Password',
+                    labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
+                    hintText: 'Confirm your password',
                     obscureText: true,
                     keyboardType: TextInputType.visiblePassword,
-                    decoration: InputDecoration(
-                      label: Text('Confirm Password'),
-                      labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
-                      hintText: 'Confirm your password',
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 14.h,
-                      ),
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 14.w),
-                        child: Image.asset(
-                          'assets/icons/lock.png',
-                          width: 20.w,
-                          height: 20.h,
-                        ),
-                      ),
-                      errorMaxLines: 2,
-                      isDense: true,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: const BorderSide(
-                          color: AppColors.cE8E8E8,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(
-                          color: _isCustomer
-                              ? AppColors.allPrimaryColor
-                              : AppColors.contractor_primary,
-                        ),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: const BorderSide(
-                          color: AppColors.c14181F,
-                        ),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: const BorderSide(
-                          color: AppColors.c14181F,
-                        ),
+                    textInputAction: TextInputAction.done,
+                    errorMaxLines: 2,
+                    isDense: true,
+                    borderRadius: 12,
+                    enabledBorderColor: AppColors.cE8E8E8,
+                    focusedBorderColor: _isCustomer
+                        ? AppColors.allPrimaryColor
+                        : AppColors.contractor_primary,
+                    errorBorderColor: AppColors.c14181F,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 14.h,
+                    ),
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 14.w),
+                      child: Image.asset(
+                        'assets/icons/lock.png',
+                        width: 20.w,
+                        height: 20.h,
                       ),
                     ),
                     validator: (value) => AuthValidationHelper.validateConfirmPassword(
                       value,
                       _passwordController.text,
                     ),
-                    textInputAction: TextInputAction.done,
+                    showLabelAboveField: false,
                   ),
                   UIHelper.verticalSpace(24.h),
                   // Terms & Conditions Checkbox
