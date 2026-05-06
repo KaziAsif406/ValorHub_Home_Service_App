@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:template_flutter/constants/app_constants.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   // ── Current user stream ──────────────────────────────
   Stream<User?> get authStateChanges => _auth.authStateChanges();
@@ -40,6 +42,7 @@ class AuthService {
           email: normalizedEmail,
           userType: normalizedUserType,
           name: name.trim(),
+          profileCompleted: normalizedUserType == kUserTypeCustomer,
         );
         await credential.user?.reload();
         // Send email verification right after sign up
@@ -69,6 +72,51 @@ class AuthService {
     } on FirebaseAuthException {
       throw 'No account found with this email.';
     }
+  }
+
+  Future<UserCredential> signInWithGoogle() async {
+    try {
+      await _googleSignIn.signOut();
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        throw 'Google sign-in was cancelled.';
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      return _auth.signInWithCredential(credential);
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    }
+  }
+
+  Future<Map<String, dynamic>?> getUserProfileByUserId(String userId) async {
+    final snapshot = await _firestore
+        .collection(kFirestoreUsersCollection)
+        .doc(userId)
+        .get();
+    return snapshot.data();
+  }
+
+  Future<void> saveGoogleUserProfile({
+    required String userId,
+    required String email,
+    required String name,
+    required String userType,
+    required bool profileCompleted,
+  }) async {
+    await _saveUserProfile(
+      userId: userId,
+      email: email,
+      userType: userType,
+      name: name,
+      profileCompleted: profileCompleted,
+    );
   }
 
   Future<String> getUserTypeByUserId(String userId) async {
@@ -220,12 +268,15 @@ class AuthService {
     required String email,
     required String userType,
     required String name,
+    bool profileCompleted = true,
   }) async {
     await _firestore.collection(kFirestoreUsersCollection).doc(userId).set(
       {
         kEmail: email,
         kKeyUserType: userType,
         'displayName': name,
+        kKeyProfileCompleted: profileCompleted,
+        if (profileCompleted) kKeyProfileCompletedAt: FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       },
       SetOptions(merge: true),
