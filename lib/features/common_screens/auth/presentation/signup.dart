@@ -446,14 +446,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           textStyle: TextFontStyle.textStyle16cFFFFFFInter700,
                         ),
                   UIHelper.verticalSpace(16.h),
-                  Center(
-                    child: Text(
-                      'Or',
-                      style: TextFontStyle.textStyle14c64748BInter400,
-                      textAlign: TextAlign.center,
-                    ),
+                  Row(
+                    children: [
+                      UIHelper.horizontalSpace(24.w),
+                      Expanded(
+                        child: Divider(
+                          color: AppColors.c808080.withValues(alpha: 0.32),
+                          thickness: 1,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12.w),
+                        child: Text(
+                          'Or',
+                          style: TextFontStyle.textStyle14c64748BInter400,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          color: AppColors.c808080.withValues(alpha: 0.32),
+                          thickness: 1,
+                        ),
+                      ),
+                      UIHelper.horizontalSpace(24.w),
+                    ],
                   ),
-                  UIHelper.verticalSpace(10.h),
+                  UIHelper.verticalSpace(5.h),
                   // Google Sign-Up Button
                   CustomButton(
                     label: 'Sign up with Google',
@@ -530,7 +549,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         });
       },
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
             width: 24.w,
