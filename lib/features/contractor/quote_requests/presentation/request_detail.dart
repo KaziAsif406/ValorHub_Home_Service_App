@@ -10,6 +10,7 @@ import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 import 'package:template_flutter/services/auth_service.dart';
 import 'package:template_flutter/services/chat_service.dart';
+import 'package:intl/intl.dart';
 
 class RequestDetailsScreen extends StatelessWidget {
 	const RequestDetailsScreen({super.key, required this.request});
@@ -166,10 +167,10 @@ class RequestDetailsScreen extends StatelessWidget {
 														child: _InfoTile(
 															icon: Icons.location_on_outlined,
 															label: 'LOCATION',
-															value: '${request.location},${request.zipCode}',
+															value: '${request.location}-${request.zipCode}',
 														),
 													),
-													UIHelper.horizontalSpace(12.w),
+													UIHelper.horizontalSpace(10.w),
 													Expanded(
 														child: _InfoTile(
 															icon: Icons.calendar_month_outlined,
@@ -177,7 +178,7 @@ class RequestDetailsScreen extends StatelessWidget {
 															value: _formatRelativeDate(request.submittedAt),
 														),
 													),
-													UIHelper.horizontalSpace(12.w),
+													UIHelper.horizontalSpace(10.w),
 													Expanded(
 														child: _InfoTile(
 															icon: Icons.attach_money_rounded,
@@ -313,18 +314,7 @@ class RequestDetailsScreen extends StatelessWidget {
 	}
 
 	String _formatRelativeDate(DateTime date) {
-		final DateTime now = DateTime.now();
-		final Duration difference = now.difference(date);
-		if (difference.inDays <= 0) {
-			return 'Today';
-		}
-		if (difference.inDays == 1) {
-			return 'Yesterday';
-		}
-		if (difference.inDays < 7) {
-			return '${difference.inDays} days ago';
-		}
-		return '${date.month}/${date.day}/${date.year}';
+		return DateFormat('d MMM, y\nhh:mm a').format(date.toLocal());
 	}
 }
 
@@ -344,7 +334,7 @@ class _InfoTile extends StatelessWidget {
 	Widget build(BuildContext context) {
 		return Container(
       height: 95.h,
-      width: 100.w,
+      width: 110.w,
 			padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
 			decoration: BoxDecoration(
 				color: AppColors.c6A7181.withValues(alpha: 0.10),
@@ -367,7 +357,7 @@ class _InfoTile extends StatelessWidget {
 							),
 						],
 					),
-					UIHelper.verticalSpace(8.h),
+					UIHelper.verticalSpace(6.h),
 					Text(
 						value,
             maxLines: 3,
@@ -377,7 +367,7 @@ class _InfoTile extends StatelessWidget {
 							fontWeight: FontWeight.w500,
 							// height: 1.24,
 							color: AppColors.c14181F,
-              height: 1.5,
+              height: 1.2,
 						),
 					),
 				],
