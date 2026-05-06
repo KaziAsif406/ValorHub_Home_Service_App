@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/common_widgets/custom_button.dart';
-import 'package:template_flutter/common_widgets/custom_textform_field.dart';
+// import 'package:template_flutter/common_widgets/custom_textform_field.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
@@ -10,6 +10,7 @@ import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 import 'package:template_flutter/constants/app_constants.dart';
 import 'package:template_flutter/services/auth_service.dart';
+import 'package:template_flutter/helpers/auth_validation_helper.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,6 +20,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _auth = AuthService();
@@ -50,22 +52,28 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _signIn() async {
+    // Validate form first
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     setState(() => _isLoading = true);
     try {
       final cred = await _auth.signIn(
-        email: _emailController.text,
+        email: AuthValidationHelper.formatEmail(_emailController.text),
         password: _passwordController.text,
       );
-      // Optional: block unverified users
+      
+      // Block unverified users
       if (!cred.user!.emailVerified) {
         await _auth.signOut();
         throw 'Please verify your email before signing in.';
       }
+      
       if (mounted) {
-        final String profileName =
-            cred.user?.displayName?.trim().isNotEmpty == true
-                ? cred.user!.displayName!.trim()
-                : _emailController.text.trim();
+        final String profileName = cred.user?.displayName?.trim().isNotEmpty == true
+            ? cred.user!.displayName!.trim()
+            : _emailController.text.trim();
         final String profileEmail = cred.user?.email?.trim().isNotEmpty == true
             ? cred.user!.email!.trim()
             : _emailController.text.trim();
@@ -91,8 +99,15 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      if (!mounted) return;
+      final String errorMessage = AuthValidationHelper.mapFirebaseException(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: AppColors.c14181F,
+          duration: const Duration(seconds: 4),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -143,9 +158,11 @@ class _LoginScreenState extends State<LoginScreen> {
               : user.email?.trim() ?? 'User');
       final String profileEmail = user.email?.trim().isNotEmpty == true
           ? user.email!.trim()
-          : _emailController.text.trim();
+          : 'user@example.com';
 
-      String userType = (profile?[kKeyUserType] as String? ?? '').trim().toLowerCase();
+      String userType = (profile?[kKeyUserType] as String? ?? '')
+          .trim()
+          .toLowerCase();
       bool profileCompleted = (profile?[kKeyProfileCompleted] as bool?) == true;
 
       if (userType != kUserTypeCustomer && userType != kUserTypeContractor) {
@@ -174,23 +191,27 @@ class _LoginScreenState extends State<LoginScreen> {
       };
 
       if (userType == kUserTypeContractor && !profileCompleted) {
-        NavigationService.navigateToReplacementWithArgs(
-          Routes.basicInfoScreen,
-          routeArgs,
-        );
+        if (mounted) {
+          NavigationService.navigateToReplacementWithArgs(
+            Routes.basicInfoScreen,
+            routeArgs,
+          );
+        }
         return;
       }
 
-      if (userType == kUserTypeContractor) {
-        NavigationService.navigateToReplacementWithArgs(
-          Routes.contractorDashboardScreen,
-          routeArgs,
-        );
-      } else {
-        NavigationService.navigateToReplacementWithArgs(
-          Routes.navigationScreen,
-          routeArgs,
-        );
+      if (mounted) {
+        if (userType == kUserTypeContractor) {
+          NavigationService.navigateToReplacementWithArgs(
+            Routes.contractorDashboardScreen,
+            routeArgs,
+          );
+        } else {
+          NavigationService.navigateToReplacementWithArgs(
+            Routes.navigationScreen,
+            routeArgs,
+          );
+        }
       }
     } catch (e) {
       if (!mounted) {
@@ -200,8 +221,14 @@ class _LoginScreenState extends State<LoginScreen> {
       if (message.contains('cancelled')) {
         return;
       }
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message)));
+      final String errorMessage = AuthValidationHelper.mapFirebaseException(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: AppColors.c14181F,
+          duration: const Duration(seconds: 4),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -224,161 +251,257 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SafeArea(
           child: SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 32.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 54.h),
-                Center(
-                  child: Image.asset(
-                    'assets/icons/logo.png',
-                    width: 126.w,
-                    height: 82.h,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                UIHelper.verticalSpace(16.h),
-                Center(
-                  child: Text(
-                    'Welcome Back',
-                    style: TextFontStyle.textStyle24c0A0A0AInter700.copyWith(
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ),
-                UIHelper.verticalSpace(8.h),
-                Center(
-                  child: Text(
-                    'Sign in to your account to continue',
-                    style: TextFontStyle.textStyle14c64748BInter400,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                UIHelper.verticalSpace(40.h),
-                CustomTextFormField(
-                  label: 'Email Address',
-                  labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
-                  hintText: 'your.email@example.com',
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 14.h,
-                  ),
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 14.w),
+            child: Form(
+              key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 54.h),
+                  Center(
                     child: Image.asset(
-                      'assets/icons/mail.png',
-                      width: 20.w,
-                      height: 20.h,
+                      'assets/icons/logo.png',
+                      width: 126.w,
+                      height: 82.h,
+                      fit: BoxFit.contain,
                     ),
                   ),
-                ),
-                UIHelper.verticalSpace(24.h),
-                CustomTextFormField(
-                  label: 'Password',
-                  labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
-                  hintText: 'Enter your password',
-                  controller: _passwordController,
-                  obscureText: true,
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 14.h,
-                  ),
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 14.w),
-                    child: Image.asset(
-                      'assets/icons/lock.png',
-                      width: 20.w,
-                      height: 20.h,
-                    ),
-                  ),
-                ),
-                UIHelper.verticalSpace(24.h),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      minimumSize: Size(2.w, 2.h),
-                      padding: EdgeInsets.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    onPressed: () {
-                      NavigationService.navigateTo(Routes.forgotPWScreen);
-                    },
+                  UIHelper.verticalSpace(16.h),
+                  Center(
                     child: Text(
-                      'Forgot password?',
-                      style: TextFontStyle.textStyle13cBE1E2DInter400,
+                      'Welcome Back',
+                      style: TextFontStyle.textStyle24c0A0A0AInter700.copyWith(
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                   ),
-                ),
-                UIHelper.verticalSpace(24.h),
-                _isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : CustomButton(
-                        label: 'Sign In',
-                        onPressed: _signIn,
-                        height: 40.h,
-                        borderRadius: 12.r,
-                        width: double.infinity,
-                        textStyle: TextFontStyle.textStyle16cFFFFFFInter700,
+                  UIHelper.verticalSpace(8.h),
+                  Center(
+                    child: Text(
+                      'Sign in to your account to continue',
+                      style: TextFontStyle.textStyle14c64748BInter400,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  UIHelper.verticalSpace(40.h),
+                  // Email Field
+                  TextFormField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    enabled: !_isLoading,
+                    decoration: InputDecoration(
+                      label: Text('Email Address'),
+                      labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
+                      hintText: 'your.email@example.com',
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 14.h,
                       ),
-                UIHelper.verticalSpace(10.h),
-                Center(
-                  child: Text(
-                    'Or',
-                    style: TextFontStyle.textStyle14c64748BInter400,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                UIHelper.verticalSpace(10.h),
-                CustomButton(
-                  label: 'Continue with Google',
-                  onPressed: _signInWithGoogle,
-                  height: 40.h,
-                  borderRadius: 12.r,
-                  width: double.infinity,
-                  isOutlined: true,
-                  borderColor: AppColors.scaffoldColor.withValues(alpha: 0.0),
-                  leading: Image.asset(
-                    'assets/icons/google.png',
-                    width: 25.w,
-                    height: 25.h,
-                  ),
-                  textStyle: TextStyle(
-                    color: AppColors.c14181F,
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                UIHelper.verticalSpace(32.h),
-                Center(
-                  child: RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Don\'t have an account? ',
-                          style: TextFontStyle.textStyle13c64748BInter400,
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 14.w),
+                        child: Image.asset(
+                          'assets/icons/mail.png',
+                          width: 20.w,
+                          height: 20.h,
                         ),
-                        WidgetSpan(
-                          child: GestureDetector(
-                            onTap: () {
-                              NavigationService.navigateTo(Routes.signUpScreen);
+                      ),
+                      errorMaxLines: 2,
+                      isDense: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: const BorderSide(
+                          color: AppColors.cE8E8E8,
+                        ),
+                      ),
+                      disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: const BorderSide(
+                          color: AppColors.cE8E8E8,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: const BorderSide(
+                          color: AppColors.allPrimaryColor,
+                        ),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: const BorderSide(
+                          color: AppColors.c14181F,
+                        ),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: const BorderSide(
+                          color: AppColors.c14181F,
+                        ),
+                      ),
+                    ),
+                    validator: AuthValidationHelper.validateEmail,
+                    textInputAction: TextInputAction.next,
+                  ),
+                  UIHelper.verticalSpace(24.h),
+                  // Password Field
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    keyboardType: TextInputType.visiblePassword,
+                    enabled: !_isLoading,
+                    decoration: InputDecoration(
+                      label: Text('Password'),
+                      labelStyle: TextFontStyle.textStyle15c0A0A0AInter400,
+                      hintText: 'Enter your password',
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 14.h,
+                      ),
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 14.w),
+                        child: Image.asset(
+                          'assets/icons/lock.png',
+                          width: 20.w,
+                          height: 20.h,
+                        ),
+                      ),
+                      errorMaxLines: 2,
+                      isDense: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: const BorderSide(
+                          color: AppColors.cE8E8E8,
+                        ),
+                      ),
+                      disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: const BorderSide(
+                          color: AppColors.cE8E8E8,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: const BorderSide(
+                          color: AppColors.allPrimaryColor,
+                        ),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: const BorderSide(
+                          color: AppColors.c14181F,
+                        ),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: const BorderSide(
+                          color: AppColors.c14181F ,
+                        ),
+                      ),
+                    ),
+                    validator: AuthValidationHelper.validatePassword,
+                    textInputAction: TextInputAction.done,
+                  ),
+                  UIHelper.verticalSpace(24.h),
+                  // Forgot Password Link
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        minimumSize: Size(2.w, 2.h),
+                        padding: EdgeInsets.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      onPressed: _isLoading
+                          ? null
+                          : () {
+                              NavigationService.navigateTo(Routes.forgotPWScreen);
                             },
-                            child: Text(
-                              'Create account',
-                              style: TextFontStyle.textStyle13cBE1E2DInter400
-                                  .copyWith(
-                                fontWeight: FontWeight.w700,
+                      child: Text(
+                        'Forgot password?',
+                        style: TextFontStyle.textStyle13cBE1E2DInter400,
+                      ),
+                    ),
+                  ),
+                  UIHelper.verticalSpace(24.h),
+                  // Sign In Button
+                  _isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              AppColors.allPrimaryColor,
+                            ),
+                          ),
+                        )
+                      : CustomButton(
+                          label: 'Sign In',
+                          onPressed: _isLoading ? null : _signIn,
+                          height: 40.h,
+                          borderRadius: 12.r,
+                          width: double.infinity,
+                          textStyle: TextFontStyle.textStyle16cFFFFFFInter700,
+                        ),
+                  UIHelper.verticalSpace(10.h),
+                  Center(
+                    child: Text(
+                      'Or',
+                      style: TextFontStyle.textStyle14c64748BInter400,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  UIHelper.verticalSpace(10.h),
+                  // Google Sign-In Button
+                  CustomButton(
+                    label: 'Continue with Google',
+                    onPressed: _isLoading ? null : _signInWithGoogle,
+                    height: 40.h,
+                    borderRadius: 12.r,
+                    width: double.infinity,
+                    isOutlined: true,
+                    borderColor: AppColors.scaffoldColor.withValues(alpha: 0.0),
+                    leading: Image.asset(
+                      'assets/icons/google.png',
+                      width: 25.w,
+                      height: 25.h,
+                    ),
+                    textStyle: TextStyle(
+                      color: AppColors.c14181F,
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  UIHelper.verticalSpace(32.h),
+                  // Sign Up Link
+                  Center(
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Don\'t have an account? ',
+                            style: TextFontStyle.textStyle13c64748BInter400,
+                          ),
+                          WidgetSpan(
+                            child: GestureDetector(
+                              onTap: _isLoading
+                                  ? null
+                                  : () {
+                                      NavigationService.navigateTo(
+                                          Routes.signUpScreen);
+                                    },
+                              child: Text(
+                                'Create account',
+                                style: TextFontStyle.textStyle13cBE1E2DInter400
+                                    .copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                UIHelper.verticalSpace(28.h),
-              ],
+                  UIHelper.verticalSpace(28.h),
+                ],
+              ),
             ),
           ),
         ),
