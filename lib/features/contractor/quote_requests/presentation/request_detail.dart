@@ -15,7 +15,6 @@ class RequestDetailsScreen extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
-		final String requestLabel = request.id;
 		final bool isAccepted = request.status == QuoteRequestStatus.accepted;
 		final bool isRejected = request.status == QuoteRequestStatus.rejected;
 		final String statusLabel = isAccepted
