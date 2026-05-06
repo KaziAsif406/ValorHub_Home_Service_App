@@ -14,10 +14,12 @@ class DashboardOverviewSection extends StatelessWidget {
     super.key,
     required this.profileName,
     required this.profileEmail,
+    this.onViewRequests,
   });
 
   final String profileName;
   final String profileEmail;
+  final VoidCallback? onViewRequests;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,7 @@ class DashboardOverviewSection extends StatelessWidget {
           WelcomeBanner(
             profileName: profileName,
             profileEmail: profileEmail,
+            onViewRequests: onViewRequests,
           ),
           UIHelper.verticalSpace(14.h),
           const _MetricsGrid(),

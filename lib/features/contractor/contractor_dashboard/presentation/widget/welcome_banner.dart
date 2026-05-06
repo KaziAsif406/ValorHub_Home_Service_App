@@ -9,10 +9,12 @@ class WelcomeBanner extends StatelessWidget {
     super.key,
     required this.profileName,
     required this.profileEmail,
+    this.onViewRequests,
   });
 
   final String profileName;
   final String profileEmail;
+  final VoidCallback? onViewRequests;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +77,7 @@ class WelcomeBanner extends StatelessWidget {
           UIHelper.verticalSpace(14.h),
           CustomButton(
             label: 'View Requests',
-            onPressed: () {},
+            onPressed: onViewRequests ?? () {},
             height: 35.h,
             width: 130.w,
             borderRadius: 14.r,

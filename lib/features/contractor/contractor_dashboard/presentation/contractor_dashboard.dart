@@ -45,7 +45,10 @@ class _ContractorDashboardScreenState extends State<ContractorDashboardScreen> {
   }
 
   void _openSection(ContractorDashboardSection section) {
-    Navigator.of(context).pop();
+    // Only close the drawer if it is currently open.
+    if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
+      Navigator.of(context).pop();
+    }
     setState(() {
       _selectedSection = section;
     });
@@ -100,6 +103,7 @@ class _ContractorDashboardScreenState extends State<ContractorDashboardScreen> {
           key: const ValueKey<String>('overview'),
           profileName: widget.profileName,
           profileEmail: widget.profileEmail,
+          onViewRequests: () => _openSection(ContractorDashboardSection.requests),
         );
       case ContractorDashboardSection.inbox:
         return DashboardInboxSection(
