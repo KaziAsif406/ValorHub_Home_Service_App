@@ -98,6 +98,115 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<String?> _promptGoogleUserType() async {
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Choose account type'),
+          content: const Text(
+            'Select how you want to use this Google account.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(kUserTypeCustomer),
+              child: const Text('Customer'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(kUserTypeContractor),
+              child: const Text('Contractor'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _signInWithGoogle() async {
+    setState(() => _isLoading = true);
+    try {
+      final cred = await _auth.signInWithGoogle();
+      final user = cred.user;
+      if (user == null) {
+        throw 'Unable to sign in with Google.';
+      }
+
+      final profile = await _auth.getUserProfileByUserId(user.uid);
+      final String profileName = (profile?['displayName'] as String?)
+                  ?.trim()
+                  .isNotEmpty ==
+              true
+          ? (profile?['displayName'] as String).trim()
+          : (user.displayName?.trim().isNotEmpty == true
+              ? user.displayName!.trim()
+              : user.email?.trim() ?? 'User');
+      final String profileEmail = user.email?.trim().isNotEmpty == true
+          ? user.email!.trim()
+          : _emailController.text.trim();
+
+      String userType = (profile?[kKeyUserType] as String? ?? '').trim().toLowerCase();
+      bool profileCompleted = (profile?[kKeyProfileCompleted] as bool?) == true;
+
+      if (userType != kUserTypeCustomer && userType != kUserTypeContractor) {
+        final String? selectedType = await _promptGoogleUserType();
+        if (selectedType == null) {
+          await _auth.signOut();
+          return;
+        }
+
+        userType = selectedType;
+        profileCompleted = userType == kUserTypeCustomer;
+        await _auth.saveGoogleUserProfile(
+          userId: user.uid,
+          email: profileEmail,
+          name: profileName,
+          userType: userType,
+          profileCompleted: profileCompleted,
+        );
+      }
+
+      await AppPrefs.setLoggedIn(true);
+      final Map<String, dynamic> routeArgs = {
+        'name': profileName,
+        'email': profileEmail,
+        kKeyUserType: userType,
+      };
+
+      if (userType == kUserTypeContractor && !profileCompleted) {
+        NavigationService.navigateToReplacementWithArgs(
+          Routes.basicInfoScreen,
+          routeArgs,
+        );
+        return;
+      }
+
+      if (userType == kUserTypeContractor) {
+        NavigationService.navigateToReplacementWithArgs(
+          Routes.contractorDashboardScreen,
+          routeArgs,
+        );
+      } else {
+        NavigationService.navigateToReplacementWithArgs(
+          Routes.navigationScreen,
+          routeArgs,
+        );
+      }
+    } catch (e) {
+      if (!mounted) {
+        return;
+      }
+      final String message = e.toString();
+      if (message.contains('cancelled')) {
+        return;
+      }
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -213,6 +322,34 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: double.infinity,
                         textStyle: TextFontStyle.textStyle16cFFFFFFInter700,
                       ),
+                UIHelper.verticalSpace(10.h),
+                Center(
+                  child: Text(
+                    'Or',
+                    style: TextFontStyle.textStyle14c64748BInter400,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                UIHelper.verticalSpace(10.h),
+                CustomButton(
+                  label: 'Continue with Google',
+                  onPressed: _signInWithGoogle,
+                  height: 40.h,
+                  borderRadius: 12.r,
+                  width: double.infinity,
+                  isOutlined: true,
+                  borderColor: AppColors.scaffoldColor.withValues(alpha: 0.0),
+                  leading: Image.asset(
+                    'assets/icons/google.png',
+                    width: 25.w,
+                    height: 25.h,
+                  ),
+                  textStyle: TextStyle(
+                    color: AppColors.c14181F,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 UIHelper.verticalSpace(32.h),
                 Center(
                   child: RichText(

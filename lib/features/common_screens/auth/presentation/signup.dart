@@ -5,8 +5,10 @@ import 'package:template_flutter/common_widgets/custom_textform_field.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
+import 'package:template_flutter/helpers/app_preferences.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
+import 'package:template_flutter/constants/app_constants.dart';
 import 'package:template_flutter/services/auth_service.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -60,6 +62,84 @@ class _SignUpScreenState extends State<SignUpScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _signUpWithGoogle() async {
+    setState(() => _isLoading = true);
+    try {
+      final cred = await _auth.signInWithGoogle();
+      final user = cred.user;
+      if (user == null) {
+        throw 'Unable to sign in with Google.';
+      }
+
+      final profile = await _auth.getUserProfileByUserId(user.uid);
+      final String profileName = (profile?['displayName'] as String?)
+                  ?.trim()
+                  .isNotEmpty ==
+              true
+          ? (profile?['displayName'] as String).trim()
+          : (user.displayName?.trim().isNotEmpty == true
+              ? user.displayName!.trim()
+              : user.email?.trim() ?? 'User');
+      final String profileEmail = user.email?.trim().isNotEmpty == true
+          ? user.email!.trim()
+          : _emailController.text.trim();
+
+      String userType = (profile?[kKeyUserType] as String? ?? '').trim().toLowerCase();
+      bool profileCompleted = (profile?[kKeyProfileCompleted] as bool?) == true;
+
+      if (userType != kUserTypeCustomer && userType != kUserTypeContractor) {
+        userType = _isCustomer ? kUserTypeCustomer : kUserTypeContractor;
+        profileCompleted = userType == kUserTypeCustomer;
+        await _auth.saveGoogleUserProfile(
+          userId: user.uid,
+          email: profileEmail,
+          name: profileName,
+          userType: userType,
+          profileCompleted: profileCompleted,
+        );
+      }
+
+      await AppPrefs.setLoggedIn(true);
+      final Map<String, dynamic> routeArgs = {
+        'name': profileName,
+        'email': profileEmail,
+        kKeyUserType: userType,
+      };
+
+      if (userType == kUserTypeContractor && !profileCompleted) {
+        NavigationService.navigateToReplacementWithArgs(
+          Routes.basicInfoScreen,
+          routeArgs,
+        );
+        return;
+      }
+
+      if (userType == kUserTypeContractor) {
+        NavigationService.navigateToReplacementWithArgs(
+          Routes.contractorDashboardScreen,
+          routeArgs,
+        );
+      } else {
+        NavigationService.navigateToReplacementWithArgs(
+          Routes.navigationScreen,
+          routeArgs,
+        );
+      }
+    } catch (e) {
+      if (!mounted) {
+        return;
+      }
+      final String message = e.toString();
+      if (message.contains('cancelled')) {
+        return;
+      }
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -305,6 +385,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         width: double.infinity,
                         textStyle: TextFontStyle.textStyle16cFFFFFFInter700,
                       ),
+                UIHelper.verticalSpace(16.h),
+                Center(
+                  child: Text(
+                    'Or',
+                    style: TextFontStyle.textStyle14c64748BInter400,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                CustomButton(
+                  label: 'Sign up with Google',
+                  onPressed: _agreeToTerms ? _signUpWithGoogle : null,
+                  height: 40.h,
+                  borderRadius: 12.r,
+                  width: double.infinity,
+                  isOutlined: true,
+                  borderColor: AppColors.scaffoldColor.withValues(alpha: 0.0),
+                  leading: Image.asset(
+                    'assets/icons/google.png',
+                    width: 25.w,
+                    height: 25.h,
+                  ),
+                  textStyle: TextStyle(
+                    color: AppColors.c14181F,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 UIHelper.verticalSpace(42.h),
                 Center(
                   child: RichText(
