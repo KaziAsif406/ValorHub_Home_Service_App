@@ -22,6 +22,15 @@ class CustomTextFormField extends StatefulWidget {
     this.minLines,
     this.contentPadding,
     this.focusNode,
+    this.enabled = true,
+    this.textInputAction,
+    this.errorMaxLines,
+    this.isDense = false,
+    this.borderRadius = 12,
+    this.enabledBorderColor = AppColors.c808080,
+    this.focusedBorderColor = AppColors.c808080,
+    this.errorBorderColor = Colors.red,
+    this.showLabelAboveField = true,
   });
 
   final String? label;
@@ -40,6 +49,15 @@ class CustomTextFormField extends StatefulWidget {
   final int? minLines;
   final EdgeInsetsGeometry? contentPadding;
   final FocusNode? focusNode;
+  final bool enabled;
+  final TextInputAction? textInputAction;
+  final int? errorMaxLines;
+  final bool isDense;
+  final double borderRadius;
+  final Color enabledBorderColor;
+  final Color focusedBorderColor;
+  final Color errorBorderColor;
+  final bool showLabelAboveField;
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
@@ -71,7 +89,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (widget.label != null && widget.label!.isNotEmpty) ...[
+          // Show label above field only if showLabelAboveField is true
+          if (widget.showLabelAboveField &&
+              widget.label != null &&
+              widget.label!.isNotEmpty) ...[
             Text(
               widget.label!,
               style: widget.labelStyle ?? 
@@ -88,7 +109,14 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             maxLines: widget.obscureText ? 1 : widget.maxLines,
             minLines: widget.minLines,
             focusNode: widget.focusNode,
+            enabled: widget.enabled,
+            textInputAction: widget.textInputAction,
             decoration: InputDecoration(
+              // Use label in decoration if showLabelAboveField is false
+              label: !widget.showLabelAboveField && widget.label != null
+                  ? Text(widget.label!)
+                  : null,
+              labelStyle: widget.labelStyle,
               hintText: widget.hintText,
               hintStyle: TextFontStyle.textStyle14c64748BInter400,
               prefixIcon: widget.prefixIcon,
@@ -106,43 +134,51 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   : widget.suffixIcon,
               contentPadding: widget.contentPadding ??
                   EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+              errorMaxLines: widget.errorMaxLines,
+              isDense: widget.isDense,
               filled: true,
               fillColor: AppColors.cF8FAFC,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: const BorderSide(
-                  color: AppColors.c808080,
+                borderRadius: BorderRadius.circular(widget.borderRadius.r),
+                borderSide: BorderSide(
+                  color: widget.enabledBorderColor,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(widget.borderRadius.r),
                 borderSide: BorderSide(
-                  color: AppColors.c808080.withValues(alpha: 0.2),
+                  color: widget.enabledBorderColor.withValues(alpha: 0.2),
+                ),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(widget.borderRadius.r),
+                borderSide: BorderSide(
+                  color: widget.enabledBorderColor.withValues(alpha: 0.2),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(widget.borderRadius.r),
                 borderSide: BorderSide(
-                  color: AppColors.c808080.withValues(alpha: 0.2),
-                  width: 2,
+                  color: widget.focusedBorderColor,
+                  width: 1.5,
                 ),
               ),
               errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: const BorderSide(
-                  color: AppColors.c808080,
+                borderRadius: BorderRadius.circular(widget.borderRadius.r),
+                borderSide: BorderSide(
+                  color: widget.errorBorderColor,
                 ),
               ),
               focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: const BorderSide(
-                  color: Colors.red,
-                  width: 2,
+                borderRadius: BorderRadius.circular(widget.borderRadius.r),
+                borderSide: BorderSide(
+                  color: widget.errorBorderColor,
+                  width: 1.5,
                 ),
               ),
               errorStyle: TextStyle(
                 fontSize: 12.sp,
-                color: Colors.red,
+                color: widget.errorBorderColor,
               ),
             ),
             style: TextStyle(
