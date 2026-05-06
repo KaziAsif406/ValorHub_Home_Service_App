@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:template_flutter/features/contractor/quote_requests/presentation/request_detail.dart';
 import 'package:template_flutter/features/contractor/quote_requests/presentation/widget/request_card.dart';
 import 'package:template_flutter/features/contractor/quote_requests/presentation/widget/selector_pill.dart';
 import 'package:template_flutter/features/customer/quotes/data/quote_request_store.dart';
@@ -84,11 +85,14 @@ class _AllRequestsScreenState extends State<AllRequestsScreen> {
                                 return Padding(
                                   padding: EdgeInsets.only(bottom: 12.h),
                                   child: QuoteRequestCard(
-                                    request: request,
-                                    onView: () => showRequestDetailsBottomSheet(
-                                      context,
-                                      request,
-                                    ),
+                                      request: request,
+                                      onView: () => Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (_) => RequestDetailsScreen(
+                                                request: request,
+                                              ),
+                                            ),
+                                          ),
                                     onAccept: () =>
                                         QuoteRequestStore.instance.updateStatus(
                                       request.id,
