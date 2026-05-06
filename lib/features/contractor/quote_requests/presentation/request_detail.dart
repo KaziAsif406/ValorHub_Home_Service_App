@@ -3,10 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/common_widgets/custom_button.dart';
 import 'package:template_flutter/constants/text_font_style.dart';
 import 'package:template_flutter/features/customer/quotes/data/quote_request_store.dart';
+import 'package:template_flutter/features/customer/contractors/data/contractor_model.dart';
+import 'package:template_flutter/features/contractor/inbox/presentation/chat_inbox.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
-// import 'package:template_flutter/helpers/all_routes.dart';
-// import 'package:template_flutter/helpers/navigation_service.dart';
+import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
+import 'package:template_flutter/services/auth_service.dart';
+import 'package:template_flutter/services/chat_service.dart';
 
 class RequestDetailsScreen extends StatelessWidget {
 	const RequestDetailsScreen({super.key, required this.request});
@@ -216,9 +219,75 @@ class RequestDetailsScreen extends StatelessWidget {
 											UIHelper.verticalSpace(26.h),
 											CustomButton(
 												label: 'Start Conversation',
-												onPressed: () {
-                          
-                        },
+												onPressed: () async {
+													try {
+														// Get the current contractor's ID
+														final currentUser = AuthService().currentUser;
+														if (currentUser == null) {
+															throw Exception('Contractor not logged in');
+														}
+
+														// Ensure we have a customer ID
+														if (request.customerId == null || request.customerId!.isEmpty) {
+															throw Exception('Customer ID not available');
+														}
+
+														// Create chat ID for this conversation
+														final chatId = ChatService.chatIdFor(
+															currentUser.uid,
+															request.customerId!,
+														);
+
+														// Create chat if it doesn't exist
+														await ChatService().createChatIfNotExists(
+															chatId,
+															[currentUser.uid, request.customerId!],
+														);
+
+														// Create a contractorData object representing the customer
+														final customer = contractorData(
+															id: request.customerId!,
+															name: request.fullName,
+															service: request.serviceCategory,
+															rating: 0.0,
+															reviews: 0,
+															location: request.location,
+															experience: 0,
+															description: request.projectDetails,
+															phone: '',
+															mail: request.customerId!,
+														);
+
+														// Navigate to the contractor's chat inbox
+														if (context.mounted) {
+															NavigationService.navigatorKey.currentState?.push(
+																MaterialPageRoute(
+																	builder: (_) => ContractorChatInboxScreen(
+																		contractor: customer,
+																		isOnline: false,
+																	),
+																),
+															);
+														}
+													} catch (e) {
+														// Show error dialog if something goes wrong
+														if (context.mounted) {
+															showDialog(
+																context: context,
+																builder: (_) => AlertDialog(
+																	title: const Text('Unable to start conversation'),
+																	content: Text(e.toString()),
+																	actions: [
+																		TextButton(
+																			onPressed: () => Navigator.of(context).pop(),
+																			child: const Text('OK'),
+																		),
+																	],
+																),
+															);
+														}
+													}
+												},
 												height: 40.h,
                         width: 190.w,
 												borderRadius: 12.r,
