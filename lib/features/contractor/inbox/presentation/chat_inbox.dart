@@ -113,38 +113,6 @@ class _ContractorChatInboxScreenState extends State<ContractorChatInboxScreen> {
     );
   }
 
-  // ignore: unused_element
-  List<ContractorChatMessage> _buildConversation() {
-    return [
-      const ContractorChatMessage(
-        text: 'Hi! Thanks for accepting my request.',
-        time: '9:58 AM',
-        isMe: false,
-      ),
-      const ContractorChatMessage(
-        text: 'Of course - happy to help with the project.',
-        time: '10:01 AM',
-        isMe: true,
-      ),
-      ContractorChatMessage(
-        text:
-            'Do you typically use cedar or composite for ${widget.contractor.service.toLowerCase()}?',
-        time: '10:04 AM',
-        isMe: false,
-      ),
-      const ContractorChatMessage(
-        text: 'Both work great. I can walk you through options and bring samples.',
-        time: '10:12 AM',
-        isMe: true,
-      ),
-      const ContractorChatMessage(
-        text: 'Sounds good - can we schedule a site visit Friday?',
-        time: '10:32 AM',
-        isMe: false,
-      ),
-    ];
-  }
-
   String _initialsFromName(String fullName) {
     final parts = fullName
         .split(' ')
