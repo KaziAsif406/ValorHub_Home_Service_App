@@ -78,15 +78,17 @@ class _ContractorChatInboxScreenState extends State<ContractorChatInboxScreen> {
                         : '';
                     final isMe = (data['senderId'] as String? ?? '') == _myId;
                     return ContractorChatMessage(text: text, time: time, isMe: isMe);
-                  }).toList();
+                  }).toList().reversed.toList();
 
                   return ListView.builder(
+                    reverse: true,
                     padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
                       final message = messages[index];
                       return ContractorChatBubble(message: message);
                     },
+                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                   );
                 },
               ),

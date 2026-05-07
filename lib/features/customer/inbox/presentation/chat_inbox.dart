@@ -78,15 +78,17 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
                         : '';
                     final isMe = (data['senderId'] as String? ?? '') == _myId;
                     return ChatMessage(text: text, time: time, isMe: isMe);
-                  }).toList();
+                  }).toList().reversed.toList();
 
                   return ListView.builder(
+                    reverse: true,
                     padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
                       final message = messages[index];
                       return ChatBubble(message: message);
                     },
+                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                   );
                 },
               ),
