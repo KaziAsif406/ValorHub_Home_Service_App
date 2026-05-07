@@ -48,68 +48,74 @@ class _ContractorChatInboxScreenState extends State<ContractorChatInboxScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF3F4F6),
       body: SafeArea(
-        child: Column(
-          children: [
-            ContractorInboxHeader(
-              name: widget.contractor.name,
-              service: widget.contractor.service,
-              isOnline: widget.isOnline,
-              initials: _initialsFromName(widget.contractor.name),
-              onBack: () => Navigator.of(context).pop(),
-              onCall: () {},
-              onMore: () {},
-            ),
-            Expanded(
-              child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                stream: ChatService().messagesStream(_chatId),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) return const SizedBox();
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  final docs = snapshot.data?.docs ?? [];
-                  final messages = docs.map((d) {
-                    final data = d.data();
-                    final text = data['text'] as String? ?? '';
-                    final created = data['createdAt'] as Timestamp?;
-                    final time = created != null
-                        ? DateFormat('h:mm a').format(created.toDate())
-                        : '';
-                    final isMe = (data['senderId'] as String? ?? '') == _myId;
-                    return ContractorChatMessage(text: text, time: time, isMe: isMe);
-                  }).toList().reversed.toList();
-
-                  return ListView.builder(
-                    reverse: true,
-                    padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      final message = messages[index];
-                      return ContractorChatBubble(message: message);
-                    },
-                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Column(
+            children: [
+              ContractorInboxHeader(
+                name: widget.contractor.name,
+                service: widget.contractor.service,
+                isOnline: widget.isOnline,
+                initials: _initialsFromName(widget.contractor.name),
+                onBack: () => Navigator.of(context).pop(),
+                onCall: () {},
+                onMore: () {},
+              ),
+              Expanded(
+                child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  stream: ChatService().messagesStream(_chatId),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) return const SizedBox();
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+          
+                    final docs = snapshot.data?.docs ?? [];
+                    final messages = docs.map((d) {
+                      final data = d.data();
+                      final text = data['text'] as String? ?? '';
+                      final created = data['createdAt'] as Timestamp?;
+                      final time = created != null
+                          ? DateFormat('h:mm a').format(created.toDate())
+                          : '';
+                      final isMe = (data['senderId'] as String? ?? '') == _myId;
+                      return ContractorChatMessage(text: text, time: time, isMe: isMe);
+                    }).toList().reversed.toList();
+          
+                    return ListView.builder(
+                      reverse: true,
+                      padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        final message = messages[index];
+                        return ContractorChatBubble(message: message);
+                      },
+                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                    );
+                  },
+                ),
+              ),
+              ContractorChatComposer(
+                controller: _messageController,
+                onSend: () async {
+                  final text = _messageController.text.trim();
+                  if (text.isEmpty) return;
+                  final auth = AuthService();
+                  final senderName = auth.currentUser?.displayName ?? '';
+                  await ChatService().sendTextMessage(
+                    chatId: _chatId,
+                    text: text,
+                    senderId: _myId,
+                    senderName: senderName,
                   );
+                  _messageController.clear();
                 },
               ),
-            ),
-            ContractorChatComposer(
-              controller: _messageController,
-              onSend: () async {
-                final text = _messageController.text.trim();
-                if (text.isEmpty) return;
-                final auth = AuthService();
-                final senderName = auth.currentUser?.displayName ?? '';
-                await ChatService().sendTextMessage(
-                  chatId: _chatId,
-                  text: text,
-                  senderId: _myId,
-                  senderName: senderName,
-                );
-                _messageController.clear();
-              },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
