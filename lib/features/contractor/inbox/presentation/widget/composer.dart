@@ -213,21 +213,25 @@ class _ContractorChatComposerState
             /// ANIMATED SEND BUTTON
             AnimatedContainer(
               duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
               width: isFocused ? 47.w : 95.w,
-              child: CustomButton(
-                label: isFocused ? '' : 'Send',
-                gap: isFocused ? false : true,
-                onPressed: widget.onSend,
-                height: 37.h,
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                color: AppColors.contractor_primary,
-                leading: Image.asset(
-                  'assets/icons/send.png',
-                  width: 18.w,
-                  height: 18.h,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14.r),
+                child: CustomButton(
+                  label: isFocused ? '' : 'Send',
+                  gap: !isFocused,
+                  onPressed: widget.onSend,
+                  height: 37.h,
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                  color: AppColors.contractor_primary,
+                  leading: Image.asset(
+                    'assets/icons/send.png',
+                    width: 18.w,
+                    height: 18.h,
+                  ),
                 ),
               ),
-            ),
+            )
           ],
         ),
       ),
