@@ -393,7 +393,7 @@ final class RouteGenerator {
                 widget: const NotificationsScreen(), settings: settings);
 
       case Routes.contractorProfileScreen:
-        final contractor = settings.arguments as contractorData;
+        final contractor = settings.arguments as ContractorData;
         return defaultTargetPlatform == TargetPlatform.iOS
             ? CupertinoPageRoute(
                 builder: (context) => ContractorProfile(contractor: contractor))
@@ -403,8 +403,8 @@ final class RouteGenerator {
 
       case Routes.requestQuoteScreen:
         final dynamic requestArgs = settings.arguments;
-        final contractorData? contractor =
-            requestArgs is contractorData ? requestArgs : null;
+        final ContractorData? contractor =
+            requestArgs is ContractorData ? requestArgs : null;
 
         return defaultTargetPlatform == TargetPlatform.iOS
             ? CupertinoPageRoute(

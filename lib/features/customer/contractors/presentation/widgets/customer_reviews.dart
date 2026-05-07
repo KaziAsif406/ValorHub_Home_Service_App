@@ -20,7 +20,7 @@ class CustomerReview {
 }
 
 class CustomerReviews extends StatelessWidget {
-  final contractorData contractor;
+  final ContractorData contractor;
 
   CustomerReviews({
     super.key,

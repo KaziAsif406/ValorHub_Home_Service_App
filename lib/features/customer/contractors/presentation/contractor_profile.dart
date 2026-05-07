@@ -17,7 +17,7 @@ import 'package:template_flutter/features/customer/inbox/presentation/chat_inbox
 import 'package:template_flutter/helpers/ui_helpers.dart';
 
 class ContractorProfile extends StatefulWidget {
-  final contractorData contractor;
+  final ContractorData contractor;
   final bool isFavorite;
 
   const ContractorProfile({

@@ -23,8 +23,8 @@ class SavedContractorsScreen extends StatelessWidget {
 		}
 	}
 
-	static const List<contractorData> _contractors = [
-		contractorData(
+	static const List<ContractorData> _contractors = [
+		ContractorData(
 			id: '',
 			name: 'Mike Johnson',
 			service: 'Plumbing',
@@ -37,7 +37,7 @@ class SavedContractorsScreen extends StatelessWidget {
 			phone: '+1 (555) 123-4567',
 			mail: 'mike.johnson@email.com',
 		),
-		contractorData(
+		ContractorData(
 			id: '',
 			name: 'Sarah Williams',
 			service: 'HVAC',
@@ -50,7 +50,7 @@ class SavedContractorsScreen extends StatelessWidget {
 			phone: '+1 (555) 987-6543',
       mail: 'sarah.williams@email.com',
 		),
-		contractorData(
+		ContractorData(
 			id: '',
 			name: 'David Chen',
 			service: 'Electrical',
@@ -103,7 +103,7 @@ class SavedContractorsScreen extends StatelessWidget {
 class _SavedContractorCard extends StatelessWidget {
 	const _SavedContractorCard({required this.data});
 
-	final contractorData data;
+	final ContractorData data;
 
 	@override
 	Widget build(BuildContext context) {

@@ -15,18 +15,18 @@ class ContractorProfileScreen extends StatelessWidget {
   const ContractorProfileScreen({super.key});
 
   // Real-time contractor stream from Firestore
-  Stream<List<contractorData>> get contractorsStream {
+  Stream<List<ContractorData>> get contractorsStream {
     return FirebaseFirestore.instance
         .collection(kFirestoreUsersCollection)
         .where(kKeyUserType, isEqualTo: kUserTypeContractor)
         .snapshots()
         .map((QuerySnapshot snap) {
-      return snap.docs.map((doc) => mapDocToContractor(doc)).whereType<contractorData>().toList();
+      return snap.docs.map((doc) => mapDocToContractor(doc)).whereType<ContractorData>().toList();
     });
   }
 
   // Compatibility getter for existing synchronous consumers.
-  static List<contractorData> get contractors => <contractorData>[];
+  static List<ContractorData> get contractors => <ContractorData>[];
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +35,13 @@ class ContractorProfileScreen extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: 380.w),
-          child: StreamBuilder<List<contractorData>>(
+          child: StreamBuilder<List<ContractorData>>(
             stream: contractorsStream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               }
-              final List<contractorData> list = snapshot.data ?? <contractorData>[];
+              final List<ContractorData> list = snapshot.data ?? <ContractorData>[];
               if (list.isEmpty) {
                 return Padding(
                   padding: EdgeInsets.symmetric(vertical: 40.h),
@@ -62,7 +62,7 @@ class ContractorProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildContractorCard(contractorData contractor) {
+  Widget _buildContractorCard(ContractorData contractor) {
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(16.w),

@@ -16,7 +16,7 @@ class ChatInboxScreen extends StatefulWidget {
     required this.isOnline,
   });
 
-  final contractorData contractor;
+  final ContractorData contractor;
   final bool isOnline;
 
   @override

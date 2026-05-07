@@ -172,7 +172,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 																	isSelected: false,
 																	onTap: () {
 																		final contractor = mapDocToContractor(userSnap.data!) ??
-																				contractorData(
+																				ContractorData(
 																					id: otherId,
 																					name: name,
 																					service: service,

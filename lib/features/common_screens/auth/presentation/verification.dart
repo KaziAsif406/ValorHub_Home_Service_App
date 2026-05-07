@@ -36,6 +36,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
         // );
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {

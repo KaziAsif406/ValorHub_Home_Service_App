@@ -5,7 +5,7 @@ import 'package:template_flutter/features/customer/contractors/data/contractor_m
 // import 'package:template_flutter/helpers/ui_helpers.dart';
 
 class ProjectGallery extends StatelessWidget {
-  final contractorData contractor;
+  final ContractorData contractor;
 
   const ProjectGallery({
     super.key,

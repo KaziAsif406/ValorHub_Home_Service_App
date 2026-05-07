@@ -1,5 +1,5 @@
-class contractorData {
-  const contractorData({
+class ContractorData {
+  const ContractorData({
     required this.id,
     required this.name,
     required this.service,

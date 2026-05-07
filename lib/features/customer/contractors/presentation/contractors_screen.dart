@@ -39,7 +39,7 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
     _selectedRating = 'Any Rating';
   }
 
-  List<contractorData> _applyFilters(List<contractorData> contractors) {
+  List<ContractorData> _applyFilters(List<ContractorData> contractors) {
     if (widget.filterCategory != null && widget.filterCategory!.isNotEmpty) {
       contractors = contractors
           .where((c) => c.service.toLowerCase() == widget.filterCategory!.toLowerCase())
@@ -182,7 +182,7 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
               final contractors = _applyFilters(
                 docs
                     .map((doc) => mapDocToContractor(doc))
-                    .whereType<contractorData>()
+                    .whereType<ContractorData>()
                     .toList(),
               );
 

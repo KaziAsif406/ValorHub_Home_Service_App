@@ -5,7 +5,7 @@ import 'package:template_flutter/features/customer/contractors/data/contractor_m
 import 'package:template_flutter/gen/colors.gen.dart';
 // import 'package:template_flutter/helpers/ui_helpers.dart';
 class ServiceOfferedTiles extends StatelessWidget {
-  final contractorData contractor;
+  final ContractorData contractor;
 
   const ServiceOfferedTiles({
     super.key,
