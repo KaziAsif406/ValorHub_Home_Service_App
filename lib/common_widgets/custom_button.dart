@@ -65,19 +65,33 @@ class CustomButton extends StatelessWidget {
               padding: padding ?? EdgeInsets.symmetric(horizontal: 20.w),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   if (leading != null) ...[
                     leading!,
-                    SizedBox(width: gap ? 10.w : 0),
+                    if (gap) SizedBox(width: 10.w),
                   ],
-                  Text(label, style: labelStyle),
+
+                  /// FIX: lock text width behavior
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 150),
+                    curve: Curves.easeInOut,
+                    child: label.isEmpty
+                        ? const SizedBox.shrink()
+                        : Text(
+                            label,
+                            style: labelStyle,
+                            overflow: TextOverflow.fade,
+                            softWrap: false,
+                          ),
+                  ),
+
                   if (trailing != null) ...[
-                    SizedBox(width: gap ? 10.w : 0),
+                    if (gap) SizedBox(width: 10.w),
                     trailing!,
                   ],
                 ],
-              ),
+              )
             ),
           ),
         ),
