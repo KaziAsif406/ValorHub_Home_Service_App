@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:template_flutter/constants/app_constants.dart';
 import 'package:template_flutter/features/customer/contractors/data/contractor_model.dart';
 
-contractorData? mapDocToContractor(DocumentSnapshot doc) {
+ContractorData? mapDocToContractor(DocumentSnapshot doc) {
   final Map<String, dynamic> data = doc.data() as Map<String, dynamic>? ?? {};
   final bool isProfileCompleted = (data[kKeyProfileCompleted] as bool?) == true ||
       (data['profile_complete'] as bool?) == true;
@@ -21,7 +21,7 @@ contractorData? mapDocToContractor(DocumentSnapshot doc) {
   final String phone = (data[kKeyMobileNumber] as String?) ?? '';
   final String description = (data[kKeyDescription] as String?) ?? '';
 
-  return contractorData(
+  return ContractorData(
     id: doc.id,
     name: name,
     service: service,

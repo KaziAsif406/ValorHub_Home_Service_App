@@ -146,7 +146,7 @@ class _DashboardInboxSectionState extends State<DashboardInboxSection> {
 															isSelected: false,
 															onTap: () {
 																// Build a minimal contractorData to pass into inbox
-																final contractor = contractorData(
+																final contractor = ContractorData(
 																	id: otherId,
 																	name: name,
 																	service: service,

@@ -246,7 +246,7 @@ class RequestDetailsScreen extends StatelessWidget {
 														);
 
 														// Create a contractorData object representing the customer
-														final customer = contractorData(
+														final customer = ContractorData(
 															id: request.customerId!,
 															name: request.fullName,
 															service: request.serviceCategory,
