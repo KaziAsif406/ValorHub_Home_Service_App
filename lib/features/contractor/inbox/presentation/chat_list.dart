@@ -111,11 +111,15 @@ class _DashboardInboxSectionState extends State<DashboardInboxSection> {
 												final otherId = participants.firstWhere(
 														(p) => p != _currentUserId,
 														orElse: () => '');
-												final lastMessage = data['lastMessage'] as String? ?? '';
+												final lastMessageRaw = data['lastMessage'] as String? ?? '';
+												final lastSenderId = data['lastSenderId'] as String? ?? '';
 												final lastUpdated = data['lastUpdated'] as Timestamp?;
 												final timeLabel = lastUpdated != null
-														? DateFormat('h:mm a').format(lastUpdated.toDate())
-														: '';
+													? DateFormat('h:mm a').format(lastUpdated.toDate())
+													: '';
+												final lastMessage = (lastSenderId.isNotEmpty && lastSenderId == _currentUserId)
+													? 'You: $lastMessageRaw'
+													: lastMessageRaw;
 
 												return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
 													future: FirebaseFirestore.instance
