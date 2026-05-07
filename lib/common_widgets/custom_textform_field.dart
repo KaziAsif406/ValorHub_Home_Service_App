@@ -131,7 +131,24 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                         color: AppColors.c808080,
                       )
                     )
-                  : widget.suffixIcon,
+                  : GestureDetector(
+                      onTap: () {
+                        if (widget.suffixIcon != null) {
+                          // Handle suffix icon tap
+                        }
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.cF8FAFC.withValues(alpha: 0.0),
+                          borderRadius: BorderRadius.circular(999.r),
+                        ),
+                        height: 20.h,
+                        width: 20.w,
+                        padding: EdgeInsets.all(10.w),
+                        child: widget.suffixIcon,
+                        
+                      ),
+                    ),
               contentPadding: widget.contentPadding ??
                   EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
               errorMaxLines: widget.errorMaxLines,
