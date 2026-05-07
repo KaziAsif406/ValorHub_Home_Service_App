@@ -126,7 +126,7 @@ class _ContractorChatComposerState
       // showing the label to avoid text appearing while the button is still
       // narrow and causing overflow.
       if (!hasFocus) {
-        Future.delayed(const Duration(milliseconds: 260), () {
+        Future.delayed(const Duration(milliseconds: 60), () {
           if (mounted && !_focusNode.hasFocus) {
             setState(() {
               _showLabel = true;
