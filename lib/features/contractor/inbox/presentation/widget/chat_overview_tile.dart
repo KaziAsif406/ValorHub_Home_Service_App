@@ -37,21 +37,21 @@ class ContractorChatOverviewTile extends StatelessWidget {
 				child: AnimatedContainer(
 					duration: const Duration(milliseconds: 220),
 					curve: Curves.easeOutCubic,
-					padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+					padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 10.h),
 					decoration: BoxDecoration(
 						color: isSelected
 								? AppColors.contractor_secondary.withValues(alpha: 0.10)
 								: Colors.transparent,
 					),
 					child: Row(
-						crossAxisAlignment: CrossAxisAlignment.start,
+						crossAxisAlignment: CrossAxisAlignment.center,
 						children: [
 							Stack(
 								clipBehavior: Clip.none,
 								children: [
 									Container(
-										width: 44.w,
-										height: 44.h,
+										width: 50.w,
+										height: 50.h,
 										alignment: Alignment.center,
 										decoration: BoxDecoration(
 											color: const Color(0xFFE6E7ED),
@@ -60,7 +60,7 @@ class ContractorChatOverviewTile extends StatelessWidget {
 										child: Text(
 											initials,
 											style: TextFontStyle.textStyle12cBE1E2DInter500.copyWith(
-                        fontSize: 14.sp,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
                         color: AppColors.contractor_primary,
                       ),
@@ -68,8 +68,8 @@ class ContractorChatOverviewTile extends StatelessWidget {
 									),
 									if (isOnline)
 										Positioned(
-											right: -1.w,
-											bottom: -1.h,
+											right: 2.w,
+											bottom: 2.h,
 											child: Container(
 												width: 13.w,
 												height: 13.h,
@@ -129,17 +129,7 @@ class ContractorChatOverviewTile extends StatelessWidget {
 												],
 											],
 										),
-										UIHelper.verticalSpace(2.h),
-										Text(
-											serviceCategory,
-											maxLines: 1,
-											overflow: TextOverflow.ellipsis,
-											style: TextFontStyle.textStyle13cBE1E2DInter400.copyWith(
-                        fontSize: 12.sp,
-                        color: AppColors.contractor_primary,
-                      ),
-										),
-										UIHelper.verticalSpace(2.h),
+										UIHelper.verticalSpace(8.h),
 										Text(
 											lastMessage,
 											maxLines: 2,
