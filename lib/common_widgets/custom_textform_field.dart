@@ -16,6 +16,7 @@ class CustomTextFormField extends StatefulWidget {
     this.obscureText = false,
     this.prefixIcon,
     this.suffixIcon,
+    this.onSuffixIconTap,
     this.onChanged,
     this.keyboardType = TextInputType.text,
     this.maxLines = 1,
@@ -43,6 +44,7 @@ class CustomTextFormField extends StatefulWidget {
   final bool obscureText;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
+  final VoidCallback? onSuffixIconTap;
   final Function(String)? onChanged;
   final TextInputType keyboardType;
   final int maxLines;
@@ -135,6 +137,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                       onTap: () {
                         if (widget.suffixIcon != null) {
                           // Handle suffix icon tap
+                          widget.onSuffixIconTap?.call();
                         }
                       },
                       child: Container(
