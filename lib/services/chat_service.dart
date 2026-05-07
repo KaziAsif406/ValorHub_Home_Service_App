@@ -27,13 +27,21 @@ class ChatService {
       throw 'Not authenticated';
     }
     final docRef = _firestore.collection('chats').doc(chatId);
-    // Set with merge:true to create if not exists, or skip if already created
+    
+    // Check if chat already exists
+    final docSnapshot = await docRef.get();
+    if (docSnapshot.exists) {
+      // Chat already exists, don't overwrite lastMessage or other fields
+      return;
+    }
+    
+    // Create new chat document only if it doesn't exist
     await docRef.set({
       'participants': participants,
       'createdAt': FieldValue.serverTimestamp(),
       'lastMessage': '',
       'lastUpdated': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
+    });
   }
 
   Future<void> sendTextMessage({
