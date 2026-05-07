@@ -102,8 +102,7 @@ class ContractorChatComposer extends StatefulWidget {
       _ContractorChatComposerState();
 }
 
-class _ContractorChatComposerState
-    extends State<ContractorChatComposer> {
+class _ContractorChatComposerState extends State<ContractorChatComposer> {
 
   late FocusNode _focusNode;
   bool isFocused = false;
@@ -126,7 +125,7 @@ class _ContractorChatComposerState
       // showing the label to avoid text appearing while the button is still
       // narrow and causing overflow.
       if (!hasFocus) {
-        Future.delayed(const Duration(milliseconds: 60), () {
+        Future.delayed(const Duration(milliseconds: 260), () {
           if (mounted && !_focusNode.hasFocus) {
             setState(() {
               _showLabel = true;
