@@ -91,13 +91,13 @@ class _ChatComposerState extends State<ChatComposer> {
                   padding: EdgeInsets.all(6.w),
                   child: Image.asset(
                     'assets/icons/attach.png',
-                    width: 18.w,
-                    height: 18.h,
+                    width: 20.w,
+                    height: 20.h,
                   ),
                 ),
               ),
 
-              UIHelper.horizontalSpace(8.w),
+              UIHelper.horizontalSpace(6.w),
 
               InkWell(
                 borderRadius: BorderRadius.circular(20.r),
@@ -105,7 +105,7 @@ class _ChatComposerState extends State<ChatComposer> {
                 child: Padding(
                   padding: EdgeInsets.all(6.w),
                   child: Image.asset(
-                    'assets/icons/emoji.png',
+                    'assets/icons/image.png',
                     width: 18.w,
                     height: 18.h,
                   ),
@@ -120,8 +120,8 @@ class _ChatComposerState extends State<ChatComposer> {
                   padding: EdgeInsets.only(right: 8.w),
                   child: Image.asset(
                     'assets/icons/add.png',
-                    width: 20.w,
-                    height: 20.h,
+                    width: 22.w,
+                    height: 22.h,
                     color: AppColors.c636363.withValues(alpha: 0.6),
                   ),
                 ),
@@ -138,6 +138,12 @@ class _ChatComposerState extends State<ChatComposer> {
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 16.w,
                     vertical: 14.h,
+                  ),
+                  suffixIcon: Image.asset(
+                    'assets/icons/emoji.png',
+                    width: 8.w,
+                    height: 8.h,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
