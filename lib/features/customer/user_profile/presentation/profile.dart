@@ -287,11 +287,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 );
                 await AppPrefs.setLoggedIn(false);
                 if (mounted) {
+                  // ignore: use_build_context_synchronously
                   Navigator.of(dialogContext).pop();
                   NavigationService.navigateToReplacement(Routes.signUpScreen);
                 }
               } catch (error) {
                 if (mounted) {
+                  // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(screenContext).showSnackBar(
                     SnackBar(content: Text(error.toString())),
                   );
@@ -371,11 +373,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               try {
                 await AppPrefs.setLoggedIn(false);
                 if (mounted) {
+                  // ignore: use_build_context_synchronously
                   Navigator.of(dialogContext).pop();
                   NavigationService.navigateToReplacement(Routes.loginScreen);
                 }
               } catch (error) {
                 if (mounted) {
+                  // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(screenContext).showSnackBar(
                     SnackBar(content: Text(error.toString())),
                   );

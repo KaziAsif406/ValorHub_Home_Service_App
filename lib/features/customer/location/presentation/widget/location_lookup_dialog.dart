@@ -7,7 +7,7 @@ import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 
 class LocationLookupDialog extends StatefulWidget {
-  const LocationLookupDialog({required this.onConfirmZip});
+  const LocationLookupDialog({super.key, required this.onConfirmZip});
 
   final ValueChanged<String> onConfirmZip;
 

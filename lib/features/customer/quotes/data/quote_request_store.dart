@@ -156,7 +156,7 @@ final class QuoteRequestStore {
               .toList() ??
           <String>[],
       submittedAt: ts?.toDate() ?? DateTime.now(),
-      status: _StatusFromString(data['status'] as String?),
+      status: _statusFromString(data['status'] as String?),
       customerId: data['customerId'] as String?,
       contractorName: data['contractorName'] as String?,
     );
@@ -170,7 +170,7 @@ final class QuoteRequestStore {
     return items;
   }
 
-  static QuoteRequestStatus _StatusFromString(String? s) {
+  static QuoteRequestStatus _statusFromString(String? s) {
     switch (s) {
       case 'accepted':
         return QuoteRequestStatus.accepted;

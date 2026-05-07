@@ -238,6 +238,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                   if (mounted) {
                     Navigator.pop(
+                      // ignore: use_build_context_synchronously
                       context,
                       {
                         'name': _nameController.text.trim(),

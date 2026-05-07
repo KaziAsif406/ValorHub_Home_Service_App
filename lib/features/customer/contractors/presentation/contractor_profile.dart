@@ -220,6 +220,7 @@ class _ContractorProfileState extends State<ContractorProfile> {
                       } catch (e) {
                         // Show error to user
                         showDialog(
+                          // ignore: use_build_context_synchronously
                           context: context,
                           builder: (_) => AlertDialog(
                             title: const Text('Unable to start chat'),
