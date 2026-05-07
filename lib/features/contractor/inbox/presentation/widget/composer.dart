@@ -107,6 +107,7 @@ class _ContractorChatComposerState
 
   late FocusNode _focusNode;
   bool isFocused = false;
+  bool _showLabel = true;
 
   @override
   void initState() {
@@ -115,9 +116,24 @@ class _ContractorChatComposerState
     _focusNode = FocusNode();
 
     _focusNode.addListener(() {
+      final hasFocus = _focusNode.hasFocus;
       setState(() {
-        isFocused = _focusNode.hasFocus;
+        isFocused = hasFocus;
+        if (hasFocus) _showLabel = false;
       });
+
+      // When losing focus, wait for the width animation to finish before
+      // showing the label to avoid text appearing while the button is still
+      // narrow and causing overflow.
+      if (!hasFocus) {
+        Future.delayed(const Duration(milliseconds: 260), () {
+          if (mounted && !_focusNode.hasFocus) {
+            setState(() {
+              _showLabel = true;
+            });
+          }
+        });
+      }
     });
   }
 
@@ -218,8 +234,8 @@ class _ContractorChatComposerState
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(14.r),
                 child: CustomButton(
-                  label: isFocused ? '' : 'Send',
-                  gap: !isFocused,
+                  label: _showLabel ? 'Send' : '',
+                  gap: _showLabel,
                   onPressed: widget.onSend,
                   height: 37.h,
                   padding: EdgeInsets.symmetric(horizontal: 12.w),
