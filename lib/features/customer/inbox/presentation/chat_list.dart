@@ -168,7 +168,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 																	timeLabel: timeLabel,
 																	initials: initials,
 																	unreadCount: 0,
-																	isOnline: false,
+																	isOnline: true,
 																	isSelected: false,
 																	onTap: () {
 																		final contractor = mapDocToContractor(userSnap.data!) ??

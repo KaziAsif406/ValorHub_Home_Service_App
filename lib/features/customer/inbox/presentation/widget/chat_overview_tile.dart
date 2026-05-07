@@ -37,21 +37,21 @@ class ChatOverviewTile extends StatelessWidget {
 				child: AnimatedContainer(
 					duration: const Duration(milliseconds: 220),
 					curve: Curves.easeOutCubic,
-					padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+					padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 10.h),
 					decoration: BoxDecoration(
 						color: isSelected
 								? AppColors.allPrimaryColor.withValues(alpha: 0.08)
-								: Colors.transparent,
+								: AppColors.scaffoldColor.withValues(alpha: 0.0),
 					),
 					child: Row(
-						crossAxisAlignment: CrossAxisAlignment.start,
+						crossAxisAlignment: CrossAxisAlignment.center,
 						children: [
 							Stack(
 								clipBehavior: Clip.none,
 								children: [
 									Container(
-										width: 44.w,
-										height: 44.h,
+										width: 55.w,
+										height: 55.h,
 										alignment: Alignment.center,
 										decoration: BoxDecoration(
 											color: const Color(0xFFE6E7ED),
@@ -67,8 +67,8 @@ class ChatOverviewTile extends StatelessWidget {
 									),
 									if (isOnline)
 										Positioned(
-											right: -1.w,
-											bottom: -1.h,
+											right: 2.w,
+											bottom: 2.h,
 											child: Container(
 												width: 13.w,
 												height: 13.h,
@@ -137,7 +137,7 @@ class ChatOverviewTile extends StatelessWidget {
                         fontSize: 12.sp,
                       ),
 										),
-										UIHelper.verticalSpace(2.h),
+										UIHelper.verticalSpace(5.h),
 										Text(
 											lastMessage,
 											maxLines: 2,
