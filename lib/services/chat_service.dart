@@ -72,6 +72,7 @@ class ChatService {
       final chatRef = _firestore.collection('chats').doc(chatId);
       tx.set(chatRef, {
         'lastMessage': text,
+        'lastSenderId': senderId,
         'lastUpdated': FieldValue.serverTimestamp(),
         'participants': FieldValue.arrayUnion([senderId])
       }, SetOptions(merge: true));
