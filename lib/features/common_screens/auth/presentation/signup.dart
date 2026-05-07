@@ -121,6 +121,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
           .toLowerCase();
       bool profileCompleted = (profile?[kKeyProfileCompleted] as bool?) == true;
 
+      // Track whether we created a new profile for this Google account
+      bool createdNewAccount = false;
       if (userType != kUserTypeCustomer && userType != kUserTypeContractor) {
         userType = _isCustomer ? kUserTypeCustomer : kUserTypeContractor;
         profileCompleted = userType == kUserTypeCustomer;
@@ -130,6 +132,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
           name: profileName,
           userType: userType,
           profileCompleted: profileCompleted,
+        );
+        createdNewAccount = true;
+      }
+
+      // If this was a newly-created Google account, show a confirmation dialog
+      if (createdNewAccount && mounted) {
+        await showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Account created'),
+            content: const Text('Your account was successfully created.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: kUserTypeCustomer == userType
+                    ? const Text('Go to Home')
+                    : const Text('Complete Profile'),
+              ),
+            ],
+          ),
         );
       }
 
