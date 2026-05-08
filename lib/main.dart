@@ -20,7 +20,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  PresenceService().initializePresence();
+  PresenceService().start();
   //await _requestPermissions();
   await GetStorage.init();
   diSetup();
