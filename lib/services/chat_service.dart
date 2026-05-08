@@ -123,4 +123,36 @@ class ChatService {
         .where('participants', arrayContains: userId)
         .snapshots();
   }
+
+  /// Returns true if all messages in a chat have been seen by the current user,
+  /// false if there are unseen messages from other users.
+  Future<bool> hasSeenAllMessages({
+    required String chatId,
+    required String currentUserId,
+  }) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('chats')
+          .doc(chatId)
+          .collection('messages')
+          .get();
+
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        final senderId = data['senderId'] ?? '';
+        final seenBy = List<String>.from(data['seenBy'] ?? []);
+
+        // If message is from another user and current user hasn't seen it
+        if (senderId != currentUserId && !seenBy.contains(currentUserId)) {
+          return false; // Found unseen message
+        }
+      }
+
+      return true; // All messages are seen
+    } catch (e) {
+      // ignore: avoid_print
+      print('ChatService.hasSeenAllMessages error: $e');
+      return true; // Default to true (seen) on error
+    }
+  }
 }
