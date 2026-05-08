@@ -67,6 +67,7 @@ class ChatService {
         'senderName': senderName,
         'createdAt': FieldValue.serverTimestamp(),
         'type': 'text',
+        'seenBy': [senderId],
       });
 
       final chatRef = _firestore.collection('chats').doc(chatId);
@@ -77,6 +78,44 @@ class ChatService {
         'participants': FieldValue.arrayUnion([senderId])
       }, SetOptions(merge: true));
     });
+  }
+
+  Future<void> markMessagesAsSeen({
+    required String chatId,
+    required String currentUserId,
+  }) async {
+
+    final snapshot = await _firestore
+        .collection('chats')
+        .doc(chatId)
+        .collection('messages')
+        .get();
+
+    for (final doc in snapshot.docs) {
+
+      final data = doc.data();
+
+      final senderId =
+          data['senderId'] ?? '';
+
+      final seenBy =
+          List<String>.from(
+            data['seenBy'] ?? [],
+          );
+
+      /// ONLY MARK OTHER USER'S MESSAGES
+      if (
+        senderId != currentUserId &&
+        !seenBy.contains(currentUserId)
+      ) {
+
+        seenBy.add(currentUserId);
+
+        await doc.reference.update({
+          'seenBy': seenBy,
+        });
+      }
+    }
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> chatsForUser(String userId) {
