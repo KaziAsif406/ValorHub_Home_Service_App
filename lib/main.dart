@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:auto_animated/auto_animated.dart';
 import 'package:template_flutter/loading_screen.dart';
+import 'package:template_flutter/services/presence_service.dart';
 // import 'package:template_flutter/navigation_screen.dart';
 import 'constants/custome_theme.dart';
 import 'gen/colors.gen.dart';
@@ -19,6 +20,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  PresenceService().initializePresence();
   //await _requestPermissions();
   await GetStorage.init();
   diSetup();
