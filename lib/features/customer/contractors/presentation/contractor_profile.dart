@@ -109,7 +109,7 @@ class _ContractorProfileState extends State<ContractorProfile> {
                   // About Section
                   _buildAboutSection(),
                   UIHelper.verticalSpace(24.h),
-            
+
                   // Services Offered Section
                   if (widget.contractor.service.isNotEmpty) ...[
                     Text(
@@ -120,7 +120,7 @@ class _ContractorProfileState extends State<ContractorProfile> {
                     ServiceOfferedTiles(contractor: widget.contractor),
                     UIHelper.verticalSpace(16.h),
                   ],
-            
+
                   // Project Gallery Section
                   Text(
                     'Project Gallery',
@@ -129,7 +129,7 @@ class _ContractorProfileState extends State<ContractorProfile> {
                   UIHelper.verticalSpace(8.h),
                   ProjectGallery(contractor: widget.contractor),
                   UIHelper.verticalSpace(16.h),
-            
+
                   // Customer Reviews Section
                   Row(
                     children: [
@@ -191,7 +191,8 @@ class _ContractorProfileState extends State<ContractorProfile> {
                           context: context,
                           builder: (_) => AlertDialog(
                             title: const Text('Sign in required'),
-                            content: const Text('Please sign in to start a chat.'),
+                            content:
+                                const Text('Please sign in to start a chat.'),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.of(context).pop(),
@@ -205,15 +206,17 @@ class _ContractorProfileState extends State<ContractorProfile> {
 
                       final currentUserId = user.uid;
                       final contractorId = widget.contractor.id;
-                      final chatId = ChatService.chatIdFor(currentUserId, contractorId);
+                      final chatId =
+                          ChatService.chatIdFor(currentUserId, contractorId);
 
                       try {
-                        await ChatService().createChatIfNotExists(chatId, [currentUserId, contractorId]);
+                        await ChatService().createChatIfNotExists(
+                            chatId, [currentUserId, contractorId]);
                         NavigationService.navigatorKey.currentState?.push(
                           MaterialPageRoute(
                             builder: (_) => ChatInboxScreen(
                               contractor: widget.contractor,
-                              isOnline: true,
+                              isOnline: 'Online',
                             ),
                           ),
                         );
@@ -378,18 +381,12 @@ class _ContractorProfileState extends State<ContractorProfile> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildBadge('Licensed Plumber', 
-              AppColors.allPrimaryColor, 
-              iconPath: 'assets/icons/verified_red.png'),
-
-              _buildBadge('Insured & Bonded', 
-              AppColors.c5BBE1E, 
-              iconPath: 'assets/icons/verified_green.png'),
-
-
-              _buildBadge('EPA Certified', 
-              AppColors.cE7B008, 
-              iconPath: 'assets/icons/certified.png'),
+              _buildBadge('Licensed Plumber', AppColors.allPrimaryColor,
+                  iconPath: 'assets/icons/verified_red.png'),
+              _buildBadge('Insured & Bonded', AppColors.c5BBE1E,
+                  iconPath: 'assets/icons/verified_green.png'),
+              _buildBadge('EPA Certified', AppColors.cE7B008,
+                  iconPath: 'assets/icons/certified.png'),
             ],
           ),
           UIHelper.verticalSpace(9.5.h),
@@ -428,10 +425,10 @@ class _ContractorProfileState extends State<ContractorProfile> {
   }
 
   Widget _buildBadge(
-    String text, 
+    String text,
     Color color, {
     String? iconPath,
-    }) {
+  }) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 3.5.h),
       decoration: BoxDecoration(
