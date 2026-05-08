@@ -195,20 +195,18 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                 );
                               }
         
-                              return FutureBuilder<bool>(
-                                future: ChatService().hasSeenAllMessages(
+                              return StreamBuilder<bool>(
+                                stream: ChatService().hasSeenAllMessagesStream(
                                   chatId: ChatService.chatIdFor(
                                     _currentUserId,
                                     otherId,
                                   ),
                                   currentUserId: _currentUserId,
                                 ),
+                                initialData: true,
                                 builder: (context, seenSnapshot) {
-                                  bool isSeen = true;
-                                  if (seenSnapshot.hasData) {
-                                    isSeen = seenSnapshot.data ?? true;
-                                  }
-        
+                                  bool isSeen = seenSnapshot.data ?? true;
+
                                   return ChatOverviewTile(
                                     name: name,
                                     serviceCategory: service,

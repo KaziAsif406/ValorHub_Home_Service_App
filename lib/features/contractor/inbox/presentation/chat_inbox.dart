@@ -39,6 +39,7 @@ class _ContractorChatInboxScreenState extends State<ContractorChatInboxScreen> {
     _myId = auth.currentUser?.uid ?? '';
     _chatId = ChatService.chatIdFor(_myId, widget.contractor.id);
     ChatService().createChatIfNotExists(_chatId, [_myId, widget.contractor.id]);
+    ChatService().markMessagesAsSeen(chatId: _chatId, currentUserId: _myId);
   }
 
   @override
@@ -94,6 +95,12 @@ class _ContractorChatInboxScreenState extends State<ContractorChatInboxScreen> {
                     }
 
                     final docs = snapshot.data?.docs ?? [];
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      ChatService().markMessagesAsSeen(
+                        chatId: _chatId,
+                        currentUserId: _myId,
+                      );
+                    });
                     final messages = docs
                         .map((d) {
                           final data = d.data();
