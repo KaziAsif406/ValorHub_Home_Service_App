@@ -8,6 +8,7 @@ import 'package:template_flutter/features/customer/inbox/presentation/widget/inb
 import 'package:template_flutter/services/chat_service.dart';
 import 'package:template_flutter/services/auth_service.dart';
 import 'package:template_flutter/services/presence_service.dart';
+import 'package:template_flutter/helpers/realtime_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
@@ -58,7 +59,7 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
           child: Column(
             children: [
               StreamBuilder(
-                stream: FirebaseDatabase.instance
+                stream: AppRealtimeDatabase.instance
                     .ref('status/${widget.contractor.id}')
                     .onValue,
                 builder: (context, snapshot) {

@@ -8,6 +8,7 @@ import 'package:template_flutter/constants/app_constants.dart';
 import 'package:template_flutter/services/chat_service.dart';
 import 'package:template_flutter/services/auth_service.dart';
 import 'package:template_flutter/services/presence_service.dart';
+import 'package:template_flutter/helpers/realtime_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:template_flutter/features/customer/contractors/data/contractor_mapper.dart';
@@ -174,7 +175,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                             }
 
                             return StreamBuilder(
-                              stream: FirebaseDatabase.instance
+                              stream: AppRealtimeDatabase.instance
                                   .ref('status/$otherId')
                                   .onValue,
                               builder: (context, statusSnapshot) {
