@@ -285,7 +285,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 await _authService.deleteAccount(
                   password: _deletePasswordController.text.trim(),
                 );
-                await AppPrefs.setLoggedIn(false);
                 if (mounted) {
                   // ignore: use_build_context_synchronously
                   Navigator.of(dialogContext).pop();
@@ -363,19 +362,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             Future<void> logout() async {
-              ScaffoldMessenger.of(screenContext).showSnackBar(
-                const SnackBar(
-                  content: Text('Logged out successfully.'),
-                ),
-              );
-
               setState(() => isLoading = true);
               try {
-                await AppPrefs.setLoggedIn(false);
+                await _authService.signOut();
                 if (mounted) {
                   // ignore: use_build_context_synchronously
                   Navigator.of(dialogContext).pop();
                   NavigationService.navigateToReplacement(Routes.loginScreen);
+                  ScaffoldMessenger.of(screenContext).showSnackBar(
+                    const SnackBar(
+                      content: Text('Logged out successfully.'),
+                    ),
+                  );
                 }
               } catch (error) {
                 if (mounted) {
