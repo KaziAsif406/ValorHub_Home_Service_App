@@ -18,7 +18,7 @@ import 'package:template_flutter/features/customer/inbox/presentation/widget/cha
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
-import 'package:template_flutter/helpers/ui_helpers.dart';
+// import 'package:template_flutter/helpers/ui_helpers.dart';
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key, this.onBackToHome});
