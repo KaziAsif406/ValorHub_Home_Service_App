@@ -194,44 +194,60 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                   );
                                 }
 
-                                return ChatOverviewTile(
-                                  name: name,
-                                  serviceCategory: service,
-                                  lastMessage: lastMessage,
-                                  timeLabel: timeLabel,
-                                  initials: initials,
-                                  unreadCount: 0,
-                                  isOnline: presence.isOnline,
-                                  isSelected: false,
-                                  onTap: () {
-                                    final mappedContractor =
-                                        (userSnap.hasData &&
-                                                userSnap.data!.exists)
-                                            ? mapDocToContractor(userSnap.data!)
-                                            : null;
+                                return FutureBuilder<bool>(
+                                  future: ChatService().hasSeenAllMessages(
+                                    chatId: ChatService.chatIdFor(
+                                      _currentUserId,
+                                      otherId,
+                                    ),
+                                    currentUserId: _currentUserId,
+                                  ),
+                                  builder: (context, seenSnapshot) {
+                                    bool isSeen = true;
+                                    if (seenSnapshot.hasData) {
+                                      isSeen = seenSnapshot.data ?? true;
+                                    }
 
-                                    final contractor = mappedContractor ??
-                                        ContractorData(
-                                          id: otherId,
-                                          name: name,
-                                          service: service,
-                                          rating: 0.0,
-                                          reviews: 0,
-                                          location: '',
-                                          experience: 0,
-                                          description: '',
-                                          phone: '',
-                                          mail: otherId,
+                                    return ChatOverviewTile(
+                                      name: name,
+                                      serviceCategory: service,
+                                      lastMessage: lastMessage,
+                                      timeLabel: timeLabel,
+                                      initials: initials,
+                                      unreadCount: 0,
+                                      isOnline: presence.isOnline,
+                                      isSeen: isSeen,
+                                      onTap: () {
+                                        final mappedContractor =
+                                            (userSnap.hasData &&
+                                                    userSnap.data!.exists)
+                                                ? mapDocToContractor(userSnap.data!)
+                                                : null;
+
+                                        final contractor = mappedContractor ??
+                                            ContractorData(
+                                              id: otherId,
+                                              name: name,
+                                              service: service,
+                                              rating: 0.0,
+                                              reviews: 0,
+                                              location: '',
+                                              experience: 0,
+                                              description: '',
+                                              phone: '',
+                                              mail: otherId,
+                                            );
+
+                                        NavigationService.navigatorKey.currentState
+                                            ?.push(
+                                          MaterialPageRoute(
+                                            builder: (_) => ChatInboxScreen(
+                                              contractor: contractor,
+                                              isOnline: presence.label,
+                                            ),
+                                          ),
                                         );
-
-                                    NavigationService.navigatorKey.currentState
-                                        ?.push(
-                                      MaterialPageRoute(
-                                        builder: (_) => ChatInboxScreen(
-                                          contractor: contractor,
-                                          isOnline: presence.label,
-                                        ),
-                                      ),
+                                      },
                                     );
                                   },
                                 );

@@ -7,12 +7,14 @@ class ChatMessage {
 	const ChatMessage({
 		required this.text,
 		required this.time,
-		required this.isMe,
+		required this.isMe, 
+    required this.isSeen,
 	});
 
 	final String text;
 	final String time;
 	final bool isMe;
+	final bool isSeen;
 }
 
 // class ChatBubble extends StatelessWidget {
@@ -166,6 +168,24 @@ class _ChatBubbleState extends State<ChatBubble> {
                   fontWeight: FontWeight.w500,
                   height: 1.4,
                 ),
+              ),
+            ),
+          ),
+          if (isMe)
+          Padding(
+            padding: EdgeInsets.only(
+              right: 4.w,
+              top: 6.h,
+              bottom: 10.h,
+            ),
+            child: Text(
+              widget.message.isSeen
+                  ? 'Seen'
+                  : 'Sent',
+              style: TextStyle(
+                fontSize: 10.sp,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),

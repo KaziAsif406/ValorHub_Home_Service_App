@@ -14,7 +14,7 @@ class ChatOverviewTile extends StatelessWidget {
 		required this.initials,
 		this.unreadCount = 0,
 		this.isOnline = false,
-		this.isSelected = false,
+		this.isSeen = false,
 		this.onTap,
 	});
 
@@ -25,7 +25,7 @@ class ChatOverviewTile extends StatelessWidget {
 	final String initials;
 	final int unreadCount;
 	final bool isOnline;
-	final bool isSelected;
+	final bool isSeen;
 	final VoidCallback? onTap;
 
 	@override
@@ -39,9 +39,9 @@ class ChatOverviewTile extends StatelessWidget {
 					curve: Curves.easeOutCubic,
 					padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 10.h),
 					decoration: BoxDecoration(
-						color: isSelected
-								? AppColors.allPrimaryColor.withValues(alpha: 0.08)
-								: AppColors.scaffoldColor.withValues(alpha: 0.0),
+						color: isSeen
+								? AppColors.scaffoldColor.withValues(alpha: 0.0)
+								: AppColors.allPrimaryColor.withValues(alpha: 0.08),
 					),
 					child: Row(
 						crossAxisAlignment: CrossAxisAlignment.center,

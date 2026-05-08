@@ -38,6 +38,7 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
     _myId = auth.currentUser?.uid ?? '';
     _chatId = ChatService.chatIdFor(_myId, widget.contractor.id);
     ChatService().createChatIfNotExists(_chatId, [_myId, widget.contractor.id]);
+    ChatService().markMessagesAsSeen(chatId: _chatId,currentUserId: _myId,);
   }
 
   @override
@@ -104,6 +105,12 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
                     }
 
                     final docs = snapshot.data?.docs ?? [];
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      ChatService().markMessagesAsSeen(
+                        chatId: _chatId,
+                        currentUserId: _myId,
+                      );
+                    });
                     final messages = docs
                         .map((d) {
                           final data = d.data();
@@ -112,10 +119,15 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
                           final time = created != null
                               ? DateFormat('h:mm a').format(created.toDate())
                               : '';
-                          final isMe =
-                              (data['senderId'] as String? ?? '') == _myId;
+                          final isMe = (data['senderId'] as String? ?? '') == _myId;
+
+                          final seenBy = List<String>.from(data['seenBy'] ?? [],);
+
+                          final isSeen =
+                            seenBy.contains(widget.contractor.id);
+
                           return ChatMessage(
-                              text: text, time: time, isMe: isMe);
+                              text: text, time: time, isMe: isMe, isSeen: isSeen);
                         })
                         .toList()
                         .reversed
