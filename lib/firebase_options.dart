@@ -25,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -52,6 +46,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '998618441031',
     projectId: 'valorhub-ea8ff',
     authDomain: 'valorhub-ea8ff.firebaseapp.com',
+    databaseURL: 'https://valorhub-ea8ff-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'valorhub-ea8ff.firebasestorage.app',
   );
 
@@ -60,6 +55,7 @@ class DefaultFirebaseOptions {
     appId: '1:998618441031:android:d70a2e4af5168a0a809862',
     messagingSenderId: '998618441031',
     projectId: 'valorhub-ea8ff',
+    databaseURL: 'https://valorhub-ea8ff-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'valorhub-ea8ff.firebasestorage.app',
   );
 
@@ -68,7 +64,33 @@ class DefaultFirebaseOptions {
     appId: '1:998618441031:ios:4f7bbf7bf255d368809862',
     messagingSenderId: '998618441031',
     projectId: 'valorhub-ea8ff',
+    databaseURL: 'https://valorhub-ea8ff-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'valorhub-ea8ff.firebasestorage.app',
+    androidClientId: '998618441031-20t9egauh25tppobs2l8qj0d05efodo9.apps.googleusercontent.com',
+    iosClientId: '998618441031-4hv0h3tr83meoj05mbf44752g59v1nad.apps.googleusercontent.com',
     iosBundleId: 'com.example.templateFlutter',
   );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyD8tY1NtbNySGAlF9XOu-u8h-Fy2wxUAYU',
+    appId: '1:998618441031:ios:4f7bbf7bf255d368809862',
+    messagingSenderId: '998618441031',
+    projectId: 'valorhub-ea8ff',
+    databaseURL: 'https://valorhub-ea8ff-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'valorhub-ea8ff.firebasestorage.app',
+    androidClientId: '998618441031-20t9egauh25tppobs2l8qj0d05efodo9.apps.googleusercontent.com',
+    iosClientId: '998618441031-4hv0h3tr83meoj05mbf44752g59v1nad.apps.googleusercontent.com',
+    iosBundleId: 'com.example.templateFlutter',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAb8jtF_bDjOiS7hzimh7OJYDwoMPB4TTg',
+    appId: '1:998618441031:web:44ad9dc5005cacac809862',
+    messagingSenderId: '998618441031',
+    projectId: 'valorhub-ea8ff',
+    authDomain: 'valorhub-ea8ff.firebaseapp.com',
+    databaseURL: 'https://valorhub-ea8ff-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'valorhub-ea8ff.firebasestorage.app',
+  );
+
 }
