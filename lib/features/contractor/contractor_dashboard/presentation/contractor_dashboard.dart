@@ -38,6 +38,53 @@ class _ContractorDashboardScreenState extends State<ContractorDashboardScreen> {
   final AuthService _auth = AuthService();
   ContractorDashboardSection _selectedSection =
       ContractorDashboardSection.overview;
+  late String _profileName;
+
+  @override
+  void initState() {
+    super.initState();
+    _profileName = widget.profileName;
+    _loadProfileName();
+  }
+
+  Future<void> _loadProfileName() async {
+    try {
+      final uid = _auth.currentUser?.uid;
+      if (uid == null || uid.isEmpty) return;
+      final data = await _auth.getUserProfileByUserId(uid);
+      if (data == null) return;
+
+      final displayName = (data['displayName'] as String?)?.trim() ?? (data['name'] as String?)?.trim();
+      if (displayName != null && displayName.isNotEmpty) {
+        setState(() {
+          _profileName = displayName;
+        });
+        return;
+      }
+
+      // Try first/last name fields if present
+      final first = (data['first_name'] as String?)?.trim() ?? '';
+      final last = (data['lst_name'] as String?)?.trim() ?? '';
+      final combined = '$first ${last.isNotEmpty ? last : ''}'.trim();
+      if (combined.isNotEmpty) {
+        setState(() {
+          _profileName = combined;
+        });
+        return;
+      }
+
+      // Fallback to email local-part if available
+      final email = (data['email'] as String?)?.trim();
+      if (email != null && email.isNotEmpty) {
+        final local = email.split('@').first;
+        setState(() {
+          _profileName = local;
+        });
+      }
+    } catch (_) {
+      // ignore errors and keep existing profileName
+    }
+  }
 
   Future<void> _signOut() async {
     await _auth.signOut();
@@ -70,7 +117,7 @@ class _ContractorDashboardScreenState extends State<ContractorDashboardScreen> {
       key: _scaffoldKey,
       backgroundColor: AppColors.scaffoldColor,
       drawer: ContractorDashboardDrawer(
-        profileName: widget.profileName,
+        profileName: _profileName,
         profileEmail: widget.profileEmail,
         selectedSection: _selectedSection,
         onSectionSelected: _openSection,
@@ -80,7 +127,7 @@ class _ContractorDashboardScreenState extends State<ContractorDashboardScreen> {
         child: Column(
           children: [
             ContractorDashboardAppBar(
-              profileName: widget.profileName,
+              profileName: _profileName,
               onMenuPressed: _openDrawer,
               onInboxPressed: _setInboxSection,
             ),
@@ -101,7 +148,7 @@ class _ContractorDashboardScreenState extends State<ContractorDashboardScreen> {
       case ContractorDashboardSection.overview:
         return DashboardOverviewSection(
           key: const ValueKey<String>('overview'),
-          profileName: widget.profileName,
+          profileName: _profileName,
           profileEmail: widget.profileEmail,
           onViewRequests: () => _openSection(ContractorDashboardSection.requests),
         );
@@ -120,7 +167,7 @@ class _ContractorDashboardScreenState extends State<ContractorDashboardScreen> {
       case ContractorDashboardSection.profile:
         return DashboardProfileSection(
           key: const ValueKey<String>('profile'),
-          profileName: widget.profileName,
+          profileName: _profileName,
           profileEmail: widget.profileEmail,
           onSignOut: _signOut,
         );
