@@ -85,7 +85,7 @@ class ChatService {
     required String currentUserId,
   }) async {
 
-    final snapshot = await _firestore
+    final snapshot = await FirebaseFirestore.instance
         .collection('chats')
         .doc(chatId)
         .collection('messages')
@@ -103,7 +103,6 @@ class ChatService {
             data['seenBy'] ?? [],
           );
 
-      /// ONLY MARK OTHER USER'S MESSAGES
       if (
         senderId != currentUserId &&
         !seenBy.contains(currentUserId)
