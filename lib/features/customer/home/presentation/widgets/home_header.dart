@@ -84,29 +84,35 @@ class _HomeHeaderState extends State<HomeHeader> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        AppColors.c000000.withValues(alpha: 0.7),
+                        AppColors.c000000.withValues(alpha: 0.1),
                       ],
                     ),
                   ),
                 ),
               ),
               Positioned(
-                bottom: 60.h,
+                bottom: 50.h,
                 left: 20.w,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Find a Trusted Service Professional',
-                      style: TextFontStyle.textStyle20cFFFFFFInter700,
-                    ),
-                    UIHelper.verticalSpace(8.h),
-                    Text(
-                      'Get free quotes from top-rated contractors',
-                      style: TextFontStyle.textStyle14cFFFFFFInter400
-                          .copyWith(color: AppColors.scaffoldColor.withValues(alpha: 0.8)),
-                    ),
-                  ],
+                child: Container(
+                  padding: EdgeInsets.all(12.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.c14181F.withValues(alpha: 0.25),
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Find a Trusted Service Professional',
+                        style: TextFontStyle.textStyle20cFFFFFFInter700,
+                      ),
+                      UIHelper.verticalSpace(8.h),
+                      Text(
+                        'Get free quotes from top-rated contractors',
+                        style: TextFontStyle.textStyle14cFFFFFFInter400,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
