@@ -167,38 +167,55 @@ class _DashboardInboxSectionState extends State<DashboardInboxSection> {
                                   );
                                 }
 
-                                return ContractorChatOverviewTile(
-                                  name: name,
-                                  serviceCategory: service,
-                                  lastMessage: lastMessage,
-                                  timeLabel: timeLabel,
-                                  initials: initials,
-                                  unreadCount: 0,
-                                  isOnline: presence.isOnline,
-                                  isSelected: false,
-                                  onTap: () {
-                                    final contractor = ContractorData(
-                                      id: otherId,
-                                      name: name,
-                                      service: service,
-                                      rating: 0.0,
-                                      reviews: 0,
-                                      location: '',
-                                      experience: 0,
-                                      description: '',
-                                      phone: '',
-                                      mail: otherId,
-                                    );
+                                return FutureBuilder<bool>(
+                                  future: ChatService().hasSeenAllMessages(
+                                    chatId: ChatService.chatIdFor(
+                                      _currentUserId,
+                                      otherId,
+                                    ),
+                                    currentUserId: _currentUserId,
+                                  ),
+                                  builder: (context, seenSnapshot) {
+                                    bool isSeen = true;
+                                    if (seenSnapshot.hasData) {
+                                      isSeen = seenSnapshot.data ?? true;
+                                    }
 
-                                    NavigationService.navigatorKey.currentState
-                                        ?.push(
-                                      MaterialPageRoute(
-                                        builder: (_) =>
-                                            ContractorChatInboxScreen(
-                                          contractor: contractor,
-                                          isOnline: presence.label,
-                                        ),
-                                      ),
+                                    return ContractorChatOverviewTile(
+                                      name: name,
+                                      serviceCategory: service,
+                                      lastMessage: lastMessage,
+                                      timeLabel: timeLabel,
+                                      initials: initials,
+                                      unreadCount: 0,
+                                      isOnline: presence.isOnline,
+                                      isSelected: false,
+                                      isSeen: isSeen,
+                                      onTap: () {
+                                        final contractor = ContractorData(
+                                          id: otherId,
+                                          name: name,
+                                          service: service,
+                                          rating: 0.0,
+                                          reviews: 0,
+                                          location: '',
+                                          experience: 0,
+                                          description: '',
+                                          phone: '',
+                                          mail: otherId,
+                                        );
+
+                                        NavigationService.navigatorKey.currentState
+                                            ?.push(
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                ContractorChatInboxScreen(
+                                              contractor: contractor,
+                                              isOnline: presence.label,
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     );
                                   },
                                 );

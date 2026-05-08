@@ -15,6 +15,7 @@ class ContractorChatOverviewTile extends StatelessWidget {
 		this.unreadCount = 0,
 		this.isOnline = false,
 		this.isSelected = false,
+		this.isSeen = true,
 		this.onTap,
 	});
 
@@ -26,6 +27,7 @@ class ContractorChatOverviewTile extends StatelessWidget {
 	final int unreadCount;
 	final bool isOnline;
 	final bool isSelected;
+	final bool isSeen;
 	final VoidCallback? onTap;
 
 	@override
@@ -39,9 +41,9 @@ class ContractorChatOverviewTile extends StatelessWidget {
 					curve: Curves.easeOutCubic,
 					padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 10.h),
 					decoration: BoxDecoration(
-						color: isSelected
-								? AppColors.contractor_secondary.withValues(alpha: 0.10)
-								: Colors.transparent,
+						color: isSeen
+								? Colors.transparent
+								: AppColors.contractor_secondary.withValues(alpha: 0.08),
 					),
 					child: Row(
 						crossAxisAlignment: CrossAxisAlignment.center,
