@@ -155,4 +155,31 @@ class ChatService {
       return true; // Default to true (seen) on error
     }
   }
+
+  /// Stream that emits whether all messages in a chat have been seen by the current user.
+  /// This listens for real-time changes to the messages collection.
+  Stream<bool> hasSeenAllMessagesStream({
+    required String chatId,
+    required String currentUserId,
+  }) {
+    return FirebaseFirestore.instance
+        .collection('chats')
+        .doc(chatId)
+        .collection('messages')
+        .snapshots()
+        .map((snapshot) {
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        final senderId = data['senderId'] ?? '';
+        final seenBy = List<String>.from(data['seenBy'] ?? []);
+
+        // If message is from another user and current user hasn't seen it
+        if (senderId != currentUserId && !seenBy.contains(currentUserId)) {
+          return false; // Found unseen message
+        }
+      }
+
+      return true; // All messages are seen
+    });
+  }
 }
