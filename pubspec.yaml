@@ -41,6 +41,7 @@ dependencies:
   geocoding: ^3.0.0
   google_sign_in: ^6.2.1
   awesome_emoji_picker: ^1.0.5
+  firebase_database: ^11.3.10
 
 
 dev_dependencies:
