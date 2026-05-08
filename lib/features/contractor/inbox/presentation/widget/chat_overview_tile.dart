@@ -39,11 +39,11 @@ class ContractorChatOverviewTile extends StatelessWidget {
 				child: AnimatedContainer(
 					duration: const Duration(milliseconds: 220),
 					curve: Curves.easeOutCubic,
-					padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 10.h),
+					padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
 					decoration: BoxDecoration(
 						color: isSeen
 								? Colors.transparent
-								: AppColors.contractor_secondary.withValues(alpha: 0.08),
+								: AppColors.contractor_secondary.withValues(alpha: 0.15),
 					),
 					child: Row(
 						crossAxisAlignment: CrossAxisAlignment.center,
