@@ -71,11 +71,11 @@ class _ChatListScreenState extends State<ChatListScreen> {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-          child: Column(
-            children: [
-              CustomTextFormField(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: CustomTextFormField(
                 height: 44.h,
                 controller: _searchController,
                 hintText: 'Search...',
@@ -88,214 +88,214 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   color: AppColors.c64748B,
                 ),
               ),
-              UIHelper.verticalSpace(10.h),
-              Expanded(
-                child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                  stream: ChatService().chatsForUser(_currentUserId),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text(
-                          'Unable to load chats',
-                          style: TextFontStyle.textStyle14c6A7181Inter400,
-                        ),
-                      );
-                    }
-
-                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return Center(
-                        child: Text(
-                          'No chats found',
-                          style: TextFontStyle.textStyle14c6A7181Inter400,
-                        ),
-                      );
-                    }
-
-                    final chats = snapshot.data!.docs;
-
-                    return ListView.separated(
-                      itemCount: chats.length,
-                      padding: EdgeInsets.symmetric(vertical: 6.h),
-                      separatorBuilder: (_, __) {
-                        return Divider(
-                          height: 1.h,
-                          thickness: 1.h,
-                          color: AppColors.c000000.withValues(alpha: 0.08),
-                        );
-                      },
-                      itemBuilder: (context, index) {
-                        final chatDoc = chats[index];
-                        final data = chatDoc.data();
-                        final participants =
-                            (data['participants'] as List<dynamic>?)
-                                    ?.cast<String>() ??
-                                [];
-                        final otherId = participants.firstWhere(
-                            (p) => p != _currentUserId,
-                            orElse: () => '');
-                        final lastMessageRaw =
-                            data['lastMessage'] as String? ?? '';
-                        final lastSenderId =
-                            data['lastSenderId'] as String? ?? '';
-                        final lastUpdated = data['lastUpdated'] as Timestamp?;
-                        final timeLabel = lastUpdated != null
-                            ? DateFormat('h:mm a').format(lastUpdated.toDate())
-                            : '';
-                        final lastMessage = (lastSenderId.isNotEmpty &&
-                                lastSenderId == _currentUserId)
-                            ? 'You: $lastMessageRaw'
-                            : lastMessageRaw;
-
-                        return FutureBuilder<
-                            DocumentSnapshot<Map<String, dynamic>>>(
-                          future: FirebaseFirestore.instance
-                              .collection(kFirestoreUsersCollection)
-                              .doc(otherId)
-                              .get(),
-                          builder: (context, userSnap) {
-                            String name = 'Unknown';
-                            String service = '';
-                            String initials = '';
-
-                            if (userSnap.hasData && userSnap.data!.exists) {
-                              final otherDoc = userSnap.data!;
-                              final mapped = mapDocToContractor(otherDoc);
-                              if (mapped != null) {
-                                name = mapped.name;
-                                service = mapped.service;
-                                initials = _initialsFromName(mapped.name);
-                              } else {
-                                final displayName =
-                                    otherDoc.data()?['displayName'] as String?;
-                                final email =
-                                    otherDoc.data()?['email'] as String? ?? '';
-                                name = displayName ?? email.split('@').first;
-                                initials = _initialsFromName(name);
-                              }
-                            }
-
-                            return StreamBuilder(
-                              stream: AppRealtimeDatabase.instance
-                                  .ref('status/$otherId')
-                                  .onValue,
-                              builder: (context, statusSnapshot) {
-                                PresenceState presence = PresenceState(
-                                  isOnline: false,
-                                  lastSeenMillis: null,
-                                );
-
-                                if (statusSnapshot.hasData) {
-                                  final event =
-                                      statusSnapshot.data as DatabaseEvent;
-
-                                  presence =
-                                      PresenceService.parseRealtimeStatus(
-                                    event.snapshot.value,
-                                  );
-                                }
-
-                                return FutureBuilder<bool>(
-                                  future: ChatService().hasSeenAllMessages(
-                                    chatId: ChatService.chatIdFor(
-                                      _currentUserId,
-                                      otherId,
-                                    ),
-                                    currentUserId: _currentUserId,
-                                  ),
-                                  builder: (context, seenSnapshot) {
-                                    bool isSeen = true;
-                                    if (seenSnapshot.hasData) {
-                                      isSeen = seenSnapshot.data ?? true;
-                                    }
-
-                                    return ChatOverviewTile(
-                                      name: name,
-                                      serviceCategory: service,
-                                      lastMessage: lastMessage,
-                                      timeLabel: timeLabel,
-                                      initials: initials,
-                                      unreadCount: 0,
-                                      isOnline: presence.isOnline,
-                                      isSeen: isSeen,
-                                      onTap: () {
-                                        final mappedContractor =
-                                            (userSnap.hasData &&
-                                                    userSnap.data!.exists)
-                                                ? mapDocToContractor(userSnap.data!)
-                                                : null;
-
-                                        final contractor = mappedContractor ??
-                                            ContractorData(
-                                              id: otherId,
-                                              name: name,
-                                              service: service,
-                                              rating: 0.0,
-                                              reviews: 0,
-                                              location: '',
-                                              experience: 0,
-                                              description: '',
-                                              phone: '',
-                                              mail: otherId,
-                                            );
-
-                                        NavigationService.navigatorKey.currentState
-                                            ?.push(
-                                          MaterialPageRoute(
-                                            builder: (_) => ChatInboxScreen(
-                                              contractor: contractor,
-                                              isOnline: presence.label,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                );
-                              },
-                            );
-                            // return ChatOverviewTile(
-                            // 	name: name,
-                            // 	serviceCategory: service,
-                            // 	lastMessage: lastMessage,
-                            // 	timeLabel: timeLabel,
-                            // 	initials: initials,
-                            // 	unreadCount: 0,
-                            // 	isOnline: true,
-                            // 	isSelected: false,
-                            // 	onTap: () {
-                            // 		final contractor = mapDocToContractor(userSnap.data!) ??
-                            // 				ContractorData(
-                            // 					id: otherId,
-                            // 					name: name,
-                            // 					service: service,
-                            // 					rating: 0.0,
-                            // 					reviews: 0,
-                            // 					location: '',
-                            // 					experience: 0,
-                            // 					description: '',
-                            // 					phone: '',
-                            // 					mail: otherId,
-                            // 				);
-
-                            // 		NavigationService.navigatorKey.currentState?.push(
-                            // 			MaterialPageRoute(
-                            // 				builder: (_) => ChatInboxScreen(
-                            // 					contractor: contractor,
-                            // 					isOnline: false,
-                            // 				),
-                            // 			),
-                            // 		);
-                            // 	},
-                            // );
-                          },
-                        );
-                      },
+            ),
+            // UIHelper.verticalSpace(10.h),
+            Expanded(
+              child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: ChatService().chatsForUser(_currentUserId),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Unable to load chats',
+                        style: TextFontStyle.textStyle14c6A7181Inter400,
+                      ),
                     );
-                  },
-                ),
+                  }
+        
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'No chats found',
+                        style: TextFontStyle.textStyle14c6A7181Inter400,
+                      ),
+                    );
+                  }
+        
+                  final chats = snapshot.data!.docs;
+        
+                  return ListView.separated(
+                    itemCount: chats.length,
+                    padding: EdgeInsets.symmetric(vertical: 6.h),
+                    separatorBuilder: (_, __) {
+                      return Divider(
+                        height: 1.h,
+                        thickness: 1.h,
+                        color: AppColors.c000000.withValues(alpha: 0.08),
+                      );
+                    },
+                    itemBuilder: (context, index) {
+                      final chatDoc = chats[index];
+                      final data = chatDoc.data();
+                      final participants =
+                          (data['participants'] as List<dynamic>?)
+                                  ?.cast<String>() ??
+                              [];
+                      final otherId = participants.firstWhere(
+                          (p) => p != _currentUserId,
+                          orElse: () => '');
+                      final lastMessageRaw =
+                          data['lastMessage'] as String? ?? '';
+                      final lastSenderId =
+                          data['lastSenderId'] as String? ?? '';
+                      final lastUpdated = data['lastUpdated'] as Timestamp?;
+                      final timeLabel = lastUpdated != null
+                          ? DateFormat('h:mm a').format(lastUpdated.toDate())
+                          : '';
+                      final lastMessage = (lastSenderId.isNotEmpty &&
+                              lastSenderId == _currentUserId)
+                          ? 'You: $lastMessageRaw'
+                          : lastMessageRaw;
+        
+                      return FutureBuilder<
+                          DocumentSnapshot<Map<String, dynamic>>>(
+                        future: FirebaseFirestore.instance
+                            .collection(kFirestoreUsersCollection)
+                            .doc(otherId)
+                            .get(),
+                        builder: (context, userSnap) {
+                          String name = 'Unknown';
+                          String service = '';
+                          String initials = '';
+        
+                          if (userSnap.hasData && userSnap.data!.exists) {
+                            final otherDoc = userSnap.data!;
+                            final mapped = mapDocToContractor(otherDoc);
+                            if (mapped != null) {
+                              name = mapped.name;
+                              service = mapped.service;
+                              initials = _initialsFromName(mapped.name);
+                            } else {
+                              final displayName =
+                                  otherDoc.data()?['displayName'] as String?;
+                              final email =
+                                  otherDoc.data()?['email'] as String? ?? '';
+                              name = displayName ?? email.split('@').first;
+                              initials = _initialsFromName(name);
+                            }
+                          }
+        
+                          return StreamBuilder(
+                            stream: AppRealtimeDatabase.instance
+                                .ref('status/$otherId')
+                                .onValue,
+                            builder: (context, statusSnapshot) {
+                              PresenceState presence = PresenceState(
+                                isOnline: false,
+                                lastSeenMillis: null,
+                              );
+        
+                              if (statusSnapshot.hasData) {
+                                final event =
+                                    statusSnapshot.data as DatabaseEvent;
+        
+                                presence =
+                                    PresenceService.parseRealtimeStatus(
+                                  event.snapshot.value,
+                                );
+                              }
+        
+                              return FutureBuilder<bool>(
+                                future: ChatService().hasSeenAllMessages(
+                                  chatId: ChatService.chatIdFor(
+                                    _currentUserId,
+                                    otherId,
+                                  ),
+                                  currentUserId: _currentUserId,
+                                ),
+                                builder: (context, seenSnapshot) {
+                                  bool isSeen = true;
+                                  if (seenSnapshot.hasData) {
+                                    isSeen = seenSnapshot.data ?? true;
+                                  }
+        
+                                  return ChatOverviewTile(
+                                    name: name,
+                                    serviceCategory: service,
+                                    lastMessage: lastMessage,
+                                    timeLabel: timeLabel,
+                                    initials: initials,
+                                    unreadCount: 0,
+                                    isOnline: presence.isOnline,
+                                    isSeen: isSeen,
+                                    onTap: () {
+                                      final mappedContractor =
+                                          (userSnap.hasData &&
+                                                  userSnap.data!.exists)
+                                              ? mapDocToContractor(userSnap.data!)
+                                              : null;
+        
+                                      final contractor = mappedContractor ??
+                                          ContractorData(
+                                            id: otherId,
+                                            name: name,
+                                            service: service,
+                                            rating: 0.0,
+                                            reviews: 0,
+                                            location: '',
+                                            experience: 0,
+                                            description: '',
+                                            phone: '',
+                                            mail: otherId,
+                                          );
+        
+                                      NavigationService.navigatorKey.currentState
+                                          ?.push(
+                                        MaterialPageRoute(
+                                          builder: (_) => ChatInboxScreen(
+                                            contractor: contractor,
+                                            isOnline: presence.label,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                          );
+                          // return ChatOverviewTile(
+                          // 	name: name,
+                          // 	serviceCategory: service,
+                          // 	lastMessage: lastMessage,
+                          // 	timeLabel: timeLabel,
+                          // 	initials: initials,
+                          // 	unreadCount: 0,
+                          // 	isOnline: true,
+                          // 	isSelected: false,
+                          // 	onTap: () {
+                          // 		final contractor = mapDocToContractor(userSnap.data!) ??
+                          // 				ContractorData(
+                          // 					id: otherId,
+                          // 					name: name,
+                          // 					service: service,
+                          // 					rating: 0.0,
+                          // 					reviews: 0,
+                          // 					location: '',
+                          // 					experience: 0,
+                          // 					description: '',
+                          // 					phone: '',
+                          // 					mail: otherId,
+                          // 				);
+        
+                          // 		NavigationService.navigatorKey.currentState?.push(
+                          // 			MaterialPageRoute(
+                          // 				builder: (_) => ChatInboxScreen(
+                          // 					contractor: contractor,
+                          // 					isOnline: false,
+                          // 				),
+                          // 			),
+                          // 		);
+                          // 	},
+                          // );
+                        },
+                      );
+                    },
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

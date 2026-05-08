@@ -37,7 +37,7 @@ class ChatOverviewTile extends StatelessWidget {
 				child: AnimatedContainer(
 					duration: const Duration(milliseconds: 220),
 					curve: Curves.easeOutCubic,
-					padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 10.h),
+					padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 10.h),
 					decoration: BoxDecoration(
 						color: isSeen
 								? AppColors.scaffoldColor.withValues(alpha: 0.0)
