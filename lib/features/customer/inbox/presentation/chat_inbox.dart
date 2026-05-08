@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/features/customer/contractors/data/contractor_model.dart';
@@ -6,6 +7,7 @@ import 'package:template_flutter/features/customer/inbox/presentation/widget/com
 import 'package:template_flutter/features/customer/inbox/presentation/widget/inbox_header.dart';
 import 'package:template_flutter/services/chat_service.dart';
 import 'package:template_flutter/services/auth_service.dart';
+import 'package:template_flutter/services/presence_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
@@ -17,7 +19,7 @@ class ChatInboxScreen extends StatefulWidget {
   });
 
   final ContractorData contractor;
-  final bool isOnline;
+  final String isOnline;
 
   @override
   State<ChatInboxScreen> createState() => _ChatInboxScreenState();
@@ -55,15 +57,42 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
           },
           child: Column(
             children: [
-              InboxHeader(
-                name: widget.contractor.name,
-                service: widget.contractor.service,
-                isOnline: widget.isOnline,
-                initials: _initialsFromName(widget.contractor.name),
-                onBack: () => Navigator.of(context).pop(),
-                onCall: () {},
-                onMore: () {},
+              StreamBuilder(
+                stream: FirebaseDatabase.instance
+                    .ref('status/${widget.contractor.id}')
+                    .onValue,
+                builder: (context, snapshot) {
+                  String statusLabel = widget.isOnline;
+
+                  if (snapshot.hasData) {
+                    final event = snapshot.data as DatabaseEvent;
+                    final presence = PresenceService.parseRealtimeStatus(
+                        event.snapshot.value);
+                    statusLabel = presence.label;
+                  }
+
+                  return InboxHeader(
+                    name: widget.contractor.name,
+                    service: widget.contractor.service,
+                    isOnline: statusLabel,
+                    initials: _initialsFromName(
+                      widget.contractor.name,
+                    ),
+                    onBack: () => Navigator.of(context).pop(),
+                    onCall: () {},
+                    onMore: () {},
+                  );
+                },
               ),
+              // InboxHeader(
+              //   name: widget.contractor.name,
+              //   service: widget.contractor.service,
+              //   isOnline: widget.isOnline,
+              //   initials: _initialsFromName(widget.contractor.name),
+              //   onBack: () => Navigator.of(context).pop(),
+              //   onCall: () {},
+              //   onMore: () {},
+              // ),
               Expanded(
                 child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                   stream: ChatService().messagesStream(_chatId),
@@ -72,28 +101,36 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     }
-          
+
                     final docs = snapshot.data?.docs ?? [];
-                    final messages = docs.map((d) {
-                      final data = d.data();
-                      final text = data['text'] as String? ?? '';
-                      final created = data['createdAt'] as Timestamp?;
-                      final time = created != null
-                          ? DateFormat('h:mm a').format(created.toDate())
-                          : '';
-                      final isMe = (data['senderId'] as String? ?? '') == _myId;
-                      return ChatMessage(text: text, time: time, isMe: isMe);
-                    }).toList().reversed.toList();
-          
+                    final messages = docs
+                        .map((d) {
+                          final data = d.data();
+                          final text = data['text'] as String? ?? '';
+                          final created = data['createdAt'] as Timestamp?;
+                          final time = created != null
+                              ? DateFormat('h:mm a').format(created.toDate())
+                              : '';
+                          final isMe =
+                              (data['senderId'] as String? ?? '') == _myId;
+                          return ChatMessage(
+                              text: text, time: time, isMe: isMe);
+                        })
+                        .toList()
+                        .reversed
+                        .toList();
+
                     return ListView.builder(
                       reverse: true,
-                      padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 18.w, vertical: 14.h),
                       itemCount: messages.length,
                       itemBuilder: (context, index) {
                         final message = messages[index];
                         return ChatBubble(message: message);
                       },
-                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
                     );
                   },
                 ),
