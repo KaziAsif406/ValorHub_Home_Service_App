@@ -24,6 +24,12 @@ class PresenceState {
 }
 
 class PresenceService {
+  PresenceService._internal();
+
+  static final PresenceService _instance = PresenceService._internal();
+
+  factory PresenceService() => _instance;
+
   final DatabaseReference _db = AppRealtimeDatabase.instance.ref();
 
   StreamSubscription<User?>? _authSub;
@@ -96,6 +102,12 @@ class PresenceService {
       // ignore: avoid_print
       print('PresenceService: failed to set offline for $uid: $e');
     }
+  }
+
+  /// Public wrapper to set a given uid offline immediately.
+  /// Useful to call before performing a sign-out so the DB reflects offline state.
+  Future<void> setOfflineForUid(String uid) async {
+    await _setOffline(uid);
   }
 
   void _setupPresenceForUid(String uid) {

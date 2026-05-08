@@ -8,6 +8,7 @@ import 'package:template_flutter/services/presence_service.dart';
 import 'constants/custome_theme.dart';
 import 'gen/colors.gen.dart';
 import 'helpers/all_routes.dart';
+import 'helpers/app_preferences.dart';
 import 'helpers/di.dart';
 import 'helpers/helper_methods.dart';
 import 'helpers/navigation_service.dart';
@@ -20,9 +21,13 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  PresenceService().start();
   //await _requestPermissions();
   await GetStorage.init();
+  final bool shouldStartPresence = await AppPrefs.isLoggedIn();
+  if (shouldStartPresence) {
+    // Keep presence active only for sessions that were explicitly logged in.
+    PresenceService().start();
+  }
   diSetup();
   // initiInternetChecker();
   // await LocationService.instance.initialize();

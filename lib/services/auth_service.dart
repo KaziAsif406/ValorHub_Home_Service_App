@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:template_flutter/constants/app_constants.dart';
+import 'package:template_flutter/helpers/app_preferences.dart';
+import 'package:template_flutter/services/presence_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -65,10 +67,13 @@ class AuthService {
     required String password,
   }) async {
     try {
-      return await _auth.signInWithEmailAndPassword(
+      final credential = await _auth.signInWithEmailAndPassword(
         email: email.trim(),
         password: password,
       );
+      await AppPrefs.setLoggedIn(true);
+      PresenceService().start();
+      return credential;
     } on FirebaseAuthException {
       throw 'No account found with this email.';
     }
@@ -89,7 +94,10 @@ class AuthService {
         idToken: googleAuth.idToken,
       );
 
-      return _auth.signInWithCredential(credential);
+      final result = await _auth.signInWithCredential(credential);
+      await AppPrefs.setLoggedIn(true);
+      PresenceService().start();
+      return result;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     }
@@ -172,7 +180,18 @@ class AuthService {
   }
 
   // ── SIGN OUT ─────────────────────────────────────────
-  Future<void> signOut() async => _auth.signOut();
+  Future<void> signOut() async {
+    final String? uid = _auth.currentUser?.uid;
+    if (uid != null && uid.isNotEmpty) {
+      try {
+        await PresenceService().setOfflineForUid(uid);
+      } catch (_) {
+        // ignore errors here — proceed to sign out regardless
+      }
+    }
+    await AppPrefs.setLoggedIn(false);
+    await _auth.signOut();
+  }
 
   // ── DELETE ACCOUNT ───────────────────────────────────
   Future<void> deleteAccount({required String password}) async {
