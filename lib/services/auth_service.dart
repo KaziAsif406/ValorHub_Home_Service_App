@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:template_flutter/constants/app_constants.dart';
 import 'package:template_flutter/helpers/app_preferences.dart';
+import 'package:template_flutter/services/notification_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:template_flutter/services/presence_service.dart';
 
 class AuthService {
@@ -73,6 +75,12 @@ class AuthService {
       );
       await AppPrefs.setLoggedIn(true);
       PresenceService().start();
+      // Save device FCM token for this user
+      try {
+        await NotificationService.saveFCMToken(token: await FirebaseMessaging.instance.getToken() ?? '');
+      } catch (_) {
+        // ignore errors here
+      }
       return credential;
     } on FirebaseAuthException {
       throw 'No account found with this email.';
@@ -97,6 +105,12 @@ class AuthService {
       final result = await _auth.signInWithCredential(credential);
       await AppPrefs.setLoggedIn(true);
       PresenceService().start();
+      // Save device FCM token for Google sign-in
+      try {
+        await NotificationService.saveFCMToken(token: await FirebaseMessaging.instance.getToken() ?? '');
+      } catch (_) {
+        // ignore errors here
+      }
       return result;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
