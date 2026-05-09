@@ -19,7 +19,19 @@ service cloud.firestore {
     match /users/{userId} {
       allow create: if isOwner(userId);
       allow read: if isOwner(userId) || signedIn();
-      allow update, delete: if isOwner(userId);
+
+      // Allow updates by the document owner. When the request includes an
+      // `fcmToken` field, validate its type and non-empty content so clients
+      // can safely write their own FCM token but cannot inject invalid data.
+      allow update: if isOwner(userId)
+        && (
+          // If fcmToken is not being written, allow the update as usual.
+          !request.resource.data.keys().hasAny(['fcmToken'])
+          // If fcmToken is present, it must be a non-empty string.
+          || (request.resource.data.fcmToken is string && request.resource.data.fcmToken.size() > 0)
+        );
+
+      allow delete: if isOwner(userId);
     }
 
     match /quote_requests/{requestId} {
