@@ -35,10 +35,25 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
   void initState() {
     super.initState();
     final auth = AuthService();
-    _myId = auth.currentUser?.uid ?? '';
-    _chatId = ChatService.chatIdFor(_myId, widget.contractor.id);
-    ChatService().createChatIfNotExists(_chatId, [_myId, widget.contractor.id]);
-    ChatService().markMessagesAsSeen(chatId: _chatId,currentUserId: _myId,);
+
+    // If the user is already signed in, initialize immediately.
+    if (auth.currentUser != null) {
+      _myId = auth.currentUser!.uid;
+      _chatId = ChatService.chatIdFor(_myId, widget.contractor.id);
+      ChatService().createChatIfNotExists(_chatId, [_myId, widget.contractor.id]);
+      ChatService().markMessagesAsSeen(chatId: _chatId, currentUserId: _myId);
+    } else {
+      // Otherwise wait for the auth state to become available before creating the chat.
+      auth.authStateChanges.firstWhere((u) => u != null).then((user) {
+        final uid = user!.uid;
+        setState(() {
+          _myId = uid;
+          _chatId = ChatService.chatIdFor(_myId, widget.contractor.id);
+        });
+        ChatService().createChatIfNotExists(_chatId, [_myId, widget.contractor.id]);
+        ChatService().markMessagesAsSeen(chatId: _chatId, currentUserId: _myId);
+      });
+    }
   }
 
   @override
@@ -86,15 +101,6 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
                   );
                 },
               ),
-              // InboxHeader(
-              //   name: widget.contractor.name,
-              //   service: widget.contractor.service,
-              //   isOnline: widget.isOnline,
-              //   initials: _initialsFromName(widget.contractor.name),
-              //   onBack: () => Navigator.of(context).pop(),
-              //   onCall: () {},
-              //   onMore: () {},
-              // ),
               Expanded(
                 child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                   stream: ChatService().messagesStream(_chatId),

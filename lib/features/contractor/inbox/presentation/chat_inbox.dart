@@ -36,10 +36,25 @@ class _ContractorChatInboxScreenState extends State<ContractorChatInboxScreen> {
   void initState() {
     super.initState();
     final auth = AuthService();
-    _myId = auth.currentUser?.uid ?? '';
-    _chatId = ChatService.chatIdFor(_myId, widget.contractor.id);
-    ChatService().createChatIfNotExists(_chatId, [_myId, widget.contractor.id]);
-    ChatService().markMessagesAsSeen(chatId: _chatId, currentUserId: _myId);
+
+    // If already signed in, initialize immediately.
+    if (auth.currentUser != null) {
+      _myId = auth.currentUser!.uid;
+      _chatId = ChatService.chatIdFor(_myId, widget.contractor.id);
+      ChatService().createChatIfNotExists(_chatId, [_myId, widget.contractor.id]);
+      ChatService().markMessagesAsSeen(chatId: _chatId, currentUserId: _myId);
+    } else {
+      // Wait for auth state and then initialize to avoid empty UID writes.
+      auth.authStateChanges.firstWhere((u) => u != null).then((user) {
+        final uid = user!.uid;
+        setState(() {
+          _myId = uid;
+          _chatId = ChatService.chatIdFor(_myId, widget.contractor.id);
+        });
+        ChatService().createChatIfNotExists(_chatId, [_myId, widget.contractor.id]);
+        ChatService().markMessagesAsSeen(chatId: _chatId, currentUserId: _myId);
+      });
+    }
   }
 
   @override
