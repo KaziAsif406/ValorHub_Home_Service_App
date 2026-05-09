@@ -134,6 +134,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       final otherId = participants.firstWhere(
                           (p) => p != _currentUserId,
                           orElse: () => '');
+                      if (otherId.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
                       final lastMessageRaw =
                           data['lastMessage'] as String? ?? '';
                       final lastSenderId =
