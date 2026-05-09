@@ -36,7 +36,7 @@ class DashboardOverviewSection extends StatelessWidget {
             onViewRequests: onViewRequests,
           ),
           UIHelper.verticalSpace(14.h),
-          const _MetricsGrid(),
+          _MetricsGrid(contractorId: contractorId),
           UIHelper.verticalSpace(18.h),
           SectionHeader(
             title: 'Recent Quote Requests',
@@ -79,67 +79,83 @@ class DashboardOverviewSection extends StatelessWidget {
 }
 
 class _MetricsGrid extends StatelessWidget {
-  const _MetricsGrid();
+  const _MetricsGrid({this.contractorId});
+
+  final String? contractorId;
 
   @override
   Widget build(BuildContext context) {
-    final List<MetricData> metrics = <MetricData>[
-      MetricData(
-        icon: Icons.description_outlined,
-        iconColor: const Color(0xFF20356F),
-        value: '12',
-        title: 'New Requests',
-        subtitle: '+3 this week',
-        onTap: () {
-          // Handle tap if needed
-        },
-      ),
-      MetricData(
+    // First card: New Requests for this contractor (status: pending)
+    final Widget newRequestsCard = StreamBuilder<List<QuoteRequestModel>>(
+      stream: contractorId == null
+          ? Stream<List<QuoteRequestModel>>.value(const <QuoteRequestModel>[])
+          : QuoteRequestStore.instance.contractorRequestsStream(contractorId!),
+      builder: (context, snapshot) {
+        final List<QuoteRequestModel> requests = snapshot.data ?? <QuoteRequestModel>[];
+        final int newCount = requests.where((r) => r.status == QuoteRequestStatus.pending).length;
+
+        final MetricData metric = MetricData(
+          icon: Icons.description_outlined,
+          iconColor: const Color(0xFF20356F),
+          value: newCount.toString(),
+          title: 'New Requests',
+          subtitle: '+${newCount > 0 ? newCount : 0} this week',
+          onTap: () {},
+        );
+
+        return MetricCard(data: metric);
+      },
+    );
+
+    // Other static metric cards
+    final Widget pendingCard = MetricCard(
+      data: MetricData(
         icon: Icons.access_time_outlined,
         iconColor: Colors.orange,
         value: '28',
         title: 'Pending',
         subtitle: 'Awaiting reply',
-        onTap: () {
-          // Handle tap if needed
-        },
+        onTap: () {},
       ),
-      MetricData(
+    );
+
+    final Widget completedCard = MetricCard(
+      data: MetricData(
         icon: Icons.check_circle_outline,
         iconColor: Colors.green,
         value: '28',
         title: 'Completed Jobs',
         subtitle: '+5 this month',
-        onTap: () {
-          // Handle tap if needed
-        },
+        onTap: () {},
       ),
-      MetricData(
+    );
+
+    final Widget reviewCard = MetricCard(
+      data: MetricData(
         icon: Icons.star_outline,
         iconColor: Colors.amber,
         value: '4.9',
         title: 'Overall Review',
         subtitle: 'From 127 reviews',
-        onTap: () {
-          // Handle tap if needed
-        },
+        onTap: () {},
       ),
+    );
+
+    final List<Widget> children = [
+      newRequestsCard,
+      pendingCard,
+      completedCard,
+      reviewCard,
     ];
 
-    return GridView.builder(
-      itemCount: metrics.length,
+    return GridView.count(
+      crossAxisCount: 2,
+      mainAxisSpacing: 12.h,
+      crossAxisSpacing: 12.w,
+      childAspectRatio: 1.12,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 12.h,
-        crossAxisSpacing: 12.w,
-        childAspectRatio: 1.12,
-      ),
-      itemBuilder: (BuildContext context, int index) {
-        final MetricData metric = metrics[index];
-        return MetricCard(data: metric);
-      },
+      children: children,
     );
   }
 }
