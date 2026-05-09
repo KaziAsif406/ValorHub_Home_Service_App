@@ -8,6 +8,7 @@ import 'package:template_flutter/features/contractor/contractor_dashboard/presen
 import 'package:template_flutter/features/contractor/contractor_dashboard/presentation/widget/welcome_banner.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
+import 'package:template_flutter/services/chat_service.dart';
 
 class DashboardOverviewSection extends StatelessWidget {
   const DashboardOverviewSection({
@@ -85,7 +86,6 @@ class _MetricsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // First card: New Requests for this contractor (status: pending)
     final Widget newRequestsCard = StreamBuilder<List<QuoteRequestModel>>(
       stream: contractorId == null
           ? Stream<List<QuoteRequestModel>>.value(const <QuoteRequestModel>[])
@@ -107,16 +107,31 @@ class _MetricsGrid extends StatelessWidget {
       },
     );
 
-    // Other static metric cards
-    final Widget pendingCard = MetricCard(
-      data: MetricData(
-        icon: Icons.access_time_outlined,
-        iconColor: Colors.orange,
-        value: '28',
-        title: 'Pending',
-        subtitle: 'Awaiting reply',
-        onTap: () {},
-      ),
+    // Pending card: count of unseen chat messages
+    final Widget pendingCard = StreamBuilder<int>(
+      stream: contractorId == null || contractorId!.isEmpty
+          ? Stream<int>.value(0)
+          : ChatService().unseenMessageCountStream(currentUserId: contractorId!),
+      builder: (context, snapshot) {
+        int unseenCount = 0;
+        if (snapshot.hasError) {
+          // ignore: avoid_print
+          print('DEBUG: pendingCard stream error: ${snapshot.error}');
+        } else if (snapshot.hasData) {
+          unseenCount = snapshot.data ?? 0;
+        }
+
+        final MetricData metric = MetricData(
+          icon: Icons.access_time_outlined,
+          iconColor: Colors.orange,
+          value: unseenCount.toString(),
+          title: 'Unseen Messages',
+          subtitle: 'Awaiting response',
+          onTap: () {},
+        );
+
+        return MetricCard(data: metric);
+      },
     );
 
     final Widget completedCard = MetricCard(
