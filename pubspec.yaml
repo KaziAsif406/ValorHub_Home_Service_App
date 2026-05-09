@@ -43,6 +43,8 @@ dependencies:
   awesome_emoji_picker: ^1.0.5
   firebase_database: ^11.3.10
   timeago: ^3.7.1
+  firebase_messaging: ^15.2.10
+  flutter_local_notifications: ^21.0.0
 
 
 dev_dependencies:
