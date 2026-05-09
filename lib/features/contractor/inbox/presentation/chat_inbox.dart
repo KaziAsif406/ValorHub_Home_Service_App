@@ -111,8 +111,16 @@ class _ContractorChatInboxScreenState extends State<ContractorChatInboxScreen> {
                               : '';
                           final isMe =
                               (data['senderId'] as String? ?? '') == _myId;
+
+                          final isLastMessage = docs.last.id == d.id;
+
+                          final seenBy = List<String>.from(data['seenBy'] ?? [],);
+
+                          final isSeen =
+                            seenBy.contains(widget.contractor.id);
+
                           return ContractorChatMessage(
-                              text: text, time: time, isMe: isMe);
+                              text: text, time: time, isMe: isMe, lastMessage: isLastMessage, isSeen: isSeen);
                         })
                         .toList()
                         .reversed

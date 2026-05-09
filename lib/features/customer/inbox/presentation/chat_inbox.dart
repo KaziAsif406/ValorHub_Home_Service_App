@@ -121,13 +121,15 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
                               : '';
                           final isMe = (data['senderId'] as String? ?? '') == _myId;
 
+                          final isLastMessage = docs.last.id == d.id;
+
                           final seenBy = List<String>.from(data['seenBy'] ?? [],);
 
                           final isSeen =
                             seenBy.contains(widget.contractor.id);
 
                           return ChatMessage(
-                              text: text, time: time, isMe: isMe, isSeen: isSeen);
+                              text: text, time: time, isMe: isMe, isSeen: isSeen, lastMessage: isLastMessage);
                         })
                         .toList()
                         .reversed

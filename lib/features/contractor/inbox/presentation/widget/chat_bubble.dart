@@ -8,11 +8,15 @@ class ContractorChatMessage {
 		required this.text,
 		required this.time,
 		required this.isMe,
+    required this.lastMessage,
+    required this.isSeen,
 	});
 
 	final String text;
 	final String time;
 	final bool isMe;
+  final bool lastMessage;
+  final bool isSeen;
 }
 
 class ContractorChatBubble extends StatefulWidget {
@@ -103,6 +107,25 @@ class _ContractorChatBubbleState extends State<ContractorChatBubble> {
                   fontWeight: FontWeight.w500,
                   height: 1.4,
                 ),
+              ),
+            ),
+          ),
+          if (isMe && widget.message.lastMessage)
+          Padding(
+            padding: EdgeInsets.only(
+              right: 4.w,
+              // top: 6.h,
+              bottom: 10.h,
+            ),
+            child: 
+            Text(
+              widget.message.isSeen
+                  ? 'Seen'
+                  : 'Sent',
+              style: TextStyle(
+                fontSize: 10.sp,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),

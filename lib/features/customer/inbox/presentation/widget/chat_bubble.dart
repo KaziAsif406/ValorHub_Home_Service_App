@@ -8,12 +8,14 @@ class ChatMessage {
 		required this.text,
 		required this.time,
 		required this.isMe, 
+    required this.lastMessage,
     required this.isSeen,
 	});
 
 	final String text;
 	final String time;
 	final bool isMe;
+	final bool lastMessage;
 	final bool isSeen;
 }
 
@@ -129,7 +131,9 @@ class _ChatBubbleState extends State<ChatBubble> {
             child: Container(
               // width: 0.82.sw,
               margin: isMe
-                  ? EdgeInsets.only(bottom: 14.h, left: 50.w)
+                  ? widget.message.lastMessage
+                      ? EdgeInsets.only(bottom: 4.h, left: 50.w)
+                      : EdgeInsets.only(bottom: 14.h, left: 50.w)
                   : EdgeInsets.only(bottom: 14.h, right: 50.w),
               // EdgeInsets.only(bottom: 14.h),
               padding: EdgeInsets.fromLTRB(
@@ -171,14 +175,15 @@ class _ChatBubbleState extends State<ChatBubble> {
               ),
             ),
           ),
-          if (isMe)
+          if (isMe && widget.message.lastMessage)
           Padding(
             padding: EdgeInsets.only(
               right: 4.w,
-              top: 6.h,
+              // top: 6.h,
               bottom: 10.h,
             ),
-            child: Text(
+            child: 
+            Text(
               widget.message.isSeen
                   ? 'Seen'
                   : 'Sent',
