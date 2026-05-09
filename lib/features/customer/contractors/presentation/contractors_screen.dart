@@ -319,6 +319,8 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
                                   Text(
                                     contractor.description,
                                     style: TextFontStyle.textStyle12c6A7181Inter400.copyWith(height: 1.6),
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
                               ),
