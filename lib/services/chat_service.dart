@@ -26,22 +26,24 @@ class ChatService {
     if (current == null) {
       throw 'Not authenticated';
     }
-    final docRef = _firestore.collection('chats').doc(chatId);
-    
-    // Check if chat already exists
-    final docSnapshot = await docRef.get();
-    if (docSnapshot.exists) {
-      // Chat already exists, don't overwrite lastMessage or other fields
-      return;
+    // Defensive validation: ensure current user is included in participants
+    if (!participants.contains(current.uid)) {
+      throw 'Current user (${current.uid}) must be included in participants: $participants';
     }
-    
-    // Create new chat document only if it doesn't exist
-    await docRef.set({
-      'participants': participants,
-      'createdAt': FieldValue.serverTimestamp(),
-      'lastMessage': '',
-      'lastUpdated': FieldValue.serverTimestamp(),
-    });
+    final docRef = _firestore.collection('chats').doc(chatId);
+
+    // Upsert without pre-reading. Pre-read is denied for non-existing docs by rules.
+    try {
+      await docRef.set({
+        'participants': participants,
+        'lastUpdated': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+    } catch (e) {
+      // Provide a clearer error message for permission issues
+      // ignore: avoid_print
+      print('ChatService.createChatIfNotExists failed: $e (authUid=${current.uid}, participants=$participants)');
+      rethrow;
+    }
   }
 
   Future<void> sendTextMessage({
@@ -56,6 +58,14 @@ class ChatService {
     print('ChatService.sendTextMessage called. authUid=${current?.uid}, senderId=$senderId, chatId=$chatId');
     if (current == null) {
       throw 'Not authenticated';
+    }
+    // Ensure chat document exists and includes the sender as a participant.
+    try {
+      await createChatIfNotExists(chatId, [senderId]);
+    } catch (e) {
+      // ignore: avoid_print
+      print('createChatIfNotExists before sendTextMessage failed: $e');
+      rethrow;
     }
     final messagesRef = _firestore.collection('chats').doc(chatId).collection('messages');
     final msgRef = messagesRef.doc();
@@ -75,6 +85,7 @@ class ChatService {
         'lastMessage': text,
         'lastSenderId': senderId,
         'lastUpdated': FieldValue.serverTimestamp(),
+        // Ensure participants contains senderId without using array transforms on create
         'participants': FieldValue.arrayUnion([senderId])
       }, SetOptions(merge: true));
     });
