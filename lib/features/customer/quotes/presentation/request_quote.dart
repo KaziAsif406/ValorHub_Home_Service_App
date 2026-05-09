@@ -224,22 +224,27 @@ class _RequestQuoteState extends State<RequestQuote> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CustomButton(
-                        width: 152.w,
-                        height: 34.h,
-                        label: 'Cancel',
-                        onPressed: () => Navigator.pop(context),
-                        isOutlined: true,
+                      Expanded(
+                        child: CustomButton(
+                          // width: 152.w,
+                          height: 34.h,
+                          label: 'Cancel',
+                          onPressed: () => Navigator.pop(context),
+                          isOutlined: true,
+                        ),
                       ),
                       UIHelper.horizontalSpace(8.w),
-                      CustomButton(
-                        width: 152.w,
-                        height: 34.h,
-                        label: _isSubmitting ? 'Submitting...' : 'Submit Request',
-                        onPressed: _isSubmitting ? null : _onSubmit,
+                      Expanded(
+                        child: CustomButton(
+                          // width: 152.w,
+                          height: 34.h,
+                          label: _isSubmitting ? 'Submitting...' : 'Submit Request',
+                          onPressed: _isSubmitting ? null : _onSubmit,
+                        ),
                       ),
                     ],
                   ),
+                  UIHelper.verticalSpace(22.h),
                 ],
               ),
             ),
