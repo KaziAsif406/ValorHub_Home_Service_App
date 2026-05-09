@@ -5,6 +5,7 @@ import 'package:auto_animated/auto_animated.dart';
 import 'package:template_flutter/loading_screen.dart';
 import 'package:template_flutter/services/presence_service.dart';
 // import 'package:template_flutter/navigation_screen.dart';
+import 'package:template_flutter/services/notification_service.dart';
 import 'constants/custome_theme.dart';
 import 'gen/colors.gen.dart';
 import 'helpers/all_routes.dart';
@@ -32,6 +33,7 @@ void main() async {
   // initiInternetChecker();
   // await LocationService.instance.initialize();
   DioSingleton.instance.create();
+  await NotificationService.initialize();
   runApp(const MyApp());
 }
 
