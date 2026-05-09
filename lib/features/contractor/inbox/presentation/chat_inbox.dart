@@ -29,31 +29,38 @@ class ContractorChatInboxScreen extends StatefulWidget {
 
 class _ContractorChatInboxScreenState extends State<ContractorChatInboxScreen> {
   final TextEditingController _messageController = TextEditingController();
-  late final String _chatId;
-  late final String _myId;
+  late String _chatId;
+  late String _myId;
 
   @override
   void initState() {
     super.initState();
     final auth = AuthService();
 
+    // Initialize with empty strings to prevent late initialization errors
+    _myId = '';
+    _chatId = '';
+
     // If already signed in, initialize immediately.
     if (auth.currentUser != null) {
-      _myId = auth.currentUser!.uid;
-      _chatId = ChatService.chatIdFor(_myId, widget.contractor.id);
-      ChatService().createChatIfNotExists(_chatId, [_myId, widget.contractor.id]);
-      ChatService().markMessagesAsSeen(chatId: _chatId, currentUserId: _myId);
+      _initializeChat(auth.currentUser!.uid);
     } else {
       // Wait for auth state and then initialize to avoid empty UID writes.
       auth.authStateChanges.firstWhere((u) => u != null).then((user) {
-        final uid = user!.uid;
-        setState(() {
-          _myId = uid;
-          _chatId = ChatService.chatIdFor(_myId, widget.contractor.id);
-        });
-        ChatService().createChatIfNotExists(_chatId, [_myId, widget.contractor.id]);
-        ChatService().markMessagesAsSeen(chatId: _chatId, currentUserId: _myId);
+        _initializeChat(user!.uid);
       });
+    }
+  }
+
+  void _initializeChat(String uid) {
+    if (uid.isEmpty) return;
+    setState(() {
+      _myId = uid;
+      _chatId = ChatService.chatIdFor(_myId, widget.contractor.id);
+    });
+    if (_chatId.isNotEmpty && _myId.isNotEmpty && widget.contractor.id.isNotEmpty) {
+      ChatService().createChatIfNotExists(_chatId, [_myId, widget.contractor.id]);
+      ChatService().markMessagesAsSeen(chatId: _chatId, currentUserId: _myId);
     }
   }
 
@@ -101,60 +108,62 @@ class _ContractorChatInboxScreenState extends State<ContractorChatInboxScreen> {
                 },
               ),
               Expanded(
-                child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                  stream: ChatService().messagesStream(_chatId),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) return const SizedBox();
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+                child: _chatId.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                        stream: ChatService().messagesStream(_chatId),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) return const SizedBox();
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
 
-                    final docs = snapshot.data?.docs ?? [];
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      ChatService().markMessagesAsSeen(
-                        chatId: _chatId,
-                        currentUserId: _myId,
-                      );
-                    });
-                    final messages = docs
-                        .map((d) {
-                          final data = d.data();
-                          final text = data['text'] as String? ?? '';
-                          final created = data['createdAt'] as Timestamp?;
-                          final time = created != null
-                              ? DateFormat('h:mm a').format(created.toDate())
-                              : '';
-                          final isMe =
-                              (data['senderId'] as String? ?? '') == _myId;
+                          final docs = snapshot.data?.docs ?? [];
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            ChatService().markMessagesAsSeen(
+                              chatId: _chatId,
+                              currentUserId: _myId,
+                            );
+                          });
+                          final messages = docs
+                              .map((d) {
+                                final data = d.data();
+                                final text = data['text'] as String? ?? '';
+                                final created = data['createdAt'] as Timestamp?;
+                                final time = created != null
+                                    ? DateFormat('h:mm a').format(created.toDate())
+                                    : '';
+                                final isMe =
+                                    (data['senderId'] as String? ?? '') == _myId;
 
-                          final isLastMessage = docs.last.id == d.id;
+                                final isLastMessage = docs.last.id == d.id;
 
-                          final seenBy = List<String>.from(data['seenBy'] ?? [],);
+                                final seenBy = List<String>.from(data['seenBy'] ?? [],);
 
-                          final isSeen =
-                            seenBy.contains(widget.contractor.id);
+                                final isSeen =
+                                  seenBy.contains(widget.contractor.id);
 
-                          return ContractorChatMessage(
-                              text: text, time: time, isMe: isMe, lastMessage: isLastMessage, isSeen: isSeen);
-                        })
-                        .toList()
-                        .reversed
-                        .toList();
+                                return ContractorChatMessage(
+                                    text: text, time: time, isMe: isMe, lastMessage: isLastMessage, isSeen: isSeen);
+                              })
+                              .toList()
+                              .reversed
+                              .toList();
 
-                    return ListView.builder(
-                      reverse: true,
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 18.w, vertical: 14.h),
-                      itemCount: messages.length,
-                      itemBuilder: (context, index) {
-                        final message = messages[index];
-                        return ContractorChatBubble(message: message);
-                      },
-                      keyboardDismissBehavior:
-                          ScrollViewKeyboardDismissBehavior.onDrag,
-                    );
-                  },
-                ),
+                          return ListView.builder(
+                            reverse: true,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 18.w, vertical: 14.h),
+                            itemCount: messages.length,
+                            itemBuilder: (context, index) {
+                              final message = messages[index];
+                              return ContractorChatBubble(message: message);
+                            },
+                            keyboardDismissBehavior:
+                                ScrollViewKeyboardDismissBehavior.onDrag,
+                          );
+                        },
+                      ),
               ),
               ContractorChatComposer(
                 controller: _messageController,
@@ -168,6 +177,7 @@ class _ContractorChatInboxScreenState extends State<ContractorChatInboxScreen> {
                     text: text,
                     senderId: _myId,
                     senderName: senderName,
+                    participants: [_myId, widget.contractor.id],
                   );
                   _messageController.clear();
                 },
