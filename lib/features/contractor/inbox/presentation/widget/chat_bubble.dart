@@ -68,7 +68,9 @@ class _ContractorChatBubbleState extends State<ContractorChatBubble> {
             child: Container(
               // width: 0.82.sw,
               margin: isMe
-                  ? EdgeInsets.only(bottom: 14.h, left: 50.w)
+                  ? widget.message.lastMessage
+                      ? EdgeInsets.only(bottom: 4.h, left: 50.w)
+                      : EdgeInsets.only(bottom: 14.h, left: 50.w)
                   : EdgeInsets.only(bottom: 14.h, right: 50.w),
               // EdgeInsets.only(bottom: 14.h),
               padding: EdgeInsets.fromLTRB(
