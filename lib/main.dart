@@ -32,7 +32,7 @@ void main() async {
   diSetup();
   // initiInternetChecker();
   // await LocationService.instance.initialize();
-  DioSingleton.instance.create();
+  // DioSingleton.instance.create();
   await NotificationService.initialize();
   runApp(const MyApp());
 }
