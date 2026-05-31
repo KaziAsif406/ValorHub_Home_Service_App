@@ -10,7 +10,12 @@ import 'package:template_flutter/services/presence_service.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'profile',
+    ],
+  );
 
   // ── Current user stream ──────────────────────────────
   Stream<User?> get authStateChanges => _auth.authStateChanges();

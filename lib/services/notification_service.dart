@@ -5,13 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:developer' as dev;
 
 class NotificationService {
-
-  static final FlutterLocalNotificationsPlugin
-      _localNotifications =
+  static final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
 
   static Future<void> initialize() async {
-
     /// REQUEST PERMISSION
     await FirebaseMessaging.instance.requestPermission();
 
@@ -20,15 +17,22 @@ class NotificationService {
       '@mipmap/ic_launcher',
     );
 
+    /// iOS INIT
+    const ios = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+
     const settings = InitializationSettings(
       android: android,
+      iOS: ios,
     );
 
     await _localNotifications.initialize(settings: settings);
 
     /// FOREGROUND MESSAGE
     FirebaseMessaging.onMessage.listen((message) {
-
       final notification = message.notification;
 
       if (notification == null) return;
@@ -55,7 +59,8 @@ class NotificationService {
         await saveFCMToken(token: token);
       }
     } catch (e, st) {
-      dev.log('Failed to fetch/save initial FCM token: $e', error: e, stackTrace: st, name: 'NotificationService');
+      dev.log('Failed to fetch/save initial FCM token: $e',
+          error: e, stackTrace: st, name: 'NotificationService');
     }
 
     // Listen for token refreshes and save them
@@ -63,7 +68,8 @@ class NotificationService {
       try {
         if (newToken.isNotEmpty) await saveFCMToken(token: newToken);
       } catch (e, st) {
-        dev.log('Failed to save refreshed FCM token: $e', error: e, stackTrace: st, name: 'NotificationService');
+        dev.log('Failed to save refreshed FCM token: $e',
+            error: e, stackTrace: st, name: 'NotificationService');
       }
     });
   }
@@ -75,18 +81,21 @@ class NotificationService {
       if (token.isEmpty) return;
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
-        dev.log('No signed-in user; skipping saving FCM token', name: 'NotificationService');
+        dev.log('No signed-in user; skipping saving FCM token',
+            name: 'NotificationService');
         return;
       }
 
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .set({'fcmToken': token, 'fcmTokenUpdatedAt': FieldValue.serverTimestamp()}, SetOptions(merge: true));
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        'fcmToken': token,
+        'fcmTokenUpdatedAt': FieldValue.serverTimestamp()
+      }, SetOptions(merge: true));
 
-      dev.log('Saved FCM token for user ${user.uid}', name: 'NotificationService');
+      dev.log('Saved FCM token for user ${user.uid}',
+          name: 'NotificationService');
     } catch (e, st) {
-      dev.log('Error saving FCM token: $e', error: e, stackTrace: st, name: 'NotificationService');
+      dev.log('Error saving FCM token: $e',
+          error: e, stackTrace: st, name: 'NotificationService');
     }
   }
 }
