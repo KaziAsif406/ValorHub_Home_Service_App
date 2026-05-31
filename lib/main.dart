@@ -13,7 +13,6 @@ import 'helpers/app_preferences.dart';
 import 'helpers/di.dart';
 import 'helpers/helper_methods.dart';
 import 'helpers/navigation_service.dart';
-import 'networks/dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
