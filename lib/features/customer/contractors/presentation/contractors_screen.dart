@@ -29,12 +29,20 @@ class ContractorsScreen extends StatefulWidget {
 class _ContractorsScreenState extends State<ContractorsScreen> {
   late String _selectedCategory;
   late String _selectedRating;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
     _selectedCategory = 'All Services';
     _selectedRating = 'Any Rating';
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   List<ContractorData> _applyFilters(List<ContractorData> contractors) {
@@ -45,10 +53,41 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
           .toList();
     }
 
+    // Apply selected category filter if not using widget-provided category
+    if ((widget.filterCategory == null || widget.filterCategory!.isEmpty) &&
+        _selectedCategory != 'All Services') {
+      contractors = contractors
+          .where(
+              (c) => c.service.toLowerCase() == _selectedCategory.toLowerCase())
+          .toList();
+    }
+
+    // Zip code filter (widget-level prop takes precedence)
     if (widget.zipCode != null && widget.zipCode!.trim().isNotEmpty) {
       final zipCode = widget.zipCode!.trim();
       contractors =
           contractors.where((c) => c.zipCode.trim() == zipCode).toList();
+    }
+
+    // Minimum rating filter
+    if (_selectedRating.isNotEmpty && _selectedRating != 'Any Rating') {
+      final match =
+          RegExp(r'([0-9]+(?:\.[0-9]+)?)').firstMatch(_selectedRating);
+      if (match != null) {
+        final double threshold = double.tryParse(match.group(1) ?? '') ?? 0.0;
+        contractors = contractors.where((c) => c.rating >= threshold).toList();
+      }
+    }
+
+    // Search query filter (name, service, location)
+    final String q = _searchQuery.trim().toLowerCase();
+    if (q.isNotEmpty) {
+      contractors = contractors.where((c) {
+        return c.name.toLowerCase().contains(q) ||
+            c.service.toLowerCase().contains(q) ||
+            c.location.toLowerCase().contains(q) ||
+            c.zipCode.toLowerCase().contains(q);
+      }).toList();
     }
 
     return contractors;
@@ -126,6 +165,12 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
                     hintText: 'Search contractors...',
                     prefixIcon: Icon(Icons.search),
                     focusNode: widget._searchFocusNode,
+                    controller: _searchController,
+                    onChanged: (v) {
+                      setState(() {
+                        _searchQuery = v;
+                      });
+                    },
                   ),
                 ),
                 UIHelper.horizontalSpace(8.w),
