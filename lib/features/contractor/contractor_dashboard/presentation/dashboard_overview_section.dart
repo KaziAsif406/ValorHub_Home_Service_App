@@ -42,7 +42,7 @@ class DashboardOverviewSection extends StatelessWidget {
           UIHelper.verticalSpace(18.h),
           SectionHeader(
             title: 'Recent Quote Requests',
-            actionText: 'See all',
+            actionText: 'View all',
             onActionTap: () {},
           ),
           UIHelper.verticalSpace(12.h),
