@@ -7,7 +7,6 @@ import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 
-
 class QuoteSent extends StatelessWidget {
   const QuoteSent({super.key});
 
@@ -47,11 +46,8 @@ class QuoteSent extends StatelessWidget {
                       color: AppColors.c21C45D.withValues(alpha: 0.10),
                       shape: BoxShape.circle,
                     ),
-                    child: Image.asset(
-                      'assets/icons/green_tick.png', 
-                      width: 32.w, 
-                      height: 32.h
-                    ),
+                    child: Image.asset('assets/icons/green_tick.png',
+                        width: 32.w, height: 32.h),
                   ),
                 ),
                 UIHelper.verticalSpace(20.h),
@@ -72,8 +68,8 @@ class QuoteSent extends StatelessWidget {
                 UIHelper.verticalSpace(28.h),
                 Container(
                   width: double.infinity,
-                  height: 68.h,
-                  padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
                   decoration: BoxDecoration(
                     color: AppColors.cF3F4F6.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(12.r),
@@ -109,11 +105,12 @@ class QuoteSent extends StatelessWidget {
                       height: 32.h,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColors.allPrimaryColor.withValues(alpha: 0.10),
+                        color:
+                            AppColors.allPrimaryColor.withValues(alpha: 0.10),
                         shape: BoxShape.circle,
                       ),
-                      child: 
-                    Image.asset('assets/icons/clipboard.png', width: 16.w, height: 16.h),
+                      child: Image.asset('assets/icons/clipboard.png',
+                          width: 16.w, height: 16.h),
                     ),
                     UIHelper.horizontalSpace(16.w),
                     Expanded(
@@ -132,10 +129,12 @@ class QuoteSent extends StatelessWidget {
                       height: 32.h,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColors.allPrimaryColor.withValues(alpha: 0.10),
+                        color:
+                            AppColors.allPrimaryColor.withValues(alpha: 0.10),
                         shape: BoxShape.circle,
                       ),
-                      child: Image.asset('assets/icons/mail_red.png', width: 16.w, height: 16.h),
+                      child: Image.asset('assets/icons/mail_red.png',
+                          width: 16.w, height: 16.h),
                     ),
                     UIHelper.horizontalSpace(16.w),
                     Expanded(
@@ -154,10 +153,12 @@ class QuoteSent extends StatelessWidget {
                       height: 32.h,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColors.allPrimaryColor.withValues(alpha: 0.10),
+                        color:
+                            AppColors.allPrimaryColor.withValues(alpha: 0.10),
                         shape: BoxShape.circle,
                       ),
-                      child: Image.asset('assets/icons/clock_red.png', width: 16.w, height: 16.h),
+                      child: Image.asset('assets/icons/clock_red.png',
+                          width: 16.w, height: 16.h),
                     ),
                     UIHelper.horizontalSpace(16.w),
                     Expanded(
@@ -174,7 +175,8 @@ class QuoteSent extends StatelessWidget {
                   height: 34.h,
                   label: 'Go To Home',
                   onPressed: () {
-                    NavigationService.navigateToReplacement(Routes.navigationScreen);
+                    NavigationService.navigateToReplacement(
+                        Routes.navigationScreen);
                   },
                 ),
                 UIHelper.verticalSpace(8.h),
@@ -184,7 +186,8 @@ class QuoteSent extends StatelessWidget {
                   label: 'View Dashboard',
                   onPressed: () {
                     // Not defined yet, so just navigate to home for now
-                    NavigationService.navigateToReplacement(Routes.navigationScreen);
+                    NavigationService.navigateToReplacement(
+                        Routes.navigationScreen);
                   },
                   isOutlined: true,
                 ),
