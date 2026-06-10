@@ -23,7 +23,10 @@ class WelcomeBanner extends StatelessWidget {
       padding: EdgeInsets.all(18.w),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [AppColors.contractor_primary, AppColors.contractor_secondary],
+          colors: [
+            AppColors.contractor_primary,
+            AppColors.contractor_secondary
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -84,7 +87,7 @@ class WelcomeBanner extends StatelessWidget {
             color: AppColors.allSecondaryColor,
             textStyle: TextStyle(
               color: AppColors.contractor_primary,
-              fontSize: 14.sp,
+              fontSize: 13.sp,
               fontWeight: FontWeight.w800,
             ),
           ),
