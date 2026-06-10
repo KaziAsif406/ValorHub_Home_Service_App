@@ -369,6 +369,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // ignore: use_build_context_synchronously
                   Navigator.of(dialogContext).pop();
                   NavigationService.navigateToReplacement(Routes.loginScreen);
+                  // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(screenContext).showSnackBar(
                     const SnackBar(
                       content: Text('Logged out successfully.'),
