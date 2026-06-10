@@ -3,6 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/common_widgets/custom_button.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:template_flutter/services/chat_service.dart';
 
 class WelcomeBanner extends StatelessWidget {
   const WelcomeBanner({
@@ -68,15 +71,51 @@ class WelcomeBanner extends StatelessWidget {
             ),
           ),
           UIHelper.verticalSpace(10.h),
-          Text(
-            'You have 2 new quote requests and 3 unread messages waiting for your attention.',
-            style: TextStyle(
-              color: AppColors.allSecondaryColor.withValues(alpha: 0.88),
-              fontSize: 14.sp,
-              height: 1.45,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          Builder(builder: (context) {
+            final String? uid = FirebaseAuth.instance.currentUser?.uid;
+            if (uid == null) {
+              return Text(
+                'You have 0 new quote requests and 0 unread messages waiting for your attention.',
+                style: TextStyle(
+                  color: AppColors.allSecondaryColor.withValues(alpha: 0.88),
+                  fontSize: 14.sp,
+                  height: 1.45,
+                  fontWeight: FontWeight.w500,
+                ),
+              );
+            }
+
+            return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+              stream: FirebaseFirestore.instance
+                  .collection('quote_requests')
+                  .where('contractorId', isEqualTo: uid)
+                  .where('status', isEqualTo: 'pending')
+                  .snapshots(),
+              builder: (context, quoteSnap) {
+                final int newRequests =
+                    quoteSnap.hasData ? quoteSnap.data!.docs.length : 0;
+
+                return StreamBuilder<int>(
+                  stream: ChatService()
+                      .unseenMessageCountStream(currentUserId: uid),
+                  builder: (context, msgSnap) {
+                    final int unread = msgSnap.hasData ? msgSnap.data! : 0;
+
+                    return Text(
+                      'You have $newRequests new quote request${newRequests == 1 ? '' : 's'} and $unread unread message${unread == 1 ? '' : 's'} waiting for your attention.',
+                      style: TextStyle(
+                        color:
+                            AppColors.allSecondaryColor.withValues(alpha: 0.88),
+                        fontSize: 14.sp,
+                        height: 1.45,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    );
+                  },
+                );
+              },
+            );
+          }),
           UIHelper.verticalSpace(14.h),
           CustomButton(
             label: 'View Requests',
