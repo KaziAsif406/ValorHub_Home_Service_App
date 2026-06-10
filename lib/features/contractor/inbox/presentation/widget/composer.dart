@@ -18,12 +18,10 @@ class ContractorChatComposer extends StatefulWidget {
   final VoidCallback? onSend;
 
   @override
-  State<ContractorChatComposer> createState() =>
-      _ContractorChatComposerState();
+  State<ContractorChatComposer> createState() => _ContractorChatComposerState();
 }
 
 class _ContractorChatComposerState extends State<ContractorChatComposer> {
-
   late FocusNode _focusNode;
   bool isFocused = false;
   bool _showLabel = true;
@@ -90,51 +88,6 @@ class _ContractorChatComposerState extends State<ContractorChatComposer> {
               children: [
                 Row(
                   children: [
-                    /// HIDE ICONS WHEN FOCUSED
-                    if (!isFocused) ...[
-                      InkWell(
-                        borderRadius: BorderRadius.circular(20.r),
-                        onTap: () {},
-                        child: Padding(
-                          padding: EdgeInsets.all(6.w),
-                          child: Image.asset(
-                            'assets/icons/attach.png',
-                            width: 20.w,
-                            height: 20.h,
-                          ),
-                        ),
-                      ),
-                
-                      UIHelper.horizontalSpace(6.w),
-                
-                      InkWell(
-                        borderRadius: BorderRadius.circular(20.r),
-                        onTap: () {},
-                        child: Padding(
-                          padding: EdgeInsets.all(6.w),
-                          child: Image.asset(
-                            'assets/icons/image.png',
-                            width: 18.w,
-                            height: 18.h,
-                          ),
-                        ),
-                      ),
-                      UIHelper.horizontalSpace(8.w),
-                    ] else ...[
-                      InkWell(
-                        borderRadius: BorderRadius.circular(20.r),
-                        onTap: () {},
-                        child: Padding(
-                          padding: EdgeInsets.only(right: 8.w),
-                          child: Image.asset(
-                            'assets/icons/add.png',
-                            width: 22.w,
-                            height: 22.h,
-                            color: AppColors.c636363.withValues(alpha: 0.6),
-                          ),
-                        ),
-                      ),
-                    ],
                     /// EXPANDING TEXTFIELD
                     Expanded(
                       child: AnimatedContainer(
@@ -163,6 +116,7 @@ class _ContractorChatComposerState extends State<ContractorChatComposer> {
                       ),
                     ),
                     UIHelper.horizontalSpace(8.w),
+
                     /// ANIMATED SEND BUTTON
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 250),
@@ -191,24 +145,27 @@ class _ContractorChatComposerState extends State<ContractorChatComposer> {
             ),
           ),
         ),
+
         /// EMOJI PICKER
         // if (showEmojiPicker)
         AnimatedSize(
           duration: Duration(milliseconds: 200),
           child: showEmojiPicker
-          ? SizedBox(
-            height: 280.h,
-            child: AwesomeEmojiPicker(
-              categoryIconColor: AppColors.c000000.withValues(alpha: 0.45),
-              searchHintText: 'Search emojis',
-              onEmojiSelected: (emoji) {
-                widget.controller.text += emoji.char;
-                widget.controller.selection = TextSelection.fromPosition(
-                  TextPosition(offset: widget.controller.text.length),
-                );
-              },
-            ),
-          ) : SizedBox.shrink(),
+              ? SizedBox(
+                  height: 280.h,
+                  child: AwesomeEmojiPicker(
+                    categoryIconColor:
+                        AppColors.c000000.withValues(alpha: 0.45),
+                    searchHintText: 'Search emojis',
+                    onEmojiSelected: (emoji) {
+                      widget.controller.text += emoji.char;
+                      widget.controller.selection = TextSelection.fromPosition(
+                        TextPosition(offset: widget.controller.text.length),
+                      );
+                    },
+                  ),
+                )
+              : SizedBox.shrink(),
         ),
       ],
     );
