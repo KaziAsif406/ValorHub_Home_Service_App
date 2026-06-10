@@ -127,13 +127,12 @@ class _HomeHeaderState extends State<HomeHeader> {
             child: Column(
               children: [
                 CustomTextFormField(
-                  hintText: 'What service do you need?',
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: AppColors.c6A7181,
-                    size: 20.sp,
-                  )
-                ),
+                    hintText: 'What service do you need?',
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: AppColors.c6A7181,
+                      size: 20.sp,
+                    )),
                 UIHelper.verticalSpace(8.h),
                 Row(
                   children: [
@@ -146,7 +145,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                     ),
                     UIHelper.horizontalSpace(12.7.w),
                     CustomButton(
-                      width: 88.w,
+                      width: 95.w,
                       label: 'Search',
                       onPressed: _handleSearch,
                     ),
