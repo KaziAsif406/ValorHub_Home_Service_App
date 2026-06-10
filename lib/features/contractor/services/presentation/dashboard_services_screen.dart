@@ -258,7 +258,7 @@ class _DashboardServicesSectionState extends State<DashboardServicesSection> {
 }
 
 class _ServiceForm extends StatefulWidget {
-  const _ServiceForm({super.key, this.initialData});
+  const _ServiceForm({this.initialData});
   final Map<String, dynamic>? initialData;
 
   @override
