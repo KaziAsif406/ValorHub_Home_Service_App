@@ -16,27 +16,41 @@ service cloud.firestore {
       );
     }
 
+    // Users collection
     match /users/{userId} {
-      allow create: if isOwner(userId);
+      // Only the authenticated user may create their own user document
+      allow create: if signedIn() && request.auth.uid == userId;
+
+      // Users can read their own profile; signed-in users may read public profiles
       allow read: if isOwner(userId) || signedIn();
 
       // Allow updates by the document owner. When the request includes an
       // `fcmToken` field, validate its type and non-empty content so clients
       // can safely write their own FCM token but cannot inject invalid data.
-      allow update: if isOwner(userId)
-        && (
-          // If fcmToken is not being written, allow the update as usual.
-          !request.resource.data.keys().hasAny(['fcmToken'])
-          // If fcmToken is present, it must be a non-empty string.
-          || (request.resource.data.fcmToken is string && request.resource.data.fcmToken.size() > 0)
-        );
+      // Additionally allow authenticated clients to update only the
+      // `rating`/`reviews` aggregate fields (for aggregation workflows).
+      allow update: if (
+        isOwner(userId)
+          && (
+            !request.resource.data.keys().hasAny(['fcmToken'])
+            || (request.resource.data.fcmToken is string && request.resource.data.fcmToken.size() > 0)
+          )
+      )
+      || (
+        signedIn()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly(['rating','reviews'])
+        && request.resource.data.rating is number
+        && request.resource.data.reviews is int
+      );
 
       allow delete: if isOwner(userId);
     }
 
+    // Quote requests (customers <-> contractors)
     match /quote_requests/{requestId} {
       allow create: if signedIn()
-        && request.resource.data.customerId == request.auth.uid;
+        && request.resource.data.customerId == request.auth.uid
+        && request.resource.data.customerId is string;
 
       allow read: if isQuoteParticipant(resource.data);
 
@@ -45,6 +59,66 @@ service cloud.firestore {
         || (signedIn() && request.auth.uid == resource.data.customerId);
 
       allow delete: if isOwner(resource.data.customerId);
+    }
+
+    // Reviews for contractors
+    match /contractor_reviews/{reviewId} {
+      // Create: only a signed-in customer who is the owning customerId may create
+      allow create: if signedIn()
+        && request.auth.uid == request.resource.data.customerId
+        // contractorId must be present and valid
+        && request.resource.data.contractorId is string
+        && request.resource.data.contractorId.size() > 0
+        // rating must be numeric and in 1..5
+        && request.resource.data.rating is number
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5
+        // comment must be a non-empty string and within reasonable length
+        && request.resource.data.comment is string
+        && request.resource.data.comment.size() > 0
+        && request.resource.data.comment.size() <= 1000;
+
+      // Reading: any signed-in user may read contractor reviews
+      allow read: if signedIn();
+
+      // Update: only the review owner may update their review (validate types/limits)
+      allow update: if request.auth != null
+        && request.auth.uid == resource.data.customerId
+        && request.resource.data.rating is number
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5
+        && request.resource.data.comment is string
+        && request.resource.data.comment.size() > 0
+        && request.resource.data.comment.size() <= 1000;
+
+      // Delete: review owner may delete; also allow the contractor themselves to remove a review about them
+      allow delete: if request.auth != null
+        && (request.auth.uid == resource.data.customerId || request.auth.uid == resource.data.contractorId);
+    }
+
+    // Services offered by contractors
+    match /services/{serviceId} {
+      // Create: signed-in contractors may create service docs that include their contractorId
+      allow create: if signedIn()
+        && request.resource.data.contractorId is string
+        && request.resource.data.contractorId == request.auth.uid
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.category is string
+        && request.resource.data.zip is string
+        && request.resource.data.rate is string
+        && (request.resource.data.active is bool || !request.resource.data.keys().hasAny(['active']));
+
+      // Read: any signed-in user can read services
+      allow read: if signedIn();
+
+      // Update: only the owning contractor may update their service; do not allow changing contractorId
+      allow update: if signedIn()
+        && resource.data.contractorId == request.auth.uid
+        && (!request.resource.data.keys().hasAny(['contractorId']) || request.resource.data.contractorId == resource.data.contractorId);
+
+      // Delete: only owner may delete
+      allow delete: if resource.data.contractorId == request.auth.uid;
     }
 
     // Chats: only participants can read/create/update chat documents
