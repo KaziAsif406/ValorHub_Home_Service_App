@@ -13,10 +13,9 @@ import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 
-
-
 class ContractorsScreen extends StatefulWidget {
-  ContractorsScreen({super.key, this.onBackToHome, this.filterCategory, this.zipCode});
+  ContractorsScreen(
+      {super.key, this.onBackToHome, this.filterCategory, this.zipCode});
 
   final VoidCallback? onBackToHome;
   final String? filterCategory;
@@ -26,7 +25,6 @@ class ContractorsScreen extends StatefulWidget {
   @override
   State<ContractorsScreen> createState() => _ContractorsScreenState();
 }
-
 
 class _ContractorsScreenState extends State<ContractorsScreen> {
   late String _selectedCategory;
@@ -42,13 +40,15 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
   List<ContractorData> _applyFilters(List<ContractorData> contractors) {
     if (widget.filterCategory != null && widget.filterCategory!.isNotEmpty) {
       contractors = contractors
-          .where((c) => c.service.toLowerCase() == widget.filterCategory!.toLowerCase())
+          .where((c) =>
+              c.service.toLowerCase() == widget.filterCategory!.toLowerCase())
           .toList();
     }
 
     if (widget.zipCode != null && widget.zipCode!.trim().isNotEmpty) {
       final zipCode = widget.zipCode!.trim();
-      contractors = contractors.where((c) => c.zipCode.trim() == zipCode).toList();
+      contractors =
+          contractors.where((c) => c.zipCode.trim() == zipCode).toList();
     }
 
     return contractors;
@@ -104,31 +104,33 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
         shadowColor: AppColors.c000000.withValues(alpha: 0.3),
         backgroundColor: AppColors.scaffoldColor,
         title: Text(
-            'Contractors',
-            style: TextFontStyle.textStyle16c14181FInter600.copyWith(
-              height: 2.0.h,
-            ),
+          'Contractors',
+          style: TextFontStyle.textStyle16c14181FInter600.copyWith(
+            height: 2.0.h,
           ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_outlined, color: AppColors.c14181F),
+          icon: const Icon(Icons.arrow_back_ios_new_outlined,
+              color: AppColors.c14181F),
           onPressed: _handleBack,
         ),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(50.h),
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(14.0),
             child: Row(
               children: [
                 Expanded(
                   child: CustomTextFormField(
-                    height: 40.h,
+                    height: 45.h,
                     hintText: 'Search contractors...',
                     prefixIcon: Icon(Icons.search),
                     focusNode: widget._searchFocusNode,
                   ),
                 ),
                 UIHelper.horizontalSpace(8.w),
-                if (widget.filterCategory == null || widget.filterCategory!.isEmpty)
+                if (widget.filterCategory == null ||
+                    widget.filterCategory!.isEmpty)
                   InkWell(
                     borderRadius: BorderRadius.circular(12.r),
                     onTap: _showFilterBottomSheet,
@@ -178,7 +180,8 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              final docs = snapshot.data?.docs ?? <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+              final docs = snapshot.data?.docs ??
+                  <QueryDocumentSnapshot<Map<String, dynamic>>>[];
               final contractors = _applyFilters(
                 docs
                     .map((doc) => mapDocToContractor(doc))
@@ -238,12 +241,14 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       Expanded(
                                         child: Text(
                                           contractor.name,
-                                          style: TextFontStyle.textStyle14c14181FInter600,
+                                          style: TextFontStyle
+                                              .textStyle14c14181FInter600,
                                         ),
                                       ),
                                       Container(
@@ -252,7 +257,8 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
                                           vertical: 6.h,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: AppColors.scaffoldColor.withValues(alpha: 0),
+                                          color: AppColors.scaffoldColor
+                                              .withValues(alpha: 0),
                                         ),
                                         child: Row(
                                           children: [
@@ -263,12 +269,15 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
                                             ),
                                             UIHelper.horizontalSpace(2.w),
                                             Text(
-                                              contractor.rating.toStringAsFixed(1),
-                                              style: TextFontStyle.textStyle12c14181FInter600,
+                                              contractor.rating
+                                                  .toStringAsFixed(1),
+                                              style: TextFontStyle
+                                                  .textStyle12c14181FInter600,
                                             ),
                                             Text(
                                               ' (${contractor.reviews})',
-                                              style: TextFontStyle.textStyle12c6A7181Inter400,
+                                              style: TextFontStyle
+                                                  .textStyle12c6A7181Inter400,
                                             ),
                                           ],
                                         ),
@@ -277,14 +286,18 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
                                   ),
                                   UIHelper.verticalSpace(6.h),
                                   Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 8.w, vertical: 2.h),
                                     decoration: BoxDecoration(
-                                      color: AppColors.allPrimaryColor.withValues(alpha: 0.10),
+                                      color: AppColors.allPrimaryColor
+                                          .withValues(alpha: 0.10),
                                       borderRadius: BorderRadius.circular(12.r),
                                     ),
                                     child: Text(
                                       contractor.service,
-                                      style: TextFontStyle.textStyle10cBE1E2DInter500.copyWith(
+                                      style: TextFontStyle
+                                          .textStyle10cBE1E2DInter500
+                                          .copyWith(
                                         color: AppColors.allPrimaryColor,
                                       ),
                                     ),
@@ -300,7 +313,8 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
                                       UIHelper.horizontalSpace(4.w),
                                       Text(
                                         contractor.location,
-                                        style: TextFontStyle.textStyle12c6A7181Inter400,
+                                        style: TextFontStyle
+                                            .textStyle12c6A7181Inter400,
                                       ),
                                       UIHelper.horizontalSpace(12.w),
                                       Image.asset(
@@ -311,14 +325,17 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
                                       UIHelper.horizontalSpace(4.w),
                                       Text(
                                         '${contractor.experience} years',
-                                        style: TextFontStyle.textStyle12c6A7181Inter400,
+                                        style: TextFontStyle
+                                            .textStyle12c6A7181Inter400,
                                       ),
                                     ],
                                   ),
                                   UIHelper.verticalSpace(5.h),
                                   Text(
                                     contractor.description,
-                                    style: TextFontStyle.textStyle12c6A7181Inter400.copyWith(height: 1.6),
+                                    style: TextFontStyle
+                                        .textStyle12c6A7181Inter400
+                                        .copyWith(height: 1.6),
                                     maxLines: 3,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -339,7 +356,8 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
                                     contractor,
                                   );
                                 },
-                                textStyle: TextFontStyle.textStyle12cBE1E2DInter600,
+                                textStyle:
+                                    TextFontStyle.textStyle12cBE1E2DInter600,
                                 borderRadius: 12.r,
                                 color: AppColors.scaffoldColor,
                                 isOutlined: true,
@@ -356,7 +374,8 @@ class _ContractorsScreenState extends State<ContractorsScreen> {
                                     contractor,
                                   );
                                 },
-                                textStyle: TextFontStyle.textStyle12cFFFFFFInter600,
+                                textStyle:
+                                    TextFontStyle.textStyle12cFFFFFFInter600,
                                 borderRadius: 12.r,
                                 height: 35.h,
                               ),
