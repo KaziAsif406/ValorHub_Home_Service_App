@@ -54,7 +54,8 @@ class DashboardProfileSection extends StatefulWidget {
   final List<String> certifications;
 
   @override
-  State<DashboardProfileSection> createState() => _DashboardProfileSectionState();
+  State<DashboardProfileSection> createState() =>
+      _DashboardProfileSectionState();
 }
 
 class _DashboardProfileSectionState extends State<DashboardProfileSection> {
@@ -175,7 +176,6 @@ class _DashboardProfileSectionState extends State<DashboardProfileSection> {
                       decoration: const InputDecoration(
                         labelText: 'Phone',
                         border: OutlineInputBorder(),
-                        
                       ),
                     ),
                     UIHelper.verticalSpace(12.h),
@@ -220,7 +220,8 @@ class _DashboardProfileSectionState extends State<DashboardProfileSection> {
                         UIHelper.horizontalSpace(8.w),
                         IconButton(
                           onPressed: () {
-                            final String value = certificationController.text.trim();
+                            final String value =
+                                certificationController.text.trim();
                             if (value.isEmpty) return;
                             setModalState(() {
                               draftCertifications.add(value);
@@ -273,7 +274,8 @@ class _DashboardProfileSectionState extends State<DashboardProfileSection> {
     }
 
     try {
-      final int parsedYears = int.tryParse(yearsController.text.trim()) ?? yearsOfExperience;
+      final int parsedYears =
+          int.tryParse(yearsController.text.trim()) ?? yearsOfExperience;
       final String normalizedServiceArea = serviceAreaController.text.trim();
       final Map<String, dynamic> payload = {
         kKeyMobileNumber: phoneController.text.trim(),
@@ -321,9 +323,10 @@ class _DashboardProfileSectionState extends State<DashboardProfileSection> {
             ? data['displayName'] as String
             : widget.profileName;
 
-        final professionalTitle = (data != null && data['service_category'] != null)
-            ? data['service_category'] as String
-            : widget.professionalTitle;
+        final professionalTitle =
+            (data != null && data['service_category'] != null)
+                ? data['service_category'] as String
+                : widget.professionalTitle;
 
         final rating = widget.rating;
         final reviewCount = widget.reviewCount;
@@ -337,17 +340,20 @@ class _DashboardProfileSectionState extends State<DashboardProfileSection> {
             ? data['email'] as String
             : widget.profileEmail;
 
-        final serviceArea = _buildServiceAreaFromData(data) ?? widget.serviceArea;
+        final serviceArea =
+            _buildServiceAreaFromData(data) ?? widget.serviceArea;
 
         final licenseNumber = (data != null && data['license_number'] != null)
             ? data['license_number'] as String
             : widget.licenseNumber;
 
-        final yearsOfExperience = (data != null && data['experience_years'] != null)
-            ? (data['experience_years'] is int
-                ? data['experience_years'] as int
-                : int.tryParse(data['experience_years'].toString()) ?? widget.yearsOfExperience)
-            : widget.yearsOfExperience;
+        final yearsOfExperience =
+            (data != null && data['experience_years'] != null)
+                ? (data['experience_years'] is int
+                    ? data['experience_years'] as int
+                    : int.tryParse(data['experience_years'].toString()) ??
+                        widget.yearsOfExperience)
+                : widget.yearsOfExperience;
 
         final completedProjects = widget.completedProjects;
 
@@ -363,6 +369,7 @@ class _DashboardProfileSectionState extends State<DashboardProfileSection> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ProfileHeaderCard(
+                contractorId: FirebaseAuth.instance.currentUser?.uid,
                 profileName: profileName,
                 professionalTitle: professionalTitle,
                 rating: rating,

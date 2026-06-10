@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:template_flutter/gen/colors.gen.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileHeaderCard extends StatelessWidget {
   const ProfileHeaderCard({
@@ -12,7 +13,10 @@ class ProfileHeaderCard extends StatelessWidget {
     required this.reviewCount,
     required this.isVerified,
     required this.onEditPressed,
+    this.contractorId,
   });
+
+  final String? contractorId;
 
   final String profileName;
   final String professionalTitle;
@@ -87,7 +91,7 @@ class ProfileHeaderCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CircleAvatar(
                       radius: 32.r,
@@ -96,7 +100,8 @@ class ProfileHeaderCard extends StatelessWidget {
                       child: Text(
                         _initials(profileName),
                         style: TextStyle(
-                          color: AppColors.scaffoldColor.withValues(alpha: 0.75),
+                          color:
+                              AppColors.scaffoldColor.withValues(alpha: 0.75),
                           fontSize: 20.sp,
                           fontWeight: FontWeight.w800,
                         ),
@@ -112,16 +117,8 @@ class ProfileHeaderCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w700,
-                              color: AppColors.scaffoldColor.withValues(alpha: 0.85),
-                            ),
-                          ),
-                          UIHelper.verticalSpace(4.h),
-                          Text(
-                            professionalTitle,
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.scaffoldColor.withValues(alpha: 0.75),
+                              color: AppColors.scaffoldColor
+                                  .withValues(alpha: 0.85),
                             ),
                           ),
                           UIHelper.verticalSpace(8.h),
@@ -133,23 +130,78 @@ class ProfileHeaderCard extends StatelessWidget {
                                 color: const Color(0xFFFDB913),
                               ),
                               UIHelper.horizontalSpace(4.w),
-                              Text(
-                                rating.toStringAsFixed(1),
-                                style: TextStyle(
-                                  fontSize: 13.sp,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.scaffoldColor.withValues(alpha: 0.85),
+                              if (contractorId != null)
+                                StreamBuilder<
+                                    QuerySnapshot<Map<String, dynamic>>>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('contractor_reviews')
+                                      .where('contractorId',
+                                          isEqualTo: contractorId)
+                                      .snapshots(),
+                                  builder: (context, snap) {
+                                    final TextStyle ratingStyle = TextStyle(
+                                      fontSize: 13.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.scaffoldColor
+                                          .withValues(alpha: 0.85),
+                                    );
+
+                                    final TextStyle countStyle = TextStyle(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.scaffoldColor
+                                          .withValues(alpha: 0.85),
+                                    );
+
+                                    if (!snap.hasData) {
+                                      return Row(children: [
+                                        Text('-', style: ratingStyle),
+                                        UIHelper.horizontalSpace(4.w),
+                                        Text('(0)', style: countStyle),
+                                      ]);
+                                    }
+
+                                    final docs = snap.data!.docs;
+                                    final int count = docs.length;
+                                    double avg = 0;
+                                    if (count > 0) {
+                                      double sum = 0;
+                                      for (final d in docs) {
+                                        final r = d.data()['rating'];
+                                        if (r is num) sum += r.toDouble();
+                                      }
+                                      avg = sum / count;
+                                    }
+
+                                    return Row(children: [
+                                      Text(avg.toStringAsFixed(1),
+                                          style: ratingStyle),
+                                      UIHelper.horizontalSpace(4.w),
+                                      Text('($count)', style: countStyle),
+                                    ]);
+                                  },
+                                )
+                              else ...[
+                                Text(
+                                  rating.toStringAsFixed(1),
+                                  style: TextStyle(
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.scaffoldColor
+                                        .withValues(alpha: 0.85),
+                                  ),
                                 ),
-                              ),
-                              UIHelper.horizontalSpace(4.w),
-                              Text(
-                                '($reviewCount)',
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.scaffoldColor.withValues(alpha: 0.85),
+                                UIHelper.horizontalSpace(4.w),
+                                Text(
+                                  '($reviewCount)',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.scaffoldColor
+                                        .withValues(alpha: 0.85),
+                                  ),
                                 ),
-                              ),
+                              ],
                               UIHelper.horizontalSpace(8.w),
                               if (isVerified)
                                 Container(
