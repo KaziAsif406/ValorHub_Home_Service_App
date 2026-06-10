@@ -91,7 +91,7 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
       'customerName': customerName,
       'rating': _selectedRating,
       'comment': comment,
-      'createdAt': FieldValue.serverTimestamp(),
+      'createdAt': Timestamp.now(),
     }).then((_) async {
       // Update contractor aggregate (rating and reviews count) in a transaction
       final DocumentReference contractorRef = firestore

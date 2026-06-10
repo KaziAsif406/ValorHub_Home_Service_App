@@ -31,7 +31,6 @@ class CustomerReviews extends StatelessWidget {
     return FirebaseFirestore.instance
         .collection('contractor_reviews')
         .where('contractorId', isEqualTo: contractorId)
-        .orderBy('createdAt', descending: true)
         .snapshots();
   }
 
@@ -49,6 +48,15 @@ class CustomerReviews extends StatelessWidget {
 
         final docs = snapshot.data?.docs ??
             <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+        // Sort client-side by createdAt descending so newly added reviews appear immediately
+        docs.sort((a, b) {
+          final Timestamp? ta = a.data()['createdAt'] as Timestamp?;
+          final Timestamp? tb = b.data()['createdAt'] as Timestamp?;
+          final int va = ta?.millisecondsSinceEpoch ?? 0;
+          final int vb = tb?.millisecondsSinceEpoch ?? 0;
+          return vb.compareTo(va);
+        });
+
         if (docs.isEmpty) {
           return Text('No reviews yet.',
               style: TextFontStyle.textStyle14c6A7181Inter400);
