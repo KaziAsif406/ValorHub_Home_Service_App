@@ -37,7 +37,7 @@ class ReviewsSection extends StatelessWidget {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: _reviews.length,
-            separatorBuilder: (_, __) => SizedBox(width: 16.w),
+            separatorBuilder: (_, __) => SizedBox(width: 0.w),
             itemBuilder: (context, index) {
               final review = _reviews[index];
               return _ReviewCard(review: review);
@@ -66,15 +66,16 @@ class _ReviewCard extends StatelessWidget {
     return Container(
       width: 260.w,
       height: 125.h,
-      padding: EdgeInsets.all(18.w),
+      padding: EdgeInsets.all(12.w),
+      margin: EdgeInsets.only(left: 16.w, right: 10.w, bottom: 8.h, top: 8.h),
       decoration: BoxDecoration(
         color: AppColors.scaffoldColor,
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 18.r,
-            offset: Offset(0, 10.h),
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 10.r,
+            offset: Offset(0.w, 2.h),
           ),
         ],
       ),

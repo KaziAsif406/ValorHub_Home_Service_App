@@ -74,9 +74,9 @@ class _ReasonCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 16.r,
-            offset: Offset(5.w, 10.h),
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 5.r,
+            offset: Offset(2.w, 2.h),
           )
         ],
       ),

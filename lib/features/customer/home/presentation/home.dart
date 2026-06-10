@@ -13,7 +13,6 @@ import 'package:template_flutter/helpers/all_routes.dart';
 import 'package:template_flutter/helpers/navigation_service.dart';
 import 'package:template_flutter/helpers/ui_helpers.dart';
 
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -68,24 +67,27 @@ class _HomeScreenState extends State<HomeScreen> {
                 const ServiceCategoriesSection(),
                 UIHelper.verticalSpace(24.h),
                 const PopularServicesSection(),
-                UIHelper.verticalSpace(10.h),
+                UIHelper.verticalSpace(24.h),
                 const WhyChooseUsSection(),
                 UIHelper.verticalSpace(24.h),
                 const ReviewsSection(),
                 UIHelper.verticalSpace(24.h),
                 // const HomeActionButton(),
-                CustomButton(
-                  label: 'Find Contractor',
-                  onPressed: () {
-                    NavigationService.navigateToWithArgs(
-                      Routes.navigationScreen,
-                      {'initialIndex': 2},
-                    );
-                  },
-                  textStyle: TextFontStyle.textStyle14cFFFFFFInter600,
-                  borderRadius: 12.r,
-                  width: 310.w,
-                  // height: 56.h,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  child: CustomButton(
+                    label: 'Find Contractor',
+                    onPressed: () {
+                      NavigationService.navigateToWithArgs(
+                        Routes.navigationScreen,
+                        {'initialIndex': 2},
+                      );
+                    },
+                    textStyle: TextFontStyle.textStyle14cFFFFFFInter600,
+                    borderRadius: 12.r,
+                    width: double.infinity,
+                    // height: 56.h,
+                  ),
                 ),
                 UIHelper.verticalSpace(12.h),
               ],

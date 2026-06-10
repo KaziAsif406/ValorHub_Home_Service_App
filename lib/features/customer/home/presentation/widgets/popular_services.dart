@@ -45,8 +45,7 @@ class PopularServicesSection extends StatelessWidget {
               crossAxisCount: 2,
               crossAxisSpacing: 8.w,
               mainAxisSpacing: 12.h,
-              childAspectRatio: 
-              1.2,
+              childAspectRatio: 1.2,
             ),
             itemCount: _services.length,
             itemBuilder: (context, index) {
@@ -74,15 +73,14 @@ class _PopularServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
- 
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.r),
         color: AppColors.scaffoldColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 16.r,
-            offset: Offset(5.w, 10.h),
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 8.r,
+            offset: Offset(0.w, 5.h),
           )
         ],
       ),
@@ -148,4 +146,3 @@ class _PopularServiceCard extends StatelessWidget {
     // );
   }
 }
-
