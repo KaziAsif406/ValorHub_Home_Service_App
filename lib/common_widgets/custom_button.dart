@@ -38,7 +38,8 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bgColor = isOutlined ? AppColors.scaffoldColor : color;
-    final border = isOutlined ? Border.all(color: borderColor, width: 1.5.w) : null;
+    final border =
+        isOutlined ? Border.all(color: borderColor, width: 1.5.w) : null;
     final labelStyle = textStyle ??
         TextStyle(
           color: isOutlined ? color : AppColors.scaffoldColor,
@@ -62,37 +63,36 @@ class CustomButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(borderRadius.r),
             ),
             child: Padding(
-              padding: padding ?? EdgeInsets.symmetric(horizontal: 20.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (leading != null) ...[
-                    leading!,
-                    if (gap) SizedBox(width: 10.w),
-                  ],
+                padding: padding ?? EdgeInsets.symmetric(horizontal: 20.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (leading != null) ...[
+                      leading!,
+                      if (gap) SizedBox(width: 10.w),
+                    ],
 
-                  /// FIX: lock text width behavior
-                  AnimatedSize(
-                    duration: const Duration(milliseconds: 150),
-                    curve: Curves.easeInOut,
-                    child: label.isEmpty
-                        ? const SizedBox.shrink()
-                        : Text(
-                            label,
-                            style: labelStyle,
-                            overflow: TextOverflow.fade,
-                            softWrap: false,
-                          ),
-                  ),
+                    /// FIX: lock text width behavior
+                    AnimatedSize(
+                      duration: const Duration(milliseconds: 150),
+                      curve: Curves.easeInOut,
+                      child: label.isEmpty
+                          ? const SizedBox.shrink()
+                          : Text(
+                              label,
+                              style: labelStyle,
+                              overflow: TextOverflow.fade,
+                              softWrap: false,
+                            ),
+                    ),
 
-                  if (trailing != null) ...[
-                    if (gap) SizedBox(width: 10.w),
-                    trailing!,
+                    if (trailing != null) ...[
+                      if (gap) SizedBox(width: 10.w),
+                      trailing!,
+                    ],
                   ],
-                ],
-              )
-            ),
+                )),
           ),
         ),
       ),
