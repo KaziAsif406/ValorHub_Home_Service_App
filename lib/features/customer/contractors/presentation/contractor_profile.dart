@@ -141,7 +141,7 @@ class _ContractorProfileState extends State<ContractorProfile> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          showAddReviewDialog(context);
+                          showAddReviewDialog(context, widget.contractor);
                         },
                         child: Row(
                           children: [
