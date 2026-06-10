@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:template_flutter/features/customer/quotes/data/quote_request_store.dart';
 import 'package:template_flutter/features/contractor/contractor_dashboard/presentation/widget/metric_card.dart';
 import 'package:template_flutter/features/contractor/contractor_dashboard/presentation/widget/quote_request_card.dart';
@@ -91,8 +92,11 @@ class _MetricsGrid extends StatelessWidget {
           ? Stream<List<QuoteRequestModel>>.value(const <QuoteRequestModel>[])
           : QuoteRequestStore.instance.contractorRequestsStream(contractorId!),
       builder: (context, snapshot) {
-        final List<QuoteRequestModel> requests = snapshot.data ?? <QuoteRequestModel>[];
-        final int newCount = requests.where((r) => r.status == QuoteRequestStatus.pending).length;
+        final List<QuoteRequestModel> requests =
+            snapshot.data ?? <QuoteRequestModel>[];
+        final int newCount = requests
+            .where((r) => r.status == QuoteRequestStatus.pending)
+            .length;
 
         final MetricData metric = MetricData(
           icon: Icons.description_outlined,
@@ -111,7 +115,8 @@ class _MetricsGrid extends StatelessWidget {
     final Widget pendingCard = StreamBuilder<int>(
       stream: contractorId == null || contractorId!.isEmpty
           ? Stream<int>.value(0)
-          : ChatService().unseenMessageCountStream(currentUserId: contractorId!),
+          : ChatService()
+              .unseenMessageCountStream(currentUserId: contractorId!),
       builder: (context, snapshot) {
         int unseenCount = 0;
         if (snapshot.hasError) {
@@ -144,17 +149,72 @@ class _MetricsGrid extends StatelessWidget {
         onTap: () {},
       ),
     );
+    final Widget reviewCard = contractorId == null
+        ? MetricCard(
+            data: MetricData(
+              icon: Icons.star_outline,
+              iconColor: Colors.amber,
+              value: '0.0',
+              title: 'Overall Review',
+              subtitle: 'No reviews yet',
+              onTap: () {},
+            ),
+          )
+        : StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+            stream: FirebaseFirestore.instance
+                .collection('contractor_reviews')
+                .where('contractorId', isEqualTo: contractorId)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return MetricCard(
+                  data: MetricData(
+                    icon: Icons.star_outline,
+                    iconColor: Colors.amber,
+                    value: '0.0',
+                    title: 'Overall Review',
+                    subtitle: 'Error',
+                    onTap: () {},
+                  ),
+                );
+              }
 
-    final Widget reviewCard = MetricCard(
-      data: MetricData(
-        icon: Icons.star_outline,
-        iconColor: Colors.amber,
-        value: '4.9',
-        title: 'Overall Review',
-        subtitle: 'From 127 reviews',
-        onTap: () {},
-      ),
-    );
+              if (!snapshot.hasData) {
+                return MetricCard(
+                  data: MetricData(
+                    icon: Icons.star_outline,
+                    iconColor: Colors.amber,
+                    value: '...',
+                    title: 'Overall Review',
+                    subtitle: 'Loading',
+                    onTap: () {},
+                  ),
+                );
+              }
+
+              final docs = snapshot.data!.docs;
+              final int count = docs.length;
+              double avg = 0.0;
+              if (count > 0) {
+                final double sum = docs.map((d) {
+                  final dynamic r = d.data()['rating'];
+                  return (r is num) ? r.toDouble() : 0.0;
+                }).fold(0.0, (double a, double b) => a + b);
+                avg = sum / count;
+              }
+
+              final MetricData metric = MetricData(
+                icon: Icons.star_outline,
+                iconColor: Colors.amber,
+                value: avg > 0 ? avg.toStringAsFixed(1) : '0.0',
+                title: 'Overall Review',
+                subtitle: count > 0 ? 'From $count reviews' : 'No reviews yet',
+                onTap: () {},
+              );
+
+              return MetricCard(data: metric);
+            },
+          );
 
     final List<Widget> children = [
       newRequestsCard,

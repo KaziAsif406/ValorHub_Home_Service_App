@@ -11,12 +11,19 @@ import 'package:template_flutter/services/auth_service.dart';
 
 import 'widget/contractor_dashboard_app_bar.dart';
 import 'widget/contractor_dashboard_drawer.dart';
-import 'widget/dashboard_overview_section.dart';
+import 'dashboard_overview_section.dart';
 import '../../profile/presentation/contractor_profile_screen.dart';
 import '../../reviews/presentation/dashboard_reviews_screen.dart';
 import '../../services/presentation/dashboard_services_screen.dart';
 
-enum ContractorDashboardSection { overview, inbox, requests, services, profile, reviews }
+enum ContractorDashboardSection {
+  overview,
+  inbox,
+  requests,
+  services,
+  profile,
+  reviews
+}
 
 class ContractorDashboardScreen extends StatefulWidget {
   const ContractorDashboardScreen({
@@ -54,7 +61,8 @@ class _ContractorDashboardScreenState extends State<ContractorDashboardScreen> {
       final data = await _auth.getUserProfileByUserId(uid);
       if (data == null) return;
 
-      final displayName = (data['displayName'] as String?)?.trim() ?? (data['name'] as String?)?.trim();
+      final displayName = (data['displayName'] as String?)?.trim() ??
+          (data['name'] as String?)?.trim();
       if (displayName != null && displayName.isNotEmpty) {
         setState(() {
           _profileName = displayName;
@@ -150,7 +158,8 @@ class _ContractorDashboardScreenState extends State<ContractorDashboardScreen> {
           key: const ValueKey<String>('overview'),
           profileName: _profileName,
           profileEmail: widget.profileEmail,
-          onViewRequests: () => _openSection(ContractorDashboardSection.requests),
+          onViewRequests: () =>
+              _openSection(ContractorDashboardSection.requests),
         );
       case ContractorDashboardSection.inbox:
         return DashboardInboxSection(
