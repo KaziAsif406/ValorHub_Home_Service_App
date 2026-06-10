@@ -31,7 +31,9 @@ class DashboardReviewsSection extends StatelessWidget {
       stream: stream,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return Center(child: Text('Unable to load reviews.'));
+          return Center(
+              child: Text('No Reviews Found.',
+                  style: TextFontStyle.textStyle14c6A7181Inter400));
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -48,112 +50,108 @@ class DashboardReviewsSection extends StatelessWidget {
           return vb.compareTo(va);
         });
 
-        return SingleChildScrollView(
+        return ListView(
           padding: EdgeInsets.all(16.w),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Reviews',
-                style: TextFontStyle.textStyle20c0A0A0AInter700.copyWith(
-                  fontWeight: FontWeight.w900,
-                ),
+          children: [
+            Text(
+              'Reviews',
+              style: TextFontStyle.textStyle20c0A0A0AInter700.copyWith(
+                fontWeight: FontWeight.w900,
               ),
-              UIHelper.verticalSpace(14.h),
-              ...docs.map((doc) {
-                final data = doc.data();
-                final String name =
-                    (data['customerName'] as String?) ?? 'Customer';
-                final double rating = (data['rating'] is num)
-                    ? (data['rating'] as num).toDouble()
-                    : 0.0;
-                final String comment = (data['comment'] as String?) ?? '';
-                final Timestamp? ts = data['createdAt'] as Timestamp?;
-                final String timeAgo =
-                    ts != null ? timeago.format(ts.toDate()) : '';
+            ),
+            UIHelper.verticalSpace(14.h),
+            ...docs.map((doc) {
+              final data = doc.data();
+              final String name =
+                  (data['customerName'] as String?) ?? 'Customer';
+              final double rating = (data['rating'] is num)
+                  ? (data['rating'] as num).toDouble()
+                  : 0.0;
+              final String comment = (data['comment'] as String?) ?? '';
+              final Timestamp? ts = data['createdAt'] as Timestamp?;
+              final String timeAgo =
+                  ts != null ? timeago.format(ts.toDate()) : '';
 
-                return Padding(
-                  padding: EdgeInsets.only(bottom: 12.h),
-                  child: Container(
-                    padding: EdgeInsets.all(16.w),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(18.r),
-                      border: Border.all(color: AppColors.c0A0A0A),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 18.r,
-                              backgroundColor: AppColors.contractor_primary
-                                  .withValues(alpha: 0.12),
-                              child: Text(
-                                _initials(name),
-                                style: TextStyle(
-                                  color: AppColors.contractor_primary,
-                                  fontSize: 11.sp,
-                                  fontWeight: FontWeight.w800,
-                                ),
+              return Padding(
+                padding: EdgeInsets.only(bottom: 12.h),
+                child: Container(
+                  padding: EdgeInsets.all(16.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18.r),
+                    border: Border.all(color: AppColors.c0A0A0A),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 18.r,
+                            backgroundColor: AppColors.contractor_primary
+                                .withValues(alpha: 0.12),
+                            child: Text(
+                              _initials(name),
+                              style: TextStyle(
+                                color: AppColors.contractor_primary,
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w800,
                               ),
                             ),
-                            UIHelper.horizontalSpace(10.w),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    name,
-                                    style: TextFontStyle
-                                        .textStyle15c0A0A0AInter700,
-                                  ),
-                                  if (timeAgo.isNotEmpty)
-                                    Text(
-                                      timeAgo,
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        color: AppColors.c6A7181,
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            ),
-                            Row(
+                          ),
+                          UIHelper.horizontalSpace(10.w),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.star_rounded,
-                                    color: Colors.amber, size: 18.sp),
-                                UIHelper.horizontalSpace(2.w),
                                 Text(
-                                  rating.toStringAsFixed(1),
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w800,
-                                    color: AppColors.c0A0A0A,
-                                  ),
+                                  name,
+                                  style:
+                                      TextFontStyle.textStyle15c0A0A0AInter700,
                                 ),
+                                if (timeAgo.isNotEmpty)
+                                  Text(
+                                    timeAgo,
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: AppColors.c6A7181,
+                                    ),
+                                  ),
                               ],
                             ),
-                          ],
-                        ),
-                        UIHelper.verticalSpace(12.h),
-                        Text(
-                          comment,
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            height: 1.4,
-                            color: AppColors.c14181F,
                           ),
+                          Row(
+                            children: [
+                              Icon(Icons.star_rounded,
+                                  color: Colors.amber, size: 18.sp),
+                              UIHelper.horizontalSpace(2.w),
+                              Text(
+                                rating.toStringAsFixed(1),
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.c0A0A0A,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      UIHelper.verticalSpace(12.h),
+                      Text(
+                        comment,
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          height: 1.4,
+                          color: AppColors.c14181F,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                );
-              }).toList(),
-            ],
-          ),
+                ),
+              );
+            }).toList(),
+          ],
         );
       },
     );
