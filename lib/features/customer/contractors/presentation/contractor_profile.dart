@@ -121,13 +121,13 @@ class _ContractorProfileState extends State<ContractorProfile> {
                     UIHelper.verticalSpace(16.h),
                   ],
 
-                  // Project Gallery Section
-                  Text(
-                    'Project Gallery',
-                    style: TextFontStyle.textStyle16c14181FInter600,
-                  ),
-                  UIHelper.verticalSpace(8.h),
-                  ProjectGallery(contractor: widget.contractor),
+                  // // Project Gallery Section
+                  // Text(
+                  //   'Project Gallery',
+                  //   style: TextFontStyle.textStyle16c14181FInter600,
+                  // ),
+                  // UIHelper.verticalSpace(8.h),
+                  // ProjectGallery(contractor: widget.contractor),
                   UIHelper.verticalSpace(16.h),
 
                   // Customer Reviews Section
